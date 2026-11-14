@@ -394,36 +394,128 @@
     ui.confirm(t("reg.clearT"), t("reg.clearP"), t("reg.clearYes"), "danger").then(function (ok) { if (ok) { ticket.lines = []; R.ticket = ticket; drawTicket(); view.search.focus(); } });
   }
 
+  /* ---------- taking payment (Build 16): cash, a card, Apple Pay, Google Pay, another way the owner accepts, or in parts ----------
+     The store's own card machine charges the card; Lakay says how much to charge and records what was taken. Cash is
+     chosen first, so a cash sale is as quick as ever: the amount received, the change, done. */
+  R.payName = function (p) {
+    if (p.method === "other") return p.name || t("pay.m.other");
+    return t("pay.m." + p.method) + (p.last4 ? " ···· " + p.last4 : "");
+  };
+  var PAY_EMO = { cash: "💵", card: "💳", applepay: "📱", googlepay: "📱", other: "🔁" };
   function takeCash() {
     var tk = B.priceTicket(ticket.lines); if (!tk.lines.length) return;
+    var prefs = B.payPrefs(), parts = [], method = "cash", d;
+    var ways = prefs.methods.filter(function (m) { return m !== "other" && B.PAY_METHODS.indexOf(m) >= 0; }).concat(prefs.others.length ? ["other"] : []);
+    function paid() { return parts.reduce(function (a, p) { return a + (p.method === "cash" ? p.applied : p.amount); }, 0); }
+    function left() { return tk.total - paid(); }
+    /* what is left to pay, shown once a part has been taken */
+    var leftN = h("strong.num#payLeftN"), leftRow = h("p.due.pay-left#payLeft", null, [h("span", null, t("pay.left")), leftN]);
+    var partsList = h("ul.pay-parts#payParts", { "aria-live": "polite" });
+    var keys = h("div.pay-ways#payWays", { role: "radiogroup", "aria-label": t("pay.how") });
+    ways.forEach(function (m) {
+      keys.appendChild(h("button.pay-way", { type: "button", role: "radio", "aria-checked": String(m === method), "data-m": m, id: "payWay-" + m, onclick: function () { choose(m); } },
+        [ui.emo(PAY_EMO[m]), h("span", null, t("pay.m." + m))]));
+    });
+    /* cash */
     var input = ui.input({ id: "cashIn", inputmode: "decimal", class: "money-in", "aria-label": t("cash.received") });
     var changeN = h("p.change", { id: "cashChange", "aria-live": "polite" });
     var quick = h("div.quick-cash", { role: "group", "aria-label": t("cash.quick") });
-    var amounts = [tk.total], whole = Math.ceil(tk.total / 100) * 100;
-    if (whole !== tk.total) amounts.push(whole);
-    [500, 1000, 2000, 5000, 10000].forEach(function (b) { if (b > whole) amounts.push(b); });
-    amounts.filter(function (v, i, a) { return a.indexOf(v) === i; }).slice(0, 6).forEach(function (v, i) {
-      quick.appendChild(h("button.key.sm", { type: "button", onclick: function () { input.value = U.moneyPlain(v); update(); } }, i === 0 ? t("cash.exact") + " " + money(v) : money(v)));
-    });
-    var d;
-    function update() {
-      var c = U.parseMoney(input.value), done = document.getElementById("cashDone");
-      if (c === null) { changeN.textContent = input.value ? t("cash.notAmount") : ""; changeN.className = "change"; if (done) done.disabled = true; return; }
-      if (c < tk.total) { changeN.textContent = t("cash.short", { m: money(tk.total - c) }); changeN.className = "change bad"; if (done) done.disabled = true; return; }
-      changeN.textContent = t("cash.change", { m: money(c - tk.total) }); changeN.className = "change good"; if (done) done.disabled = false;
+    function quickKeys() {
+      U.clear(quick);
+      var due = left(), amounts = [due], whole = Math.ceil(due / 100) * 100;
+      if (whole !== due) amounts.push(whole);
+      [500, 1000, 2000, 5000, 10000].forEach(function (b) { if (b > whole) amounts.push(b); });
+      amounts.filter(function (v, i, a) { return a.indexOf(v) === i; }).slice(0, 6).forEach(function (v, i) {
+        quick.appendChild(h("button.key.sm", { type: "button", onclick: function () { input.value = U.moneyPlain(v); update(); } }, i === 0 ? t("cash.exact") + " " + money(v) : money(v)));
+      });
     }
-    input.addEventListener("input", update);
-    input.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); var b = document.getElementById("cashDone"); if (b && !b.disabled) b.click(); } });
-    d = ui.dialog({ title: t("cash.title"), emoji: "💵", focus: "#cashIn",
-      body: [h("p.due", null, [h("span", null, t("cash.due")), h("strong.num", { id: "cashDue" }, money(tk.total))]), quick, ui.field("cash.received", input), changeN],
-      actions: [{ label: t("cancel") }, { label: t("cash.complete"), kind: "primary", id: "cashDone", disabled: true, emoji: "✅", onClick: function (close, btn) {
-        var c = U.parseMoney(input.value); if (c === null || c < tk.total) return false;
-        btn.disabled = true;
-        B.completeSale(ticket.lines, c).then(function (sale) {
-          ticket.lines = []; close(); drawTicket(); ui.celebrate(); R.showReceipt(sale, true);
-        }, function (e) { btn.disabled = false; ui.toast(t(e && e.code === "short" ? "cash.shortErr" : "door.problem"), "bad"); console.error(e); });
-        return false;
-      } }] });
+    var cashPane = h("div.pay-pane#payCash", null, [quick, ui.field("cash.received", input), changeN]);
+    /* a card, a phone, another way */
+    var amount = ui.input({ id: "payAmount", inputmode: "decimal", class: "money-in" });
+    var code = ui.input({ id: "payCode", maxlength: "40" }), last4 = ui.input({ id: "payLast4", inputmode: "numeric", maxlength: "4" });
+    var name = ui.select(prefs.others.map(function (n) { return [n, n]; }), prefs.others[0] || "", { id: "payName" });
+    var how = h("p.pay-how#payHow", { "aria-live": "polite" }), warnN = h("p.err#payWarn", { role: "alert" });
+    var nameF = ui.field("pay.name", name), codeF = ui.field("pay.code", code, { required: prefs.askCode === "required", hint: t("pay.codeHint") }), last4F = ui.field("pay.last4", last4, { hint: t("pay.last4Hint") });
+    var otherPane = h("div.pay-pane#payOther", null, [how, h("div.form-grid", null, [nameF, ui.field("pay.amount", amount, { required: true }), codeF, last4F]), warnN]);
+    function choose(m) {
+      method = m;
+      Array.prototype.forEach.call(keys.children, function (b) { b.setAttribute("aria-checked", String(b.getAttribute("data-m") === m)); });
+      cashPane.hidden = m !== "cash"; otherPane.hidden = m === "cash";
+      nameF.hidden = m !== "other"; last4F.hidden = m !== "card" || prefs.askLast4 === "no"; codeF.hidden = m === "other" ? false : prefs.askCode === "no";
+      codeF.querySelector("label").firstChild.textContent = t(m === "other" ? "pay.ref" : "pay.code");
+      if (m === "cash") { quickKeys(); setTimeout(function () { try { input.focus(); } catch (e) { } }, 30); }
+      else { amount.value = U.moneyPlain(left()); setTimeout(function () { try { amount.select(); } catch (e) { } }, 30); }
+      update();
+    }
+    function current() {
+      if (method === "cash") { var c = U.parseMoney(input.value); return c === null || c <= 0 ? null : { method: "cash", tendered: c }; }
+      var a = U.parseMoney(amount.value); if (a === null || a <= 0) return null;
+      var p = { method: method, amount: a, ref: code.value.trim() };
+      if (method === "card" && last4.value.trim()) p.last4 = last4.value.trim();
+      if (method === "other") p.name = name.value;
+      return p;
+    }
+    function buttons(done, part) { var a = document.getElementById("cashDone"), b = document.getElementById("payPart"); if (a) a.disabled = !done; if (b) { b.disabled = !part; b.hidden = !part; } }
+    function update() {
+      var due = left(), p = current();
+      leftN.textContent = money(due); leftRow.hidden = !parts.length;
+      warnN.textContent = "";
+      if (method === "cash") {
+        var c = U.parseMoney(input.value);
+        if (c === null) { changeN.textContent = input.value ? t("cash.notAmount") : ""; changeN.className = "change"; buttons(false, false); return; }
+        if (c < due) { changeN.textContent = t("cash.short", { m: money(due - c) }); changeN.className = "change bad"; buttons(false, c > 0 && ways.length > 1); return; }
+        changeN.textContent = t("cash.change", { m: money(c - due) }); changeN.className = "change good"; buttons(true, false); return;
+      }
+      how.textContent = method === "other" ? t("pay.howOther", { m: money(p ? p.amount : due), name: name.value }) : t("pay.howCard", { m: money(p ? p.amount : due), on: prefs.machine ? prefs.machine : t("pay.theMachine") });
+      if (!p) { buttons(false, false); return; }
+      if (B.cardNumberIn(code.value)) { warnN.textContent = t("pay.noCardNumber"); buttons(false, false); return; }
+      if (p.last4 && !/^\d{4}$/.test(p.last4)) { warnN.textContent = t("pay.err.last4"); buttons(false, false); return; }
+      if (method !== "other" && prefs.askCode === "required" && !p.ref) { buttons(false, false); return; }
+      if (p.amount > due) { warnN.textContent = t("pay.err.over", { m: money(due) }); buttons(false, false); return; }
+      buttons(p.amount === due, p.amount < due);
+    }
+    function drawParts() {
+      U.clear(partsList);
+      parts.forEach(function (p, i) {
+        partsList.appendChild(h("li", null, [ui.emo(PAY_EMO[p.method]), h("span.pay-part-n", null, R.payName(p)), p.ref ? h("small.muted", null, t("pay.codeIs", { c: p.ref })) : null,
+          h("span.num", null, money(p.method === "cash" ? p.applied : p.amount)),
+          h("button.icon-key", { type: "button", "aria-label": t("pay.removePart"), title: t("pay.removePart"), onclick: function () { parts.splice(i, 1); drawParts(); choose(method); } }, U.icon("x"))]));
+      });
+      partsList.hidden = !parts.length;
+    }
+    /* one part now, the rest another way */
+    function addPart() {
+      var p = current(); if (!p) return false;
+      if (p.method === "cash") { if (p.tendered >= left()) return false; p.applied = p.tendered; input.value = ""; }
+      else { if (p.amount >= left()) return false; amount.value = ""; code.value = ""; last4.value = ""; }
+      parts.push(p); drawParts();
+      choose(p.method === "cash" ? (ways.indexOf("card") >= 0 ? "card" : ways.filter(function (w) { return w !== "cash"; })[0] || "cash") : "cash");
+      return false;
+    }
+    function finish(btn) {
+      var p = current(); if (!p) return false;
+      var pays = parts.map(function (x) { var y = Object.assign({}, x); delete y.applied; return y; }).concat([p]);
+      btn.disabled = true;
+      B.completeSale(ticket.lines, pays).then(function (sale) {
+        ticket.lines = []; d.close(); drawTicket(); ui.celebrate(); R.showReceipt(sale, true);
+      }, function (e) {
+        btn.disabled = false;
+        var k = e && e.code;
+        ui.toast(t(k === "short" ? "cash.shortErr" : k === "cardNumber" ? "pay.noCardNumber" : k === "code" ? "pay.err.code" : k === "over" ? "pay.err.overAll" : "door.problem"), "bad"); console.error(e);
+      });
+      return false;
+    }
+    input.addEventListener("input", update); amount.addEventListener("input", update); code.addEventListener("input", update); last4.addEventListener("input", update); name.addEventListener("change", update);
+    [input, amount, code, last4].forEach(function (f) { f.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter") return; e.preventDefault();
+      var a = document.getElementById("cashDone"), b = document.getElementById("payPart");
+      if (a && !a.disabled) a.click(); else if (b && !b.disabled) b.click();
+    }); });
+    d = ui.dialog({ title: t("pay.title"), emoji: "💳", focus: "#cashIn", wide: ways.length > 1,
+      body: [h("p.due", null, [h("span", null, t("cash.due")), h("strong.num", { id: "cashDue" }, money(tk.total))]), ways.length > 1 ? keys : null, partsList, leftRow, cashPane, otherPane],
+      actions: [{ label: t("cancel") }, { label: t("pay.part"), id: "payPart", onClick: function () { return addPart(); } },
+        { label: t("cash.complete"), kind: "primary", id: "cashDone", disabled: true, emoji: "✅", onClick: function (close, btn) { return finish(btn); } }] });
+    drawParts(); choose("cash");
   }
 
   /* ---------- the receipt ---------- */
@@ -438,21 +530,25 @@
       h("table.r-totals", null, h("tbody", null, [
         h("tr", null, [h("td", null, t("reg.subtotal")), h("td.num", null, money(s.subtotal))])].concat(
         s.taxes.map(function (x) { return h("tr", null, [h("td", null, x.name + " (" + U.rateText(x.rate) + ")"), h("td.num", null, money(x.tax))]); }), [
-        h("tr.r-total", null, [h("td", null, t("reg.total")), h("td.num", null, money(s.total))]),
-        h("tr", null, [h("td", null, t("receipt.cash")), h("td.num", null, money(s.pay[0].tendered))]),
-        h("tr", null, [h("td", null, t("receipt.change")), h("td.num", null, money(s.pay[0].change))])]))),
+        h("tr.r-total", null, [h("td", null, t("reg.total")), h("td.num", null, money(s.total))])].concat(
+        /* each payment (Build 16): the card machine's approval code under a card or a phone; the cash received, then the change */
+        [].concat.apply([], s.pay.map(function (p) {
+          if (p.method === "cash") return [h("tr", null, [h("td", null, t("receipt.cash")), h("td.num", null, money(p.tendered))]), h("tr", null, [h("td", null, t("receipt.change")), h("td.num", null, money(p.change))])];
+          return [h("tr.r-pay", null, [h("td", null, [R.payName(p), p.ref ? h("small.r-code", null, t("pay.codeIs", { c: p.ref })) : null]), h("td.num", null, money(p.amount))])];
+        })))))),
       h("p.r-by", null, t("receipt.servedBy", { name: ui.userTag(s.by) })),
       set.receiptNote ? h("p.r-note", null, set.receiptNote) : null,
       h("p.r-thanks", null, E.thanks()),
       h("p.r-build", null, E.made())]);
   };
   R.showReceipt = function (s, fresh) {
-    ui.dialog({ title: fresh ? t("receipt.doneTitle") : t("receipt.title"), emoji: fresh ? "🎉" : "🧾", body: [fresh ? h("p.change.good", null, t("cash.change", { m: money(s.pay[0].change) })) : null, R.receiptNode(s)],
+    var cash = s.pay.filter(function (p) { return p.method === "cash"; })[0];
+    ui.dialog({ title: fresh ? t("receipt.doneTitle") : t("receipt.title"), emoji: fresh ? "🎉" : "🧾", body: [fresh ? h("p.change.good#receiptChange", null, cash ? t("cash.change", { m: money(cash.change) }) : t("pay.paidBy", { how: s.pay.map(R.payName).join(" + ") })) : null, R.receiptNode(s)],
       actions: [{ label: t("receipt.print"), emoji: "🖨️", onClick: function () { ui.print(R.receiptNode(s)); return false; } },
                 { label: fresh ? t("receipt.newSale") : t("close"), kind: "primary", id: "receiptDone", onClick: function (c) { c(); if (view && document.body.contains(view.search)) view.search.focus(); } }] });
   };
 
-  /* keys at the register: F2 finds, F9 takes cash */
+  /* keys at the register: F2 finds, F9 takes payment */
   document.addEventListener("keydown", function (e) {
     if (!B.isOpen || ui.current !== "register" || document.querySelector(".layer")) return;
     if (e.key === "F2") { e.preventDefault(); view && view.search.focus(); }

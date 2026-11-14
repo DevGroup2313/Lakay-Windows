@@ -237,7 +237,8 @@
       env = e;
       var start = new Date(now.getTime() - 16 * 86400000);
       var settings = { storeName: E.t("practice.store"), ownerName: E.t("practice.owner"), currency: "USD",
-        taxes: [{ id: "tx1", name: E.t("practice.tax"), rate: 7000 }], weekStart: 1, lockMinutes: 15, receiptNote: "", created: start.toISOString(), practice: true };
+        taxes: [{ id: "tx1", name: E.t("practice.tax"), rate: 7000 }], weekStart: 1, lockMinutes: 15, receiptNote: "", created: start.toISOString(), practice: true,
+        payments: { methods: ["cash", "card", "applepay", "googlepay"], machine: "", others: ["Zelle", "Cash App"], askCode: "optional", askLast4: "yes" } };
       var recs = [{ kind: "settings", id: "main", value: settings },
         { kind: "user", id: "owner", value: { id: "owner", no: 1001, name: settings.ownerName, role: "owner", created: start.toISOString() } },
         { kind: "counter", id: "receipt", value: { next: 1 } }];
@@ -326,7 +327,14 @@
           var seller = j % 4 === 3 ? "owner" : at.getHours() < 13 ? SAMPLE_PEOPLE[0][0] : SAMPLE_PEOPLE[1][0];
           B.user = state.users[seller] || state.users.owner;
           var total = B.priceTicket(lines).total, paid = total <= 2000 ? Math.ceil(total / 500) * 500 : Math.ceil(total / 1000) * 1000;
-          return B.completeSale(lines, paid).then(function () { B.user = state.users.owner; tick(); });
+          /* about a third by card, some by phone, a few in two parts (cash, then the card); the rest in cash. The ways
+             follow the sale's place in the fortnight, not the dice, so the sales themselves stay the same */
+          var code = String(100000 + (j * 7919) % 900000), pays = paid;
+          if (j % 3 === 1) pays = [{ method: "card", amount: total, ref: code, last4: String(1000 + (j * 37) % 9000) }];
+          else if (j % 7 === 3) pays = [{ method: "applepay", amount: total, ref: code }];
+          else if (j % 11 === 5) pays = [{ method: "googlepay", amount: total, ref: code }];
+          else if (j % 13 === 6 && total > 500) pays = [{ method: "card", amount: total - 500, ref: code, last4: String(1000 + (j * 53) % 9000) }, { method: "cash", tendered: 500 }];
+          return B.completeSale(lines, pays).then(function () { B.user = state.users.owner; tick(); });
         });
         if (j === plan.length - 1) c2 = c2.then(function () { return sampleShifts(today); });
         if (j === Math.floor(plan.length / 2)) {
@@ -886,6 +894,69 @@
   /* what one entry did to the drawer: money in (the amount sent or put on a phone, and the fee) or out (a payout) */
   B.svcCash = function (v) { return { cashIn: (v.kind === "payout" ? 0 : v.amount) + (v.fee || 0), cashOut: v.kind === "payout" ? v.amount : 0 }; };
 
+  /* ---------- payments (Build 16) ----------
+     Lakay never touches a card. The store's own card machine (Square, Clover, SumUp, a bank's terminal: any of them)
+     charges the card, Apple Pay or Google Pay; Lakay records what was taken: the way, the amount, the machine's approval
+     code and, if the owner asks for them, the card's last four digits. A full card number is refused wherever it could
+     be typed. A sale may be paid in parts: cash and a card, two cards, a card and another way the owner accepts. */
+  B.PAY_METHODS = ["cash", "card", "applepay", "googlepay", "other"];
+  B.payPrefs = function (st) {
+    st = st || state;
+    var p = clone((st && st.settings && st.settings.payments) || {}), d = { methods: ["cash", "card", "applepay", "googlepay"], machine: "", others: [], askCode: "optional", askLast4: "no" };
+    Object.keys(d).forEach(function (k) { if (p[k] === undefined || p[k] === null) p[k] = d[k]; });
+    if (p.methods.indexOf("cash") < 0) p.methods.unshift("cash");
+    return p;
+  };
+  /* a card's number: 13 to 19 digits (spaces and dashes allowed) whose check digit is right */
+  function cardNumberIn(text) {
+    var runs = String(text || "").match(/\d[\d -]{11,24}\d/g) || [];
+    return runs.some(function (r) {
+      var d = r.replace(/[ -]/g, ""); if (!/^\d{13,19}$/.test(d)) return false;
+      var sum = 0, alt = false;
+      for (var i = d.length - 1; i >= 0; i--) { var n = +d[i]; if (alt) { n *= 2; if (n > 9) n -= 9; } sum += n; alt = !alt; }
+      return sum % 10 === 0;
+    });
+  }
+  B.cardNumberIn = cardNumberIn;
+  /* The payments of one sale, checked and put in order: the other ways first, then the cash, in one part, with its
+     change. pays: [{ method, amount, tendered (cash), ref, last4, name (another way) }], or a number (cash received,
+     as Builds 1 to 15 had it). */
+  function cleanPayments(total, pays, prefs) {
+    if (typeof pays === "number") pays = [{ method: "cash", tendered: pays }];
+    if (!Array.isArray(pays) || !pays.length) throw err("short");
+    var other = [], tendered = 0, anyCash = false;
+    pays.forEach(function (p) {
+      var m = String(p.method || "");
+      if (B.PAY_METHODS.indexOf(m) < 0) throw err("method");
+      if (m === "cash") {
+        if (!Number.isSafeInteger(p.tendered) || p.tendered <= 0) throw err("short");
+        tendered += p.tendered; anyCash = true; return;
+      }
+      if (m === "other" ? !(prefs.others || []).length : prefs.methods.indexOf(m) < 0) throw err("method");
+      if (!Number.isSafeInteger(p.amount) || p.amount <= 0) throw err("amount");
+      var ref = String(p.ref || "").trim().slice(0, 40), last4 = String(p.last4 || "").trim(), name = String(p.name || "").trim().slice(0, 30);
+      if (cardNumberIn(ref) || cardNumberIn(name) || cardNumberIn(p.note)) throw err("cardNumber");
+      if (last4 && !/^\d{4}$/.test(last4)) throw err("last4");
+      if (m !== "other" && m !== "card" && last4) last4 = "";
+      if (m !== "other" && prefs.askCode === "required" && !ref) throw err("code");
+      if (m === "other" && !name) throw err("name");
+      var x = { method: m, amount: p.amount };
+      if (ref) x.ref = ref;
+      if (last4) x.last4 = last4;
+      if (m === "other") x.name = name;
+      if (m !== "other" && prefs.machine) x.machine = String(prefs.machine).slice(0, 40);
+      other.push(x);
+    });
+    var otherSum = other.reduce(function (a, x) { return a + x.amount; }, 0);
+    if (otherSum > total) throw err("over");
+    var cashDue = total - otherSum;
+    if (!anyCash) { if (cashDue !== 0) throw err("short"); return other; }
+    if (cashDue === 0) throw err("over");
+    if (tendered < cashDue) throw err("short");
+    return other.concat([{ method: "cash", amount: cashDue, tendered: tendered, change: tendered - cashDue }]);
+  }
+  B.cleanPayments = function (total, pays) { return cleanPayments(total, pays, B.payPrefs()); };
+
   /* ---------- the ticket and the sale ---------- */
   /* Prices a ticket from the books as they stand: lines [{itemId, qty}] give lines with prices, the tax of each rate
      (worked out on the total taxed at that rate, rounded half up to the cent) and the totals. */
@@ -905,18 +976,19 @@
     out.total = out.subtotal + out.tax;
     return out;
   };
-  B.completeSale = function (lines, tendered) {
+  /* pays: the payments (Build 16), or, as before, the cash received */
+  B.completeSale = function (lines, pays) {
     return B.change(function (st) {
       need("sell");
       var t = B.priceTicket(lines, st);
       if (!t.lines.length) throw err("empty");
-      if (!Number.isSafeInteger(tendered) || tendered < t.total) throw err("short");
+      var paid = cleanPayments(t.total, pays, B.payPrefs(st));
       var counter = clone(st.counters.receipt || { next: 1 }), no = B.device.code + "-" + String(counter.next).padStart(6, "0");
       counter.next += 1;
       var now = clock();
       var sale = { id: U.uid("s"), no: no, at: now.toISOString(), day: U.dayKey(now), hour: now.getHours(), by: B.user.id, byNo: B.numberOf(B.user), dev: B.device.id,
         lines: t.lines, subtotal: t.subtotal, taxes: t.taxes, tax: t.tax, total: t.total, items: t.items,
-        pay: [{ method: "cash", amount: t.total, tendered: tendered, change: tendered - t.total }], status: "completed" };
+        pay: paid, status: "completed" };
       var recs = [{ kind: "sale", id: sale.id, value: sale }, { kind: "counter", id: "receipt", value: counter }];
       var touched = {};
       t.lines.forEach(function (l) { touched[l.itemId] = (touched[l.itemId] || 0) + l.qty; });
@@ -935,7 +1007,7 @@
     function inWin(x) { if (!win) return true; var at = Date.parse(x.at); return at >= win.from && at < win.to; }
     function mine(x) { return !who || x.by === who; }
     var st = state, r = { from: fromKey, to: toKey, win: win || null, who: who || null, count: 0, items: 0, net: 0, tax: 0, gross: 0, cogs: 0, noCost: 0, profit: 0,
-      byCat: {}, byItem: {}, byHour: [], byDay: {}, byMethod: {}, byPerson: {}, losses: { value: 0, qty: 0, byReason: {} }, received: { qty: 0, value: 0 } };
+      byCat: {}, byItem: {}, byHour: [], byDay: {}, byMethod: {}, byMethodN: {}, split: 0, byPerson: {}, losses: { value: 0, qty: 0, byReason: {} }, received: { qty: 0, value: 0 } };
     for (var h = 0; h < 24; h++) r.byHour.push({ count: 0, gross: 0 });
     st.sales.forEach(function (s) {
       if (s.status !== "completed" || s.day < fromKey || s.day > toKey || !inWin(s) || !mine(s)) return;
@@ -945,7 +1017,11 @@
       r.byHour[s.hour].count++; r.byHour[s.hour].gross += s.total;
       var d = r.byDay[s.day] = r.byDay[s.day] || { count: 0, gross: 0, net: 0, profit: 0 };
       d.count++; d.gross += s.total; d.net += s.subtotal;
-      s.pay.forEach(function (p) { r.byMethod[p.method] = (r.byMethod[p.method] || 0) + p.amount; });
+      s.pay.forEach(function (p) {
+        var k = p.method === "other" ? "other:" + (p.name || "") : p.method;
+        r.byMethod[k] = (r.byMethod[k] || 0) + p.amount; r.byMethodN[k] = (r.byMethodN[k] || 0) + 1;
+      });
+      if (s.pay.length > 1) r.split++;
       s.lines.forEach(function (l) {
         var cost = l.cost === null ? null : l.cost * l.qty;
         if (cost === null) r.noCost += l.amount; else r.cogs += cost;

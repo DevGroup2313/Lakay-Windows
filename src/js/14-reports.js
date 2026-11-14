@@ -169,6 +169,17 @@
     if (slow.length) node.appendChild(section("🐢 " + t("rep.slow"), table([t("inv.name"), t("inv.stock")].concat(costs ? [t("inv.value")] : []), slow.slice(0, 10).map(function (it) {
       return [it.name, it.stock].concat(costs ? [it.cost === null ? "—" : money(it.stock * it.cost)] : []);
     }), [1, 2]), t("rep.slowHint")));
+    /* how the sales were paid (Build 16): each way, how many times and how much; the cash is what stayed in the drawer */
+    var ways = Object.keys(r.byMethod);
+    if (r.count && ways.length) {
+      var order = ["cash", "card", "applepay", "googlepay"];
+      ways.sort(function (a, b) { var ia = order.indexOf(a), ib = order.indexOf(b); return (ia < 0 ? 9 : ia) - (ib < 0 ? 9 : ib) || r.byMethod[b] - r.byMethod[a]; });
+      node.appendChild(section("💳 " + t("rep.paidBy"), h("div", null, [
+        table([t("rep.way"), t("rep.times"), t("rep.amount")], ways.map(function (k) {
+          return [k.indexOf("other:") === 0 ? k.slice(6) || t("pay.m.other") : t("pay.m." + k), r.byMethodN[k], money(r.byMethod[k])];
+        }).concat([[t("rep.total"), "", money(ways.reduce(function (a, k) { return a + r.byMethod[k]; }, 0))]]), [1, 2]),
+        r.split ? h("p.hint#repSplit", null, t(r.split === 1 ? "rep.split1" : "rep.split", { n: r.split })) : null]), t("rep.paidByHint")));
+    }
     /* money transfers and top-ups, apart from the sales: the money is the providers' (Build 15) */
     var sv = r.services, provs = Object.keys(sv.byProvider);
     if (sv.count || sv.voided) node.appendChild(section("💱 " + t("rep.svc"), h("div", null, [
@@ -224,10 +235,13 @@
   }
   function csvReceipts() {
     var x = rangeSales();
-    var rows = [["receipt", "date", "time", "cashier", "items", "subtotal", "tax", "total", "method", "tendered", "change"]];
+    /* Build 16: every way a sale was paid, the cash received and the change, and the card machine's approval codes */
+    var rows = [["receipt", "date", "time", "cashier", "items", "subtotal", "tax", "total", "paid_by", "cash_received", "change", "approval_codes"]];
     x.list.forEach(function (s) {
-      var p = s.pay[0];
-      rows.push([s.no, s.day, E.fmtTime(new Date(s.at), true), ui.userTag(s.by), s.items, U.moneyPlain(s.subtotal), U.moneyPlain(s.tax), U.moneyPlain(s.total), p.method, U.moneyPlain(p.tendered), U.moneyPlain(p.change)]);
+      var cash = s.pay.filter(function (p) { return p.method === "cash"; })[0];
+      rows.push([s.no, s.day, E.fmtTime(new Date(s.at), true), ui.userTag(s.by), s.items, U.moneyPlain(s.subtotal), U.moneyPlain(s.tax), U.moneyPlain(s.total),
+        s.pay.map(function (p) { return (p.method === "other" ? p.name : p.method) + " " + U.moneyPlain(p.amount); }).join("; "),
+        cash ? U.moneyPlain(cash.tendered) : "", cash ? U.moneyPlain(cash.change) : "", s.pay.filter(function (p) { return p.ref; }).map(function (p) { return p.ref; }).join("; ")]);
     });
     ui.saveFile(fname("receipts", x.rg), "text/csv", R.csv(rows)).then(function () { ui.toast(t("rep.saved"), "good"); });
   }

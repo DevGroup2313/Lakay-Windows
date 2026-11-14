@@ -4,7 +4,7 @@
 (function () {
   var U = E.util, h = U.h, t = E.t, B = E.books, C = E.crypto, ui = E.ui, money = U.money;
 
-  var SET_EMO = { store: "🏪", tax: "🧾", cats: "🗂️", display: "🎨", security: "🔐", backup: "💾", verify: "🛡️", storage: "🗄️", about: "ℹ️", erase: "🧹" };
+  var SET_EMO = { store: "🏪", tax: "🧾", pay: "💳", cats: "🗂️", display: "🎨", security: "🔐", backup: "💾", verify: "🛡️", storage: "🗄️", about: "ℹ️", erase: "🧹" };
   function sec(id, titleKey, tipKey, children) {
     return h("section.card.set-sec", { id: id, "aria-labelledby": id + "-h" }, [h("div.card-head", null, [h("h2", { id: id + "-h" }, [ui.emo(SET_EMO[id.replace("set-", "")] || "⚙️"), t(titleKey)]), tipKey ? ui.tip(tipKey) : null]), children]);
   }
@@ -12,7 +12,7 @@
   ui.rooms.settings = function (main) {
     var st = B.state(), s = st.settings;
     main.appendChild(ui.roomHead("room.settings", null));
-    var nav = h("nav.set-nav", { "aria-label": t("set.sections") }, ["store", "tax", "cats", "display", "security", "backup", "verify", "storage", "about", "erase"].map(function (k) {
+    var nav = h("nav.set-nav", { "aria-label": t("set.sections") }, ["store", "tax", "pay", "cats", "display", "security", "backup", "verify", "storage", "about", "erase"].map(function (k) {
       return h("button.chip", { type: "button", onclick: function () { var n = document.getElementById("set-" + k); if (n) n.scrollIntoView({ behavior: ui.still() ? "auto" : "smooth", block: "start" }); } }, [ui.emo(SET_EMO[k]), t("set." + k)]);
     }));
     main.appendChild(nav);
@@ -58,6 +58,30 @@
     main.appendChild(sec("set-tax", "set.tax", "tip.tax", [h("p.hint", null, t("set.taxIntro")), tlist,
       h("div.row-keys", null, [h("button.key", { type: "button", id: "taxAdd", onclick: function () { taxDialog(null); } }, [ui.emo("➕"), t("set.taxAdd")]),
         (s.taxes || []).length ? null : h("button.link", { type: "button", onclick: function () { U.prefSet("taxSkipped", "1"); ui.toast(t("set.taxSkipped"), "good"); } }, t("set.taxSkip"))])]));
+
+    /* payments (Build 16): the ways the store takes, its card machine's name, and what Lakay asks for at the counter */
+    var pp = B.payPrefs(st), ways = {};
+    ["card", "applepay", "googlepay"].forEach(function (m) { ways[m] = pp.methods.indexOf(m) >= 0; });
+    var machine = ui.input({ id: "setPayMachine", value: pp.machine, maxlength: "40", placeholder: t("set.payMachinePh") });
+    var others = ui.input({ id: "setPayOthers", value: pp.others.join(", "), maxlength: "160", placeholder: t("set.payOthersPh") });
+    var askCode = pp.askCode, askLast4 = pp.askLast4;
+    main.appendChild(sec("set-pay", "set.pay", "tip.pay", h("form.form-grid", { onsubmit: function (e) {
+      e.preventDefault();
+      var names = others.value.split(",").map(function (x) { return x.trim().slice(0, 30); }).filter(function (x, i, a) { return x && a.indexOf(x) === i; }).slice(0, 8);
+      if (names.some(function (x) { return B.cardNumberIn(x); }) || B.cardNumberIn(machine.value)) { ui.fieldError(others, t("pay.noCardNumber")); return; }
+      B.updateSettings({ payments: { methods: ["cash"].concat(["card", "applepay", "googlepay"].filter(function (m) { return ways[m]; })), machine: machine.value.trim(), others: names, askCode: askCode, askLast4: askLast4 } })
+        .then(function () { ui.toast(t("set.saved"), "good"); ui.refresh(); }, ui.failed);
+    } }, [
+      h("div.field.span2", null, [h("p.label", null, t("set.payWays")), h("div.pay-toggles#setPayWays", null, [h("span.pay-toggle.on", { "aria-disabled": "true" }, [ui.emo("💵"), t("pay.m.cash")])].concat(["card", "applepay", "googlepay"].map(function (m) {
+        var b = h("button.pay-toggle" + (ways[m] ? ".on" : ""), { type: "button", "aria-pressed": String(ways[m]), "data-m": m, onclick: function () { ways[m] = !ways[m]; b.classList.toggle("on", ways[m]); b.setAttribute("aria-pressed", String(ways[m])); } },
+          [ui.emo(m === "card" ? "💳" : "📱"), t("pay.m." + m)]);
+        return b;
+      }))), h("p.hint", null, t("set.payWaysHint"))]),
+      ui.field("set.payMachine", machine, { hint: t("set.payMachineHint") }), ui.field("set.payOthers", others, { hint: t("set.payOthersHint") }),
+      h("div.field", null, [h("p.label", null, t("set.payAskCode")), Object.assign(ui.seg([["optional", t("set.payOptional")], ["required", t("set.payRequired")], ["no", t("set.payNo")]], askCode, function (v) { askCode = v; }, t("set.payAskCode")), { id: "setPayCode" })]),
+      h("div.field", null, [h("p.label", null, t("set.payAskLast4")), Object.assign(ui.seg([["yes", t("set.payYes")], ["no", t("set.payNo")]], askLast4, function (v) { askLast4 = v; }, t("set.payAskLast4")), { id: "setPayLast4" })]),
+      h("p.hint.span2.pay-never", null, [ui.emo("🔒"), " ", t("set.payNever")]),
+      h("div.form-actions.span2", null, h("button.key.primary#setPaySave", { type: "submit" }, [ui.emo("💾"), t("save")]))])));
 
     /* shelves */
     var catName = ui.input({ id: "catNew", maxlength: "40", placeholder: t("set.catPh") });
@@ -187,7 +211,7 @@
   }
 
   /* ---------- the Guidebook ---------- */
-  var ARTICLES = ["start", "door", "team", "clock", "master", "sale", "items", "receive", "correct", "depts", "svc", "reports", "notes", "backup", "sealed", "verify", "display", "studio", "build", "limits"];
+  var ARTICLES = ["start", "door", "team", "clock", "master", "sale", "pay", "items", "receive", "correct", "depts", "svc", "reports", "notes", "backup", "sealed", "verify", "display", "studio", "build", "limits"];
   var ART_EMO = { start: "🌟", door: "🚪", team: "👥", clock: "🕘", master: "🗝️", sale: "🛒", items: "🏷️", receive: "🚚", correct: "✏️", reports: "📊", notes: "🗒️", backup: "💾", sealed: "🔐", verify: "🛡️", display: "🎨", studio: "⚒️", build: "🔢", limits: "🧭" };
   E.guideCount = function () { return ARTICLES.length; };
   ui.rooms.guide = function (main) {

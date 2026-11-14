@@ -4,6 +4,23 @@ Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED.
 
 The newest build is first. The build number also shows in Lakay's About.
 
+## Build 16 (14 November 2026): taking payment by cash, card, Apple Pay, Google Pay and other ways, in one part or several
+
+The second item on the owner's list: card, Apple Pay and Google Pay through any processor, and split payments.
+
+- **Take payment** replaces Take cash, on the same key and F9. Cash is chosen first, so a cash sale is as quick as ever: the amount received, the change, done.
+- **A card, Apple Pay or Google Pay** is charged on the store's own card machine, whatever its processor (Square, Clover, SumUp, a bank's terminal). Lakay shows the exact amount to charge ("Charge $53.21 on Square") and records what was taken: the way, the amount, the machine's approval code and, if the owner asks for them, the card's last four digits.
+- **Other ways the owner accepts**, by name (for example Zelle or Cash App), with their reference.
+- **Split payments.** Take part of the total one way ("Take this part, then the rest") and the rest another: cash then a card, a card then Apple Pay, two cards. Each part is listed with what is left to pay, and a part can be taken back before the sale is done. No part may be more than what is left. Cash given for the last part gets its change.
+- **A card's number never enters Lakay.** Lakay never touches the card. A full card number (13 to 19 digits whose check digit is right) is refused wherever it could be typed: at the counter, in Settings, and by the books themselves.
+- **Settings, Payments** (the owner): the ways the store takes (cash always; card, Apple Pay and Google Pay each on or off), the card machine's name, the other ways by name, and whether to ask for the approval code (ask, require, or not) and the card's last four digits.
+- **Receipts** list each payment, the card or phone with its approval code under it, then the cash received and the change.
+- **Reports: How it was paid.** Each way, how many payments and how much, with the sales paid in parts counted; the cash is what stayed in the drawer after the change. The receipts export (CSV) lists every way a sale was paid, the cash received, the change and the approval codes.
+- **The practice store** now has sales by card, by phone and in two parts, and takes Zelle and Cash App, so every part can be tried.
+- **A fix:** a key or field Lakay hides stays hidden whatever its own style. Build 15's camera key had stayed visible on devices without a camera (pressing it only said that no camera could be used); it is now hidden there.
+- **A new chapter in the Guidebook:** Taking payment: cash, cards and phones.
+- tests/t_build16.js: 51 checks. Every suite passes: 395 checks in all.
+
 ## Build 15 (14 November 2026): Inventory's departments, scanning everywhere, large inventories, and the transfers and top-ups
 
 The first item on the owner's list: Inventory, with the store's departments as real sections, barcode scanning everywhere, and room for an inventory of any size.

@@ -133,6 +133,14 @@ When cards are added, the card system (for example Square) handles the card. Emp
 method and the card system's reference. Card numbers never enter Emporium. This keeps the card rules (PCI DSS) with the
 card company, as far as possible.
 
+Build 16 does exactly this, with any processor. The store's own card machine charges the card, Apple Pay or Google
+Pay; Lakay records the way, the amount, the machine's approval code and, only if the owner asks, the card's last four
+digits. A string that looks like a card's full number (13 to 19 digits whose Luhn check digit is right, with or
+without spaces) is refused at the counter, in Settings and by the books themselves, so it cannot be stored by
+mistake. Lakay's page still loads no processor's script and reaches no network: a direct link to one processor would
+be a separate, reviewed change. Whether a store's own setup meets PCI DSS is the card company's and the store's
+question; Lakay keeps card data out of its books.
+
 ## 7. Protection against attacks and malware
 
 - **No code from outside.** The app's page carries all its own code. A Content Security Policy forbids scripts and

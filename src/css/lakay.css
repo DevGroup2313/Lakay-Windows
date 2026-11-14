@@ -102,6 +102,9 @@ p { margin: .35rem 0; }
 a { color: var(--pri-text); }
 :focus-visible { outline: 2.5px solid var(--pri-ring); outline-offset: 2px; border-radius: 9px; }
 ::selection { background: rgba(var(--pri-rgb), .22); }
+/* what is hidden stays hidden, whatever its own display (Build 16: a key or a field Lakay hides, such as the camera key
+   on a device without a camera) */
+[hidden] { display: none !important; }
 .ico { width: 1.15em; height: 1.15em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: -.2em; }
 .emo { font-family: var(--emoji); font-style: normal; font-weight: 400; line-height: 1; display: inline-block; flex: none; }
 .mono { font-family: var(--mono); letter-spacing: .06em; }

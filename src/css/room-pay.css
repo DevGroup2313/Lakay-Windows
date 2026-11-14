@@ -1,0 +1,45 @@
+/* LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt.
+   Taking payment (Build 16): the ways to pay as pearl keys, the chosen one with the periwinkle edge; the parts of a
+   split payment as a short list; the settings of the ways the store takes. White and pearl, the colour woven in,
+   nothing green. */
+
+/* the ways to pay */
+.pay-ways { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 14px; }
+.pay-way { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 8px 16px 8px 12px; border-radius: 14px; cursor: pointer;
+  background: var(--face); border: 1px solid var(--line); color: var(--ink-2); font: 600 .9rem/1.1 var(--sans); box-shadow: var(--pill);
+  transition: transform .16s var(--spring), box-shadow .16s var(--ease), border-color .16s var(--ease), color .16s var(--ease); }
+.pay-way .emo { font-size: 1.15rem; }
+.pay-way:hover { transform: translateY(-1px); box-shadow: var(--pill-hi); color: var(--pri-text); }
+.pay-way:focus-visible { outline: 2.5px solid var(--pri-ring); outline-offset: 2px; }
+.pay-way[aria-checked="true"] { color: var(--ink); border-color: rgba(var(--pri-rgb), .38); background: linear-gradient(180deg, #ffffff, #f4f4fd);
+  box-shadow: inset 0 -2px 0 var(--pri), var(--pill-hi); transform: translateY(-1px); }
+:root[data-theme="night"] .pay-way[aria-checked="true"] { background: linear-gradient(180deg, #2a2a3d, #232334); }
+
+/* what has been taken so far, and what is left */
+.pay-parts { list-style: none; margin: 0 0 10px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.pay-parts li { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 12px; background: var(--slab-face); border: 1px solid rgba(var(--pri-rgb), .18); box-shadow: var(--pill); }
+.pay-parts .pay-part-n { font-weight: 600; color: var(--ink); }
+.pay-parts small { flex: 1; }
+.pay-parts .num { font: 600 1rem/1 var(--serif); font-variant-numeric: tabular-nums; }
+.pay-left { border-top: 1px dashed rgba(var(--pri-rgb), .3); padding-top: 8px; }
+.pay-pane .form-grid { margin-top: 6px; }
+.pay-how { margin: 0 0 6px; padding: 10px 12px; border-radius: 12px; background: rgba(var(--pri-rgb), .07); color: var(--ink); font-weight: 600; }
+#payWarn:empty { display: none; }
+
+/* the receipt: each payment, with the card machine's approval code under it */
+.receipt .r-pay td:first-child { display: flex; flex-direction: column; }
+.receipt .r-code { font-size: .75em; color: var(--muted); }
+
+/* settings: the ways the store takes, each a key that turns on and off */
+.pay-toggles { display: flex; flex-wrap: wrap; gap: 8px; }
+.pay-toggle { display: inline-flex; align-items: center; gap: 7px; min-height: 40px; padding: 6px 14px 6px 10px; border-radius: 999px; cursor: pointer;
+  background: var(--face); border: 1px solid var(--line); color: var(--muted); font: 600 .84rem/1 var(--sans); box-shadow: var(--pill); }
+.pay-toggle.on { color: var(--ink); border-color: rgba(var(--pri-rgb), .4); box-shadow: inset 0 -2px 0 var(--pri), var(--pill); }
+.pay-toggle:not(.on) .emo { filter: grayscale(1); opacity: .6; }
+span.pay-toggle { cursor: default; }
+.pay-never { display: flex; align-items: center; gap: 4px; }
+.form-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+@media (max-width: 560px) {
+  .pay-way { flex: 1 1 calc(50% - 8px); justify-content: center; }
+}
