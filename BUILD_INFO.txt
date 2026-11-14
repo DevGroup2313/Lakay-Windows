@@ -1,6 +1,6 @@
 Lakay
-Build: 16
+Build: 17
 Date: 14 November 2026
-Stage: Lakay Build 16: payments by cash, card, Apple Pay, Google Pay and the other ways the owner accepts, through the store's own card machine (any processor), in one part or several
+Stage: Lakay Build 17: Learning, with a lesson for each part of the work, a guided tour that does the work in front of the person, two questions to finish each lesson, and a tip in every room
 Copyright (c) 2026 Yannie D. Forest. All rights reserved.
 NO LICENCE IS GRANTED.
