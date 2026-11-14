@@ -214,6 +214,11 @@
       list.push(need("🔔", x.text, t("home.attnRem", { t: ui.time(x.at) }), Date.parse(x.at) <= Date.now() ? "warn" : null,
         [t("home.open"), function () { ui.alertsPanel(); }]));
     });
+    /* a person's lessons still to take (Build 17) */
+    if (staff && E.learn) {
+      var left = E.learn.leftFor(B.user).length;
+      if (left) list.push(need("🎓", t(left === 1 ? "learn.homeLeft1" : "learn.homeLeft", { n: left }), t("learn.homeLeftSub"), null, [t("home.open"), function () { ui.go("learn"); }]));
+    }
     if (!staff && !practice) {
       var lastB = U.prefGet("lastBackup", ""), days = lastB ? Math.floor((Date.now() - Date.parse(lastB)) / 86400000) : null;
       if (days === null || days >= 7) list.push(need("💾", days === null ? t("home.attnBackupNone") : t("home.attnBackupOld", { n: days }), t("home.attnBackupSub"), days === null ? "warn" : null,
@@ -249,6 +254,7 @@
       ["inventory", "box", t("km.items", { n: items, low: stock.low.length }), stock.low.length ? "warn" : null],
       ["reports", "chart", t("km.taken", { m: money(r.gross) }), null],
       ["team", "people", t("km.onClock", { n: B.onClock().length }), null],
+      ["learn", "cap", lessonsLine(), null],
       ["guide", "book", t("km.chapters", { n: E.guideCount ? E.guideCount() : 15 }), null],
       ["settings", "gear", last ? t("km.backup", { d: E.fmtDate(new Date(last), "short") }) : t("km.noBackup"), last ? null : "warn"],
       ["studio", "edit", t("km.studio"), null]];
@@ -259,6 +265,11 @@
           h("span.ct-plate", null, [h("span.ct-plate-ico", null, U.icon(k[1])), h("span.hm-tile-t", null, [h("b", null, t("room." + k[0])), h("small" + (k[3] ? "." + k[3] : ""), null, k[2])])]),
           h("span.ct-pull", { "aria-hidden": "true" })]);
       }))]);
+  }
+  function lessonsLine() {
+    if (!E.learn || !B.user) return "";
+    var mine = E.learn.lessonsFor(B.user), done = E.learn.doneOf(B.user);
+    return t("km.lessons", { n: mine.filter(function (l) { return done[l.id]; }).length, m: mine.length });
   }
   function quickKey(emoji, key, fn, kind) { return h("button.key" + (kind ? "." + kind : ""), { type: "button", onclick: fn }, [ui.emo(emoji), t(key)]); }
   ui.quickKey = quickKey;
@@ -357,6 +368,8 @@
     drawTicket();
   }
   R.add = add;
+  /* the ticket as given (a lesson empties it, fills it, and puts back what was there: 24-learn.js) */
+  R.setLines = function (lines) { ticket.lines = (lines || []).map(function (l) { return { itemId: l.itemId, qty: l.qty }; }); R.ticket = ticket; drawTicket(); };
   function setQty(id, q) {
     var l = ticket.lines.find(function (x) { return x.itemId === id; }); if (!l) return;
     if (!(q >= 1)) ticket.lines = ticket.lines.filter(function (x) { return x !== l; }); else l.qty = Math.min(9999, Math.floor(q));

@@ -141,6 +141,17 @@ mistake. Lakay's page still loads no processor's script and reaches no network: 
 be a separate, reviewed change. Whether a store's own setup meets PCI DSS is the card company's and the store's
 question; Lakay keeps card data out of its books.
 
+## 6b. Learning (Build 17)
+
+The guided tour acts only through Lakay's own page, as a person does: it presses the page's keys and types into its
+fields. It has no road of its own into the books. In the store itself (not the practice store), a step whose key would
+write in the books is shown but never pressed; the tour then closes the windows it opened and puts the sale at the
+Register back as it was. The test `tests/t_build17.js` runs the sale, payment, transfer and delivery tours in a real
+store and checks that the ledger did not move. A lesson's mark is the only thing Learning writes: one ledger line,
+`training.completed`, with the person's user id, the lesson, and how many answers were right the first time, sealed
+like every other record (record kind `train`, one per person) and replayed by Verify. Learning keeps nothing about
+customers, and it reaches no network.
+
 ## 7. Protection against attacks and malware
 
 - **No code from outside.** The app's page carries all its own code. A Content Security Policy forbids scripts and

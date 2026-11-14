@@ -17,7 +17,7 @@
   var roomMain = null, roomMode = null;
   function draw(focusTab) {
     if (!roomMain || !document.body.contains(roomMain)) return;
-    var y = window.scrollY; U.clear(roomMain); render(roomMain, roomMode); roomMain.appendChild(ui.footer()); window.scrollTo(0, y);
+    var y = window.scrollY; U.clear(roomMain); render(roomMain, roomMode); ui.roomFoot(roomMain, false); window.scrollTo(0, y);
     if (focusTab) { var tb = document.getElementById("invTab-" + I.dept); if (tb) try { tb.focus({ preventScroll: true }); } catch (e) { } }
   }
 

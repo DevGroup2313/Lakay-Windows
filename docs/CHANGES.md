@@ -4,6 +4,23 @@ Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED.
 
 The newest build is first. The build number also shows in Lakay's About.
 
+## Build 17 (14 November 2026): Learning, with a lesson for each part of the work, a guided tour that does the work in front of the person, and a tip in every room
+
+The third item on the owner's list: trainings for staff and new hires, a guided interactive tour with live demonstrations, and tips throughout.
+
+- **Learning**, a new room in the menu under Learn. Eight short lessons: Welcome to Lakay, Your hours, Making a sale, Cards, phones and payments in parts, Money transfers and top-ups, Deliveries and finding stock, Reading the reports, and Keeping the books safe. Each person sees the lessons their access opens: a cashier five, a manager seven, the owner eight.
+- **Show me: the guided tour.** Lakay lights one part of a room at a time and says what it is for, with Next, Back and Escape (the arrow keys too). Where a lesson shows the work, a pointer moves to each key and presses it, and types where a person would type, through Lakay's own keys: it finds an item, adds it to the sale, takes the cash, takes a card part and then the rest, records a transfer, receives a delivery. Some steps are the person's turn (add an item to the sale, open the payment window, choose last week); the tour says when it is done.
+- **Safe in the store itself.** In the practice store a tour finishes the sale, the delivery and the transfer, so that all of it can be seen. In the store itself it stops before anything would be written in the books, says so, closes what it opened, and puts the sale at the Register back as it was. The tests check that no line is written.
+- **Two questions end each lesson.** A wrong answer says "Not quite. Try again."; the right one says why. When both are answered, the lesson is marked done in the books (a `training.completed` line), with how many were right the first time. Taking a lesson again keeps the newest mark. Verify replays the marks with the rest of the books.
+- **The team's lessons.** The owner, and those with the team access, see each person's lessons in Learning: how many are done, the last one finished, and a mark for each lesson. In the practice store, Marie and Jean have taken some already.
+- **Show me in the rooms.** The headings of the Register, Inventory, Reports, Team and Settings have a Show me key that starts that room's tour.
+- **A tip at the foot of every room**, a different one at each visit, with Another tip. The cross hides the tips; Display turns them on again. Learning also lists every tip, room by room.
+- **The Home** has a drawer for Learning, and reminds a staff member of the lessons still to take.
+- **A new chapter in the Guidebook:** Learning: lessons and the guided tour.
+- Calm and "reduce motion" keep the tour still: the pointer appears at each key instead of travelling to it. On a phone, the tour's bubble sits at the top or the foot of the screen, away from what it lights.
+- Every word is in English, French and Kreyòl (258 new phrases; the Kreyòl is marked for review by a native speaker).
+- tests/t_build17.js: 88 checks. tests/t_build10.js now counts eight drawers on the Home. Every suite passes: 483 checks in all.
+
 ## Build 16 (14 November 2026): taking payment by cash, card, Apple Pay, Google Pay and other ways, in one part or several
 
 The second item on the owner's list: card, Apple Pay and Google Pay through any processor, and split payments.

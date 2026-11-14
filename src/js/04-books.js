@@ -143,7 +143,7 @@
   function load(vault, key, userId) {
     ID = vault.storeId;
     return D.entries("rec").then(function (entries) {
-      var st = { settings: null, users: {}, cats: {}, items: {}, sales: [], moves: [], shifts: [], services: [], counters: {}, pad: {}, notes: {}, head: null, unreadable: [] };
+      var st = { settings: null, users: {}, cats: {}, items: {}, sales: [], moves: [], shifts: [], services: [], train: {}, counters: {}, pad: {}, notes: {}, head: null, unreadable: [] };
       /* each person's notes are their own: a sign-in opens only the notes of the one signing in (the practice store opens
          all of its sample people's, since it changes from one to another) */
       var mine = "notes:" + (userId || "owner"), practice = B.mode === "practice";
@@ -186,6 +186,7 @@
     else if (kind === "move") st.moves.push(v);
     else if (kind === "shift") { var q = st.shifts.findIndex(function (x) { return x.id === v.id; }); if (q >= 0) st.shifts[q] = v; else st.shifts.push(v); }
     else if (kind === "svc") { st.services = st.services || []; var z = st.services.findIndex(function (x) { return x.id === v.id; }); if (z >= 0) st.services[z] = v; else st.services.push(v); }
+    else if (kind === "train") { st.train = st.train || {}; st.train[id] = v; }
     else if (kind === "counter") st.counters[id] = v;
     else if (kind === "pad") st.pad[id] = v;
     else if (kind === "notes") st.notes[id] = (v && Array.isArray(v.notes)) ? v.notes : [];
@@ -348,6 +349,7 @@
       return c2;
     });
     chain = chain.then(function () { return sampleServices(); });
+    chain = chain.then(function () { return sampleTraining(); });
     return chain.then(function () { B._at = null; B.user = state.users.owner; return state; }, function (e) { B._at = null; B.user = state && state.users.owner; throw e; });
   }
   /* The practice store's money transfers and top-ups: a few a day for two weeks, with made-up fees and references.
@@ -369,6 +371,21 @@
         });
       })(new Date(day.getFullYear(), day.getMonth(), day.getDate(), 10 + rnd(8), rnd(60), 0), SAMPLE_SVC[rnd(SAMPLE_SVC.length)], d * 10 + k);
     }
+    return c;
+  }
+  /* the sample people's lessons (Build 17): Marie, a cashier, has taken the first two of her five; Jean, a manager,
+     six of his seven, with a question missed here and there */
+  function sampleTraining() {
+    var c = Promise.resolve(), base = new Date(); base.setHours(10, 30, 0, 0);
+    [[SAMPLE_PEOPLE[0][0], [["welcome", 2], ["clock", 2]], 9], [SAMPLE_PEOPLE[1][0], [["welcome", 2], ["clock", 1], ["sale", 2], ["pay", 2], ["svc", 2], ["stock", 1]], 12]].forEach(function (p) {
+      p[1].forEach(function (x, k) {
+        c = c.then(function () {
+          B._at = new Date(base.getTime() - (p[2] - k) * 86400000).toISOString();
+          B.user = state.users[p[0]] || state.users.owner;
+          return B.trainDone(x[0], x[1], 2).then(function () { B.user = state.users.owner; });
+        });
+      });
+    });
     return c;
   }
   /* the sample people's shifts for the days before today: Marie from a quarter to nine, Jean from a quarter to one,
@@ -854,6 +871,22 @@
     });
   };
 
+  /* ---------- learning (Build 17): each person's lessons done, kept in the books so that the owner can see them ---------- */
+  B.trainingOf = function (userId) {
+    var r = state && state.train && state.train[userId || (B.user && B.user.id)];
+    return r ? clone(r) : { user: userId || (B.user && B.user.id), done: {} };
+  };
+  B.trainDone = function (lesson, score, of) {
+    return B.change(function (st) {
+      if (!B.user) throw err("locked");
+      lesson = String(lesson || "").slice(0, 30);
+      if (!/^[a-z]+$/.test(lesson) || !Number.isSafeInteger(score) || !Number.isSafeInteger(of) || score < 0 || of < 1 || score > of) throw err("lesson");
+      var me = B.user.id, rec = clone((st.train && st.train[me]) || { user: me, done: {} });
+      rec.done[lesson] = { at: clock().toISOString(), score: score, of: of };
+      return { type: "training.completed", data: { user: me, lesson: lesson, score: score, of: of }, recs: [{ kind: "train", id: me, value: rec }], result: rec };
+    });
+  };
+
   /* ---------- money transfers and top-ups (Build 15) ----------
      The money a customer sends, receives or puts on a phone is held for the provider (RIA, CAM, Unitransfer, Boss
      Revolution): it is not the store's sale. Each one is written as it happens: the provider, what kind it was, the
@@ -1077,14 +1110,14 @@
     var key = KEY, id = ID, st = state;
     if (!key) return Promise.reject(err("locked"));
     return D.entries("journal").then(function (entries) {
-      var res = { ok: true, lines: entries.length, problems: [] }, prev = ZERO, expect = 1, items = {}, svcs = {}, i = 0;
+      var res = { ok: true, lines: entries.length, problems: [] }, prev = ZERO, expect = 1, items = {}, svcs = {}, train = {}, i = 0;
       function next() {
         if (i >= entries.length) return Promise.resolve();
         var e = entries[i++];
         return C.open(key, e[1], aadLine(id, e[0])).then(function (line) {
           if (line.seq !== e[0] || e[0] !== expect) res.problems.push({ seq: e[0], what: "order" });
           if (line.prev !== prev) res.problems.push({ seq: e[0], what: "chain" });
-          replay(items, line, res, svcs);
+          replay(items, line, res, svcs, train);
           expect = e[0] + 1;
           return U.sha256hex(U.canon(line)).then(function (hsh) { prev = hsh; });
         }, function () { res.problems.push({ seq: e[0], what: "unreadable" }); prev = null; expect = e[0] + 1; }).then(function () {
@@ -1111,15 +1144,29 @@
           delete svcs[v.id];
         });
         Object.keys(svcs).forEach(function (k) { res.problems.push({ svc: k, what: "extra" }); });
+        /* each person's lessons (Build 17): the marks kept are the ones the ledger wrote last */
+        Object.keys(st.train || {}).forEach(function (u) {
+          var done = (st.train[u] && st.train[u].done) || {}, want = train[u] || {};
+          Object.keys(done).forEach(function (l) {
+            var w = want[l];
+            if (!w) res.problems.push({ train: u, lesson: l, what: "missing" });
+            else if (w.score !== done[l].score || w.of !== done[l].of) res.problems.push({ train: u, lesson: l, what: "differs" });
+            delete want[l];
+          });
+          Object.keys(want).forEach(function (l) { res.problems.push({ train: u, lesson: l, what: "extra" }); });
+          delete train[u];
+        });
+        Object.keys(train).forEach(function (u) { res.problems.push({ train: u, what: "extra" }); });
         (st.unreadable || []).forEach(function (k) { res.problems.push({ rec: k, what: "unreadable" }); });
         res.ok = res.problems.length === 0;
         return res;
       });
     });
   };
-  function replay(items, line, res, svcs) {
+  function replay(items, line, res, svcs, train) {
     var d = line.data || {};
     switch (line.type) {
+      case "training.completed": if (train && d.user && d.lesson) { train[d.user] = train[d.user] || {}; train[d.user][d.lesson] = { score: d.score, of: d.of }; } break;
       case "service.recorded": if (d.svc) svcs[d.svc.id] = clone(d.svc); break;
       case "service.voided": if (svcs[d.id]) svcs[d.id].status = "void"; else res.problems.push({ seq: line.seq, what: "void" }); break;
       case "item.created": items[d.item.id] = clone(d.item); break;

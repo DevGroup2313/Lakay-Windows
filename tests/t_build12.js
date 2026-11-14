@@ -141,7 +141,7 @@ function png(file) { const b = fs.readFileSync(file); return { w: b.readUInt32BE
   ok(keys.length >= 6 && keys.every(Boolean), "on an iPad every key keeps its words whole");
   await p.setViewportSize({ width: 390, height: 900 }); await home();
   const names = await p.evaluate(() => Array.prototype.map.call(document.querySelectorAll(".hm-tile-t b"), (n) => n.scrollWidth <= n.clientWidth + 1));
-  ok(names.length === 7 && names.every(Boolean), "on a phone every room's name is whole on its drawer");
+  ok(names.length === 8 && names.every(Boolean), "on a phone every room's name is whole on its drawer (eight drawers, Learning included since Build 17)");
   ok(await p.evaluate(() => document.documentElement.scrollWidth - window.innerWidth) <= 0, "and nothing scrolls sideways");
   await p.setViewportSize({ width: 1280, height: 860 });
 

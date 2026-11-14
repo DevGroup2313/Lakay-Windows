@@ -90,7 +90,10 @@ var ICONS = {
   cloche: "M3 18.5h18M4.8 18.5a7.2 7.2 0 0 1 14.4 0M12 8.2V6.6M10.3 6.6h3.4",
   swap: "M4.5 8h14l-4-4M19.5 16h-14l4 4",
   camera: "M4 7.5h3.5L9 5h6l1.5 2.5H20V19H4zM12 10a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z",
-  barcode: "M4 5v14M7 5v14M9.5 5v14M13 5v14M15 5v14M18 5v14M20 5v14"
+  barcode: "M4 5v14M7 5v14M9.5 5v14M13 5v14M15 5v14M18 5v14M20 5v14",
+  /* learning (Build 17): a cap for the room, a play mark for Show me */
+  cap: "M2.5 9.5 12 5l9.5 4.5L12 14zM6.5 11.5v4.5c3 2.2 8 2.2 11 0v-4.5M21.5 9.5v5",
+  play: "M8 5.5v13l10.5-6.5z"
 };
 function icon(name, cls) {
   var ns = "http://www.w3.org/2000/svg", svg = document.createElementNS(ns, "svg");

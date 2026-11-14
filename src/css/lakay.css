@@ -668,7 +668,7 @@ button.hx-item:hover { transform: translateY(-1px); box-shadow: var(--pill); }
 .dialog-body { padding: 6px 22px 12px; overflow-y: auto; font-size: .875rem; color: var(--ink-2); }
 .dialog-body p { line-height: 1.55; }
 .dialog-foot { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; padding: 12px 22px 20px; }
-#toasts { position: fixed; right: calc(84px + env(safe-area-inset-right, 0px)); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 2600; display: flex; flex-direction: column; gap: 8px; max-width: min(400px, calc(100vw - 32px)); }
+#toasts { position: fixed; right: calc(84px + env(safe-area-inset-right, 0px)); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 2750; display: flex; flex-direction: column; gap: 8px; max-width: min(400px, calc(100vw - 32px)); }
 .toast { display: flex; gap: .6rem; align-items: center; padding: .65rem .95rem; border-radius: 14px; background: var(--surface); color: var(--ink); border: 1px solid var(--line);
   box-shadow: var(--key3d); font-weight: 600; font-size: .84rem; animation: toastIn .3s var(--ease) both; transition: opacity .35s ease, transform .35s ease; }
 .toast::before { content: ""; width: 4px; align-self: stretch; border-radius: 2px; background: var(--pri-text); flex: none; }

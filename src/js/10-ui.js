@@ -39,7 +39,7 @@
 
   /* ---------- emojis (drawn by the device's own emoji font; hidden from screen readers, the words carry the meaning) ---------- */
   ui.emo = function (ch, cls) { return h("span.emo" + (cls ? "." + cls : ""), { "aria-hidden": "true" }, ch); };
-  ui.ROOM_EMO = { home: "🏠", register: "🛒", inventory: "📦", reports: "📊", team: "👥", guide: "📖", settings: "⚙️", studio: "⚒️" };
+  ui.ROOM_EMO = { home: "🏠", register: "🛒", inventory: "📦", reports: "📊", team: "👥", learn: "🎓", guide: "📖", settings: "⚙️", studio: "⚒️" };
   /* the departments' signs: no fruit or food as decoration (the owner, 13 November 2026), only what each one holds */
   ui.CAT_EMO = { music: "🎵", movies: "🎬", perfume: "🌸", grocery: "🧺", drinks: "🥤", food: "🍽️", services: "💱", other: "🛍️" };
   ui.catEmo = function (c) { return ui.CAT_EMO[c] || "🏷️"; };
@@ -229,7 +229,7 @@
 
   /* ---------- the shell, after Ingenium's (the side menu of plain words) with Carpe Diem's capsule of top keys ---------- */
   var GROUPS = [["nav.g.store", [["home", "home"], ["register", "register"], ["inventory", "box"], ["reports", "chart"], ["team", "people"]]],
-                ["nav.g.learn", [["guide", "book"], ["settings", "gear"]]],
+                ["nav.g.learn", [["learn", "cap"], ["guide", "book"], ["settings", "gear"]]],
                 ["nav.g.owner", [["studio", "edit"]]]];
   ui.rooms = {};
   ui.current = null;
@@ -279,14 +279,23 @@
     /* a room may say what a scanned code does there (the Register adds it, Inventory opens it): 23-scan.js */
     ui.onScan = null;
     ui.rooms[room](main);
-    main.appendChild(ui.footer());
+    ui.roomFoot(main, !quiet);
     if (!quiet && E.sound) E.sound.play("page");
     if (!quiet) { try { main.focus({ preventScroll: true }); } catch (e) { } window.scrollTo(0, 0); }
   };
   ui.refresh = function () { if (ui.current && document.getElementById("room")) { var y = window.scrollY; ui.go(ui.current, true); window.scrollTo(0, y); } };
-  /* A room's head: Ingenium's page title, its tip, the room's own keys on the right, and a plain lede below. */
+  /* The end of every room: its tip (Build 17, 24-learn.js; fresh: a new visit shows the next one), then the footer. */
+  ui.roomFoot = function (main, fresh) {
+    var tip = E.learn && E.learn.tipStrip ? E.learn.tipStrip(ui.current, fresh) : null;
+    if (tip) main.appendChild(tip);
+    main.appendChild(ui.footer());
+  };
+  /* A room's head: Ingenium's page title, its tip, the room's own keys on the right, and a plain lede below. A room
+     with a tour also has its Show me key (Build 17). */
   ui.roomHead = function (titleKey, tipKey, right) {
     var room = titleKey.replace("room.", "");
+    var show = E.learn && E.learn.showKey ? E.learn.showKey(room) : null;
+    if (show) right = (right ? [].concat(right) : []).concat([show]);
     return h("div.room-intro", null, [
       h("div.room-head", null, [h("div.room-title", null, [h("h1.page-title", null, t(titleKey)), tipKey ? ui.tip(tipKey) : null]), right ? h("div.room-tools", null, right) : null]),
       E.has("lede." + room) ? h("p.lede", null, t("lede." + room)) : null]);
@@ -484,6 +493,8 @@
       row(t("disp.menu"), ui.seg([["0", t("disp.menu.full")], ["1", t("disp.menu.icons")]], U.prefGet("fold", "0"), function (v) { U.prefSet("fold", v); ui.applyLook(); }, t("disp.menu"))),
       row(t("disp.sound"), ui.seg([["1", t("on")], ["0", t("off")]], U.prefGet("sound", "1"), function (v) { U.prefSet("sound", v); if (v === "1" && E.sound) E.sound.play("welcome"); }, t("disp.sound"))),
       row(t("disp.vol"), ui.seg([["0.35", t("disp.vol.soft")], ["0.7", t("disp.vol.mid")], ["1", t("disp.vol.full")]], U.prefGet("soundVol", "0.7"), function (v) { U.prefSet("soundVol", v); if (E.sound) E.sound.play("sale"); }, t("disp.vol"))),
+      /* the tip at the foot of each room (Build 17) */
+      row(t("disp.tips"), ui.seg([["1", t("on")], ["0", t("off")]], U.prefGet("tips", "1"), function (v) { U.prefSet("tips", v); if (B.isOpen) ui.refresh(); }, t("disp.tips"))),
       h("p.hint", null, t("set.calmHint")),
       h("div.display-keys", null, [h("button.key#dispRefresh", { type: "button", onclick: ui.refreshApp }, [ui.emo("↻"), t("top.refresh")]),
         h("button.key#dispReset", { type: "button", onclick: function (e) { var l = e.currentTarget.closest(".layer"); if (l) l.remove(); ui.resetPanel(); } }, [ui.emo("⟲"), t("reset.h")])]),
