@@ -47,7 +47,7 @@
     /* who is on the clock now */
     if (B.can("team")) {
       var on = B.onClock();
-      main.appendChild(section("teamNow", "🟢", "clock.nowH", on.length ? h("ul.clock-list.big#teamOnClock", null, on.map(function (x) {
+      main.appendChild(section("teamNow", "🔵", "clock.nowH", on.length ? h("ul.clock-list.big#teamOnClock", null, on.map(function (x) {
         var u = st.users[x.user];
         return h("li", null, [h("span.who-dot" + (B.onBreak(x) ? ".onbreak" : ".onclock"), { "aria-hidden": "true" }),
           h("span.who-main", null, [h("b", null, u ? u.name : x.user), h("span.muted", null, " · " + t("people.id", { n: x.no || B.numberOf(u) }))]),

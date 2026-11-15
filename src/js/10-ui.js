@@ -464,7 +464,7 @@
       actions.push({ label: sh ? t("signout.andClock") : t("signout"), kind: "primary", emoji: "🚪", id: "signOutKey", onClick: function (close) { close(); ui.signOut(!!sh); } });
       if (sh) actions.push({ label: t("signout.stay"), id: "signOutStay", onClick: function (close) { close(); ui.signOut(false); } });
     }
-    d = ui.dialog({ title: t("status.h"), emoji: practice ? "🧪" : sh ? (brk ? "☕" : "🟢") : "⚪", body: rows, actions: actions });
+    d = ui.dialog({ title: t("status.h"), emoji: practice ? "🧪" : sh ? (brk ? "☕" : "🔵") : "⚪", body: rows, actions: actions });
   };
   /* a person's own password: the old one, then the new one twice */
   ui.myPassword = function () {

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-39k6ezEltZoaSB9uk/I3IU3V5Zvs2a4ByMhdXUvVMcQ='; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-cKN4MFHn6slJqfENdbDEzESgsr4Ju4juk9h/quUkgSc='; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#f5f4f8">
@@ -6769,7 +6769,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       actions.push({ label: sh ? t("signout.andClock") : t("signout"), kind: "primary", emoji: "🚪", id: "signOutKey", onClick: function (close) { close(); ui.signOut(!!sh); } });
       if (sh) actions.push({ label: t("signout.stay"), id: "signOutStay", onClick: function (close) { close(); ui.signOut(false); } });
     }
-    d = ui.dialog({ title: t("status.h"), emoji: practice ? "🧪" : sh ? (brk ? "☕" : "🟢") : "⚪", body: rows, actions: actions });
+    d = ui.dialog({ title: t("status.h"), emoji: practice ? "🧪" : sh ? (brk ? "☕" : "🔵") : "⚪", body: rows, actions: actions });
   };
   /* a person's own password: the old one, then the new one twice */
   ui.myPassword = function () {
@@ -7458,7 +7458,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     if (staff) {
       var sh = B.openShift(me.id);
       return h("section.hm-strip.ct-strip-bar", { "aria-label": t("home.yourShift") }, [
-        h("span.hm-strip-emo", { "aria-hidden": "true" }, sh ? (B.onBreak(sh) ? "☕" : "🟢") : "🕘"),
+        h("span.hm-strip-emo", { "aria-hidden": "true" }, sh ? (B.onBreak(sh) ? "☕" : "🔵") : "🕘"),
         h("div.hm-strip-t", null, [h("b", null, t("home.yourShift")), h("span#heroStepNote", null, sh ? (B.onBreak(sh) ? t("clock.onBreak", { t: E.fmtTime(new Date(sh.breaks[sh.breaks.length - 1].from)) }) : t("clock.onSince", { t: E.fmtTime(new Date(sh.in)), d: ui.dur(B.shiftMs(sh)) })) : t("clock.off"))]),
         h("div.hm-strip-k", null, [h("button.hx-btn", { type: "button", onclick: ui.statusPanel }, [ui.emo(sh ? "☕" : "🕘"), sh ? t("home.clockKeys") : t("clock.in")]),
           h("button.hx-btn", { type: "button", onclick: function () { ui.go("team"); } }, [ui.emo("🗓️"), t("team.mine")])])]);
@@ -10037,7 +10037,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     /* who is on the clock now */
     if (B.can("team")) {
       var on = B.onClock();
-      main.appendChild(section("teamNow", "🟢", "clock.nowH", on.length ? h("ul.clock-list.big#teamOnClock", null, on.map(function (x) {
+      main.appendChild(section("teamNow", "🔵", "clock.nowH", on.length ? h("ul.clock-list.big#teamOnClock", null, on.map(function (x) {
         var u = st.users[x.user];
         return h("li", null, [h("span.who-dot" + (B.onBreak(x) ? ".onbreak" : ".onclock"), { "aria-hidden": "true" }),
           h("span.who-main", null, [h("b", null, u ? u.name : x.user), h("span.muted", null, " · " + t("people.id", { n: x.no || B.numberOf(u) }))]),

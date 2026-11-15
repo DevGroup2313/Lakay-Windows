@@ -123,7 +123,7 @@
     if (staff) {
       var sh = B.openShift(me.id);
       return h("section.hm-strip.ct-strip-bar", { "aria-label": t("home.yourShift") }, [
-        h("span.hm-strip-emo", { "aria-hidden": "true" }, sh ? (B.onBreak(sh) ? "☕" : "🟢") : "🕘"),
+        h("span.hm-strip-emo", { "aria-hidden": "true" }, sh ? (B.onBreak(sh) ? "☕" : "🔵") : "🕘"),
         h("div.hm-strip-t", null, [h("b", null, t("home.yourShift")), h("span#heroStepNote", null, sh ? (B.onBreak(sh) ? t("clock.onBreak", { t: E.fmtTime(new Date(sh.breaks[sh.breaks.length - 1].from)) }) : t("clock.onSince", { t: E.fmtTime(new Date(sh.in)), d: ui.dur(B.shiftMs(sh)) })) : t("clock.off"))]),
         h("div.hm-strip-k", null, [h("button.hx-btn", { type: "button", onclick: ui.statusPanel }, [ui.emo(sh ? "☕" : "🕘"), sh ? t("home.clockKeys") : t("clock.in")]),
           h("button.hx-btn", { type: "button", onclick: function () { ui.go("team"); } }, [ui.emo("🗓️"), t("team.mine")])])]);
