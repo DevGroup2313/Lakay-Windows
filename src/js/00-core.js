@@ -94,6 +94,8 @@ var ICONS = {
   /* learning (Build 17): a cap for the room, a play mark for Show me */
   cap: "M2.5 9.5 12 5l9.5 4.5L12 14zM6.5 11.5v4.5c3 2.2 8 2.2 11 0v-4.5M21.5 9.5v5",
   play: "M8 5.5v13l10.5-6.5z",
+  /* the schedule (Build 20): a calendar page */
+  calendar: "M4.5 6h15v14h-15zM4.5 10.5h15M8.5 3.5v5M15.5 3.5v5M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01",
   /* the Author Studio's colours (Build 18): a painter's palette */
   palette: "M12 3.5a8.5 8.5 0 1 0 0 17c1.3 0 1.9-1 1.5-2.1-.5-1.3.4-2.6 1.8-2.6h1.6a3.6 3.6 0 0 0 3.6-3.6C20.5 7.3 16.7 3.5 12 3.5zM7.6 12.2h.01M9.2 8.2h.01M13.7 7.4h.01M16.9 10h.01"
 };

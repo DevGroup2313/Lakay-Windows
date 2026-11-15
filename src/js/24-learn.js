@@ -521,7 +521,7 @@
   };
 
   /* ---------- tips at the foot of each room ---------- */
-  var TIPS = { home: 4, register: 4, inventory: 4, reports: 3, team: 3, learn: 3, guide: 2, settings: 3, studio: 2 };
+  var TIPS = { home: 4, register: 4, inventory: 4, reports: 3, team: 3, schedule: 3, learn: 3, guide: 2, settings: 3, studio: 2 };
   var tipAt = {};
   L.tipsOn = function () { return U.prefGet("tips", "1") === "1"; };
   /* fresh: a new visit to the room shows its next tip; a room drawn again keeps the one it shows */

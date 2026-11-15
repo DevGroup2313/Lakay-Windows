@@ -4,6 +4,23 @@ Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED.
 
 The newest build is first. The build number also shows in Lakay's About.
 
+## Build 20 (15 November 2026): the Schedule, with shift swaps approved by a leader
+
+The owner's request: "generate schedules for my employees and be able to manage their shifts and be able to restructure their schedules and swap their shifts or reschedule them when needed".
+
+- **Schedule, a new room in the menu**, after Team. The week's shifts: a line for each person, a column for each day, and the hours planned. The arrows move to the weeks before and after (eight each way). On a phone the week shows day by day.
+- **Planning, for those given the team's hours.** The plus key in a day adds a shift: who, the day, from and to, and a note if it helps (Register, stock, closing). Press a shift to change it or remove it. No one is ever given two shifts at once.
+- **The plan of a day gone by is kept as it was.** No shift can be added, changed or removed on a past day, by anyone, so the schedule cannot be rewritten after the fact to make someone look absent.
+- **Generating the weeks:** Keep as the usual week keeps the week shown as the store's pattern; Fill from the usual week then fills a new week in one press; Copy the week before does the same from the week just past. Only today and the days to come are filled, and a shift that would overlap one already planned is left out.
+- **Each person's own shifts** for the next two weeks, at the top, with Ask to swap.
+- **Swaps.** A person asks a colleague to cover one of their shifts, or to trade it for one of the colleague's, with a word if they wish. The colleague answers first. Then someone with the team's hours approves, and only then do the shifts change hands, checked again as they are then. No one approves their own request, the owner aside. A request can be cancelled until it is decided; a request on a shift a leader then changes is closed.
+- **Against the time clock.** Each shift that has begun shows how it went: on time (in within five minutes of the start), late by so many minutes, not in yet, or missed. Planned and worked, for leaders, sets the hours planned beside the hours the clock counted, with the late and missed shifts. The schedule never changes the time clock.
+- **The Home** shows the person's next shift, a colleague's request, and for leaders the swaps waiting for them.
+- **The practice store** has a schedule: the past days as its sample shifts were worked (one day Jean was planned from half past twelve, so he shows 17 minutes late), a usual week of five days each from today, a cover Jean agreed to (waiting for the owner) and a trade Jean asked of Marie. A practice store made by an earlier build is given these once as it opens.
+- **Every step is a ledger line:** `slot.added`, `slot.changed`, `slot.removed`, `week.filled`, `rota.saved`, `swap.asked`, `swap.answered`, `swap.decided`, `swap.cancelled`.
+- A chapter in the Guidebook, The schedule and shift swaps; three tips. The Guidebook's chapter on the clock now says the dot is periwinkle, as it is since Build 19. Every word is in English, French and Kreyòl (127 new phrases; the Kreyòl is marked for review by a native speaker).
+- tests/t_build20.js: 55 checks. Every suite passes: 701 checks in all.
+
 ## Build 19 (15 November 2026): team leaders and managers, training assigned to each person, exercises, onboarding and refreshers
 
 The owner's request of 15 November 2026: limited administrative access for team leaders and managers; training and exercises on the system and the app, assigned to employees and new hires; a full onboarding system, with refreshers, built into the app.

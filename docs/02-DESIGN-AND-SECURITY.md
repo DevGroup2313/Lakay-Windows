@@ -188,6 +188,16 @@ one sealed record, `plan`. Only those with Training may change them. Every chang
 onboarding (the owner aside). The course holds only what it may: a task's title is at most 80 characters and its
 note at most 400, with control characters taken out; steps that do not exist are left out.
 
+## 6c. The Schedule (Build 20)
+
+A planned shift (`slot`), the usual week (`rota`) and each swap request (`swap`) are sealed records like every other,
+and every change to them is a ledger line with the person who made it. Only those with the team's hours plan; the
+books refuse the rest. The plan of a day gone by cannot be added to, changed or removed by anyone, so the schedule
+cannot be rewritten after the fact to make a person look late or absent. A swap changes hands only when the colleague
+has agreed and someone with the team's hours has approved, and it is checked again at that moment (the shifts are
+still theirs, still to come, and no one would hold two at once). No one approves their own request, the owner aside.
+The time clock is never changed by the schedule: "late" and "missed" are read from the clock's own records.
+
 ## 7. Protection against attacks and malware
 
 - **No code from outside.** The app's page carries all its own code. A Content Security Policy forbids scripts and

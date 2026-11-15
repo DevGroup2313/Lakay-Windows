@@ -144,7 +144,7 @@
   function load(vault, key, userId) {
     ID = vault.storeId;
     return D.entries("rec").then(function (entries) {
-      var st = { settings: null, users: {}, cats: {}, items: {}, sales: [], moves: [], shifts: [], services: [], train: {}, plans: {}, course: null, counters: {}, pad: {}, notes: {}, head: null, unreadable: [] };
+      var st = { settings: null, users: {}, cats: {}, items: {}, sales: [], moves: [], shifts: [], services: [], train: {}, plans: {}, course: null, slots: [], rota: null, swaps: [], counters: {}, pad: {}, notes: {}, head: null, unreadable: [] };
       /* each person's notes are their own: a sign-in opens only the notes of the one signing in (the practice store opens
          all of its sample people's, since it changes from one to another) */
       var mine = "notes:" + (userId || "owner"), practice = B.mode === "practice";
@@ -157,6 +157,8 @@
         st.moves.sort(function (a, b) { return a.at < b.at ? -1 : a.at > b.at ? 1 : 0; });
         st.shifts.sort(function (a, b) { return a.in < b.in ? -1 : a.in > b.in ? 1 : 0; });
         st.services.sort(function (a, b) { return a.at < b.at ? -1 : a.at > b.at ? 1 : 0; });
+        st.slots.sort(slotOrder);
+        st.swaps.sort(function (a, b) { return a.at < b.at ? -1 : a.at > b.at ? 1 : 0; });
         if (!st.head || !st.settings) throw err("damaged");
         return D.get("journal", st.head.seq).then(function (env) {
           if (!env) { st.headProblem = true; return; }
@@ -190,6 +192,9 @@
     else if (kind === "train") { st.train = st.train || {}; st.train[id] = v; }
     else if (kind === "plan") { st.plans = st.plans || {}; st.plans[id] = v; }
     else if (kind === "course") st.course = v;
+    else if (kind === "slot") { st.slots = st.slots || []; var si = st.slots.findIndex(function (x) { return x.id === v.id; }); if (si >= 0) st.slots[si] = v; else { st.slots.push(v); st.slots.sort(slotOrder); } }
+    else if (kind === "rota") st.rota = v;
+    else if (kind === "swap") { st.swaps = st.swaps || []; var wi = st.swaps.findIndex(function (x) { return x.id === v.id; }); if (wi >= 0) st.swaps[wi] = v; else st.swaps.push(v); }
     else if (kind === "counter") st.counters[id] = v;
     else if (kind === "pad") st.pad[id] = v;
     else if (kind === "notes") st.notes[id] = (v && Array.isArray(v.notes)) ? v.notes : [];
@@ -275,13 +280,58 @@
      manager's new access, and the store its plan of training (sampleCourse). Nothing here touches a real store, and a
      sample that cannot be made is let go: the practice store still opens. */
   function upgradePractice(st) {
-    if (B.mode !== "practice" || !state || state.course) return st;
-    /* Jean as the practice store made him (the manager's access of Build 6 to Build 18); if the owner changed him, he is left as he is */
-    var jean = state.users[SAMPLE_PEOPLE[1][0]], c = Promise.resolve(), was = ["sell", "items", "receive", "adjust", "costs", "reports", "team"];
-    if (jean && jean.active !== false && JSON.stringify(jean.access || []) === JSON.stringify(was))
-      c = c.then(function () { return B.editPerson(jean.id, { access: B.PRESETS.manager.slice(), preset: "manager" }); });
-    return c.then(sampleCourse).then(function () { B._at = null; B.user = state.users.owner; return state; },
+    if (B.mode !== "practice" || !state) return st;
+    var c = Promise.resolve();
+    if (!state.course) {
+      /* Jean as the practice store made him (the manager's access of Build 6 to Build 18); if the owner changed him, he is left as he is */
+      var jean = state.users[SAMPLE_PEOPLE[1][0]], was = ["sell", "items", "receive", "adjust", "costs", "reports", "team"];
+      if (jean && jean.active !== false && JSON.stringify(jean.access || []) === JSON.stringify(was))
+        c = c.then(function () { return B.editPerson(jean.id, { access: B.PRESETS.manager.slice(), preset: "manager" }); });
+      c = c.then(sampleCourse);
+    }
+    /* and a practice store made before Build 20, its schedule */
+    if (!state.rota && !(state.slots || []).length) c = c.then(sampleSchedule);
+    return c.then(function () { B._at = null; B.user = state.users.owner; return state; },
       function (e) { console.warn(e); B._at = null; if (state) B.user = state.users.owner; return state; });
+  }
+  /* the practice store's schedule (Build 20). Until yesterday, the shifts as the time clock's samples were worked, both
+     every day (one day Jean was planned from half past twelve, so his quarter to one shows fifteen minutes late). From
+     today, the usual week: Marie Monday to Friday, mornings; Jean Wednesday to Sunday, afternoons. Marie asked Jean to
+     cover her Monday next week and he agreed, so it waits for a leader; Jean asked Marie to trade his Saturday next week
+     for her Tuesday, and it waits for her answer. */
+  function sampleSchedule() {
+    var marie = SAMPLE_PEOPLE[0][0], jean = SAMPLE_PEOPLE[1][0];
+    if (!state.users[marie] || !state.users[jean] || state.users[marie].active === false || state.users[jean].active === false) return Promise.resolve();
+    var today = new Date(), todayKey = U.dayKey(today), wk = U.fromDayKey(B.weekStartKey(today)), last = U.addDays(wk, -7), at = today.toISOString();
+    var MARIE = [1, 2, 3, 4, 5], JEAN = [3, 4, 5, 6, 0], slots = [], rows = [];
+    function slot(user, d, from, to) { var s = { id: U.uid("s"), user: user, day: U.dayKey(d), from: from, to: to, note: "", by: "owner", at: at, status: "on" }; slots.push(s); return s; }
+    for (var d = new Date(last), n = 0; U.dayKey(d) < todayKey; d = U.addDays(d, 1), n++) {
+      slot(marie, d, "08:45", "15:15"); slot(jean, d, n === 9 ? "12:30" : "12:45", "20:15");
+    }
+    for (var e = new Date(today.getFullYear(), today.getMonth(), today.getDate()); e < U.addDays(wk, 14); e = U.addDays(e, 1)) {
+      if (MARIE.indexOf(e.getDay()) >= 0) slot(marie, e, "08:45", "15:15");
+      if (JEAN.indexOf(e.getDay()) >= 0) slot(jean, e, "12:45", "20:15");
+    }
+    for (var i = 0; i < 7; i++) {
+      var g = U.addDays(wk, i);
+      if (MARIE.indexOf(g.getDay()) >= 0) rows.push({ dow: i, user: marie, from: "08:45", to: "15:15", note: "" });
+      if (JEAN.indexOf(g.getDay()) >= 0) rows.push({ dow: i, user: jean, from: "12:45", to: "20:15", note: "" });
+    }
+    function on(user, d) { var k = U.dayKey(d); return slots.filter(function (s) { return s.user === user && s.day === k; })[0]; }
+    var next = U.addDays(wk, 7), mon = on(marie, next), tue = on(marie, U.addDays(next, 1)), sat = on(jean, U.addDays(next, 5));
+    function as(id, when, fn) { return function () { B._at = when.toISOString(); B.user = state.users[id]; return fn().then(function () { B.user = state.users.owner; }); }; }
+    var yesterday = U.addDays(new Date(today.getFullYear(), today.getMonth(), today.getDate()), -1);
+    function hour(d, hh) { var x = new Date(d); x.setHours(hh, 0, 0, 0); return x; }
+    return Promise.resolve()
+      .then(as("owner", hour(U.addDays(last, -1), 18), function () {
+        return B.change(function () { var v = { v: 1, rows: rows, from: U.dayKey(wk), at: at, by: "owner" }; return { type: "rota.saved", data: { from: v.from, rows: rows.length }, recs: [{ kind: "rota", id: "main", value: v }] }; });
+      }))
+      .then(as("owner", hour(U.addDays(last, -1), 18), function () {
+        return B.change(function () { return { type: "week.filled", data: { week: U.dayKey(last), source: "sample", added: slots.length }, recs: slots.map(function (s) { return { kind: "slot", id: s.id, value: s }; }) }; });
+      }))
+      .then(as(marie, hour(yesterday, 10), function () { return mon && sat ? B.askSwap({ slot: mon.id, to: jean, kind: "cover", note: "" }) : Promise.resolve(); }))
+      .then(as(jean, hour(yesterday, 14), function () { var w = B.swaps(function (x) { return x.from === marie && x.status === "asked"; })[0]; return w ? B.answerSwap(w.id, true) : Promise.resolve(); }))
+      .then(as(jean, hour(yesterday, 16), function () { return sat && tue ? B.askSwap({ slot: sat.id, to: marie, kind: "trade", theirSlot: tue.id, note: "" }) : Promise.resolve(); }));
   }
   /* The practice store's sample people: [user id, staff number, name, level of access]. */
   var SAMPLE_PEOPLE = [["u_practice_marie", 1002, "Marie", "cashier"], ["u_practice_jean", 1003, "Jean", "manager"]];
@@ -367,6 +417,7 @@
     chain = chain.then(function () { return sampleServices(); });
     chain = chain.then(function () { return sampleTraining(); });
     chain = chain.then(function () { return sampleCourse(); });
+    chain = chain.then(function () { return sampleSchedule(); });
     return chain.then(function () { B._at = null; B.user = state.users.owner; return state; }, function (e) { B._at = null; B.user = state && state.users.owner; throw e; });
   }
   /* The practice store's money transfers and top-ups: a few a day for two weeks, with made-up fees and references.
@@ -1155,6 +1206,197 @@
       rec.tasks[taskId] = { at: clock().toISOString(), by: B.user.id };
       return { type: "training.task", data: { user: userId, task: taskId, by: B.user.id }, recs: [{ kind: "train", id: userId, value: rec }], result: rec };
     });
+  };
+
+  /* ---------- schedules and shift swaps (Build 20) ----------
+     A shift planned is a "slot": who, which day, from and to (the store's own clock, hh:mm) and a short note. Those with
+     the team access plan the week, fill it from the usual week or from the week before, and change or remove a shift;
+     every change is a ledger line. A person may ask a colleague to cover one of their shifts, or to trade one for one
+     of the colleague's. The colleague answers; then someone with the team access approves, and only then do the shifts
+     change hands (no one approves their own request, the owner aside). The time clock is never touched: the hours worked
+     stay what the clock says, and the schedule is compared with them. */
+  function slotOrder(a, b) { return a.day < b.day ? -1 : a.day > b.day ? 1 : a.from < b.from ? -1 : a.from > b.from ? 1 : 0; }
+  function hhmm(x) { return /^([01]\d|2[0-3]):[0-5]\d$/.test(x || ""); }
+  function mins(x) { return +x.slice(0, 2) * 60 + +x.slice(3, 5); }
+  B.slotMins = function (sl) { return Math.max(0, mins(sl.to) - mins(sl.from)); };
+  B.slots = function (filter) { return state ? (state.slots || []).filter(function (x) { return x.status !== "off" && (!filter || filter(x)); }).map(clone) : []; };
+  function slotOn(st, id) { return (st.slots || []).filter(function (x) { return x.id === id && x.status !== "off"; })[0] || null; }
+  B.slotOf = function (id) { var x = state && slotOn(state, id); return x ? clone(x) : null; };
+  /* two shifts of one person on one day may not overlap */
+  function overlaps(st, sl, skip) {
+    return (st.slots || []).some(function (x) {
+      return x.status !== "off" && x.user === sl.user && x.day === sl.day && skip.indexOf(x.id) < 0 && mins(x.from) < mins(sl.to) && mins(sl.from) < mins(x.to);
+    });
+  }
+  function cleanSlot(st, f, base) {
+    var sl = clone(base);
+    if (f.user !== undefined) sl.user = String(f.user || "");
+    if (f.day !== undefined) sl.day = String(f.day || "");
+    if (f.from !== undefined) sl.from = String(f.from || "");
+    if (f.to !== undefined) sl.to = String(f.to || "");
+    if (f.note !== undefined) sl.note = plain(f.note, 60);
+    var u = st.users[sl.user];
+    if (!u || u.active === false) throw err("noperson");
+    if (!dueDay(sl.day)) throw err("day");
+    /* the plan of a day gone by is kept as it was: no one rewrites it after the fact */
+    if (sl.day < U.dayKey(clock())) throw err("pastday");
+    if (!hhmm(sl.from) || !hhmm(sl.to) || mins(sl.to) <= mins(sl.from)) throw err("hours");
+    sl.note = sl.note || "";
+    return sl;
+  }
+  /* a request still open on a shift that changed is closed, so no one approves a swap of a shift that is no longer there */
+  function dropSwaps(st, ids, now) {
+    return (st.swaps || []).filter(function (w) { return B.SWAP_OPEN.indexOf(w.status) >= 0 && (ids.indexOf(w.slot) >= 0 || ids.indexOf(w.theirSlot) >= 0); })
+      .map(function (w) { var v = clone(w); v.status = "void"; v.closed = now; return { kind: "swap", id: v.id, value: v }; });
+  }
+  B.addSlot = function (f) {
+    return B.change(function (st) {
+      need("team");
+      var sl = cleanSlot(st, f, { id: U.uid("s"), note: "" });
+      if (overlaps(st, sl, [])) throw err("overlap");
+      sl.by = B.user.id; sl.at = clock().toISOString(); sl.status = "on";
+      return { type: "slot.added", data: { slot: clone(sl) }, recs: [{ kind: "slot", id: sl.id, value: sl }], result: sl };
+    });
+  };
+  B.changeSlot = function (id, f) {
+    return B.change(function (st) {
+      need("team");
+      var cur = slotOn(st, id); if (!cur) throw err("noslot");
+      if (cur.day < U.dayKey(clock())) throw err("pastday");
+      var sl = cleanSlot(st, f, cur), diff = {};
+      ["user", "day", "from", "to", "note"].forEach(function (k) { if (sl[k] !== cur[k]) diff[k] = [cur[k], sl[k]]; });
+      if (!Object.keys(diff).length) return null;
+      if (overlaps(st, sl, [id])) throw err("overlap");
+      var now = clock().toISOString(); sl.updated = now; sl.updatedBy = B.user.id;
+      return { type: "slot.changed", data: { id: id, diff: diff }, recs: [{ kind: "slot", id: id, value: sl }].concat(dropSwaps(st, [id], now)), result: sl };
+    });
+  };
+  B.removeSlot = function (id) {
+    return B.change(function (st) {
+      need("team");
+      var cur = slotOn(st, id); if (!cur) throw err("noslot");
+      if (cur.day < U.dayKey(clock())) throw err("pastday");
+      var now = clock().toISOString(), sl = clone(cur); sl.status = "off"; sl.updated = now; sl.updatedBy = B.user.id;
+      return { type: "slot.removed", data: { id: id, user: cur.user, day: cur.day, from: cur.from, to: cur.to }, recs: [{ kind: "slot", id: id, value: sl }].concat(dropSwaps(st, [id], now)), result: sl };
+    });
+  };
+  /* the first day of the week that holds a day, by the store's own first day of the week */
+  B.weekStartKey = function (d) {
+    d = d || clock();
+    var first = state && state.settings && state.settings.weekStart === 0 ? 0 : 1, x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    return U.dayKey(U.addDays(x, -((x.getDay() - first + 7) % 7)));
+  };
+  function dayIndex(fromKey, dayKey) { return Math.round((U.fromDayKey(dayKey).getTime() - U.fromDayKey(fromKey).getTime()) / 86400000); }
+  function weekRows(st, weekKey) {
+    var end = U.dayKey(U.addDays(U.fromDayKey(weekKey), 6));
+    return (st.slots || []).filter(function (x) { return x.status !== "off" && x.day >= weekKey && x.day <= end; })
+      .map(function (x) { return { dow: dayIndex(weekKey, x.day), user: x.user, from: x.from, to: x.to, note: x.note || "" }; });
+  }
+  /* the usual week: one week of shifts kept as the pattern the next weeks are filled from */
+  B.usualWeek = function () { return clone((state && state.rota) || { v: 1, rows: [] }); };
+  B.saveUsualWeek = function (weekKey) {
+    return B.change(function (st) {
+      need("team");
+      if (!dueDay(weekKey)) throw err("day");
+      var rows = weekRows(st, weekKey);
+      if (!rows.length) throw err("empty");
+      var v = { v: 1, rows: rows, from: weekKey, at: clock().toISOString(), by: B.user.id };
+      return { type: "rota.saved", data: { from: weekKey, rows: rows.length }, recs: [{ kind: "rota", id: "main", value: v }], result: v };
+    });
+  };
+  /* a week filled from the usual week or from the week before it: only today and the days to come, and never a shift that
+     would overlap one already there */
+  B.fillWeek = function (weekKey, source) {
+    return B.change(function (st) {
+      need("team");
+      if (!dueDay(weekKey)) throw err("day");
+      source = source === "last" ? "last" : "usual";
+      var rows = source === "last" ? weekRows(st, U.dayKey(U.addDays(U.fromDayKey(weekKey), -7))) : ((st.rota && st.rota.rows) || []);
+      var now = clock(), todayKey = U.dayKey(now), at = now.toISOString(), tmp = { slots: (st.slots || []).slice() }, recs = [];
+      rows.forEach(function (r) {
+        var u = st.users[r.user]; if (!u || u.active === false || !hhmm(r.from) || !hhmm(r.to) || r.dow < 0 || r.dow > 6) return;
+        var sl = { id: U.uid("s"), user: r.user, day: U.dayKey(U.addDays(U.fromDayKey(weekKey), r.dow)), from: r.from, to: r.to, note: plain(r.note, 60), by: B.user.id, at: at, status: "on" };
+        if (sl.day < todayKey || overlaps(tmp, sl, [])) return;
+        tmp.slots.push(sl); recs.push({ kind: "slot", id: sl.id, value: sl });
+      });
+      if (!recs.length) return null;
+      return { type: "week.filled", data: { week: weekKey, source: source, added: recs.length }, recs: recs, result: recs.map(function (r) { return r.value; }) };
+    });
+  };
+  /* ---- swaps: a colleague covers a shift, or two people trade one shift each ---- */
+  B.SWAP_OPEN = ["asked", "agreed"];
+  B.swaps = function (filter) { return state ? (state.swaps || []).filter(function (x) { return !filter || filter(x); }).map(clone) : []; };
+  function swapOn(st, id) { return clone((st.swaps || []).filter(function (x) { return x.id === id; })[0] || null); }
+  function startsLater(sl) { var now = clock(), k = U.dayKey(now); return sl.day > k || (sl.day === k && mins(sl.from) > now.getHours() * 60 + now.getMinutes()); }
+  B.askSwap = function (f) {
+    return B.change(function (st) {
+      if (!B.user) throw err("locked");
+      var sl = slotOn(st, f.slot); if (!sl) throw err("noslot");
+      if (sl.user !== B.user.id) throw err("denied");
+      if (!startsLater(sl)) throw err("past");
+      var to = st.users[f.to]; if (!to || to.active === false || to.id === B.user.id) throw err("noperson");
+      var kind = f.kind === "trade" ? "trade" : "cover", theirs = null;
+      if (kind === "trade") { theirs = slotOn(st, f.theirSlot); if (!theirs || theirs.user !== to.id) throw err("noslot"); if (!startsLater(theirs)) throw err("past"); }
+      var ids = [sl.id].concat(theirs ? [theirs.id] : []);
+      if ((st.swaps || []).some(function (w) { return B.SWAP_OPEN.indexOf(w.status) >= 0 && (ids.indexOf(w.slot) >= 0 || ids.indexOf(w.theirSlot) >= 0); })) throw err("already");
+      /* whoever takes a shift must be free then */
+      if (overlaps(st, { user: to.id, day: sl.day, from: sl.from, to: sl.to }, ids)) throw err("overlap");
+      if (theirs && overlaps(st, { user: B.user.id, day: theirs.day, from: theirs.from, to: theirs.to }, ids)) throw err("overlap");
+      var w = { id: U.uid("w"), kind: kind, from: B.user.id, to: to.id, slot: sl.id, theirSlot: theirs ? theirs.id : null, note: plain(f.note, 120), at: clock().toISOString(), status: "asked" };
+      return { type: "swap.asked", data: { id: w.id, kind: kind, to: to.id, slot: sl.id, theirSlot: w.theirSlot }, recs: [{ kind: "swap", id: w.id, value: w }], result: w };
+    });
+  };
+  B.answerSwap = function (id, yes) {
+    return B.change(function (st) {
+      var w = swapOn(st, id); if (!w) throw err("noswap");
+      if (!B.user || w.to !== B.user.id) throw err("denied");
+      if (w.status !== "asked") throw err("closed");
+      w.status = yes ? "agreed" : "declined"; w.answered = clock().toISOString();
+      return { type: "swap.answered", data: { id: id, yes: !!yes }, recs: [{ kind: "swap", id: id, value: w }], result: w };
+    });
+  };
+  B.cancelSwap = function (id) {
+    return B.change(function (st) {
+      var w = swapOn(st, id); if (!w) throw err("noswap");
+      if (!B.user || w.from !== B.user.id) throw err("denied");
+      if (B.SWAP_OPEN.indexOf(w.status) < 0) throw err("closed");
+      w.status = "cancelled"; w.closed = clock().toISOString();
+      return { type: "swap.cancelled", data: { id: id }, recs: [{ kind: "swap", id: id, value: w }], result: w };
+    });
+  };
+  /* a leader decides; approved, the shifts change hands, checked again as they are now */
+  B.decideSwap = function (id, yes, why) {
+    return B.change(function (st) {
+      need("team");
+      var w = swapOn(st, id); if (!w) throw err("noswap");
+      if (w.status !== "agreed") throw err("closed");
+      if (!B.isOwner() && (w.from === B.user.id || w.to === B.user.id)) throw err("denied");
+      var now = clock().toISOString();
+      w.decidedBy = B.user.id; w.decided = now;
+      if (!yes) { w.status = "refused"; w.why = plain(why, 120); return { type: "swap.decided", data: { id: id, yes: false }, recs: [{ kind: "swap", id: id, value: w }], result: w }; }
+      var a = slotOn(st, w.slot), b = w.theirSlot ? slotOn(st, w.theirSlot) : null, ids = [w.slot].concat(w.theirSlot ? [w.theirSlot] : []);
+      if (!a || a.user !== w.from || (w.theirSlot && (!b || b.user !== w.to))) throw err("changed");
+      if (!startsLater(a) || (b && !startsLater(b))) throw err("past");
+      var na = clone(a); na.user = w.to; na.updated = now; na.updatedBy = B.user.id; na.swap = id;
+      if (overlaps(st, na, ids)) throw err("overlap");
+      var recs = [{ kind: "slot", id: na.id, value: na }];
+      if (b) { var nb = clone(b); nb.user = w.from; nb.updated = now; nb.updatedBy = B.user.id; nb.swap = id; if (overlaps(st, nb, ids)) throw err("overlap"); recs.push({ kind: "slot", id: nb.id, value: nb }); }
+      w.status = "approved"; recs.push({ kind: "swap", id: id, value: w });
+      return { type: "swap.decided", data: { id: id, yes: true, from: w.from, to: w.to, slot: w.slot, theirSlot: w.theirSlot }, recs: recs, result: w };
+    });
+  };
+  /* a shift planned against the time clock: not begun yet, on time (in within five minutes of the start), late, not in
+     yet (the shift has begun and no one clocked in), or absent (the shift is over and no one did) */
+  B.attendance = function (sl, now) {
+    now = now || clock();
+    var start = U.fromDayKey(sl.day); start.setHours(+sl.from.slice(0, 2), +sl.from.slice(3, 5), 0, 0);
+    var end = U.fromDayKey(sl.day); end.setHours(+sl.to.slice(0, 2), +sl.to.slice(3, 5), 0, 0);
+    var first = (state ? state.shifts : []).reduce(function (m, x) {
+      if (x.user !== sl.user || x.day !== sl.day) return m; var t = Date.parse(x.in); return m === null || t < m ? t : m;
+    }, null);
+    if (first === null) return { state: now.getTime() < start.getTime() + 5 * 60000 ? "later" : now < end ? "notin" : "absent" };
+    var late = Math.round((first - start.getTime()) / 60000);
+    return late > 5 ? { state: "late", minutes: late } : { state: "ontime" };
   };
 
   /* ---------- money transfers and top-ups (Build 15) ----------

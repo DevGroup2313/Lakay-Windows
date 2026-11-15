@@ -1,0 +1,98 @@
+/* LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt.
+   The Schedule (Build 20): the week's bar, the table of shifts, each shift as a small card (on time in periwinkle,
+   late and not in yet in amber, absent in brick, never green), the person's own shifts, the requests, and the week
+   day by day on a phone. White slabs and pearl, the periwinkle woven in. */
+
+/* ---------- the week's bar ---------- */
+.sch-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 16px; margin-bottom: 14px; }
+.sch-nav { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; }
+.sch-week { display: flex; flex-direction: column; margin: 0; min-width: 0; }
+.sch-week b { font: 600 1.05rem/1.2 var(--serif); color: var(--ink); }
+.sch-week span { color: var(--muted); font-size: .86rem; }
+.sch-tools { display: flex; flex-wrap: wrap; gap: 6px; }
+.sch-tools .key.sm, .sch-nav .key.sm { gap: 5px; padding-left: 9px; padding-right: 10px; }
+.sch-tools .ico, .sch-nav .ico { width: 14px; height: 14px; }
+
+/* ---------- the table of the week ---------- */
+.sch-wrap { margin-bottom: 16px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--sh-card); }
+.sch-grid { min-width: 860px; table-layout: fixed; }
+.sch-grid th, .sch-grid td { vertical-align: top; }
+.sch-grid thead th { text-align: center; padding-top: 10px; padding-bottom: 8px; }
+.sch-grid thead th:first-child { text-align: left; width: 124px; }
+.sch-grid thead th:last-child { width: 72px; }
+.sch-dow { display: block; font: 700 .68rem/1.3 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.sch-date { display: block; font: 600 1.15rem/1.2 var(--serif); color: var(--ink); }
+.sch-grid thead th.today .sch-dow, .sch-grid thead th.today .sch-date { color: var(--pri-text); }
+.sch-grid thead th.today { box-shadow: inset 0 -3px 0 rgba(var(--pri-rgb), .6); }
+.sch-grid tbody th { font-weight: 600; color: var(--ink); white-space: normal; }
+.sch-person b { display: block; font-weight: 600; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; }
+.sch-person small { display: block; color: var(--muted); font-weight: 500; font-size: .74rem; }
+.sch-grid tr.me th { color: var(--pri-text); }
+.sch-cell { padding: 5px; }
+.sch-cell.today { background: rgba(var(--pri-rgb), .045); }
+.sch-cell.past { background: var(--surface-2); }
+.sch-cell { position: relative; }
+.sch-total { white-space: nowrap; color: var(--ink-2); font-variant-numeric: tabular-nums; font-weight: 600; }
+
+/* a shift */
+.sch-chip { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; width: 100%; margin: 0 0 4px; padding: 6px 5px 6px 9px; border-radius: 10px; text-align: left; white-space: nowrap; overflow: hidden;
+  font: inherit; color: var(--ink); cursor: pointer; background: var(--surface); border: 1px solid rgba(var(--pri-rgb), .22); box-shadow: inset 3px 0 0 rgba(var(--pri-rgb), .55), var(--pill);
+  transition: transform .15s var(--spring), box-shadow .15s var(--ease); }
+.sch-chip:hover { transform: translateY(-1px); box-shadow: inset 3px 0 0 rgba(var(--pri-rgb), .75), var(--pill-hi); }
+.sch-chip:focus-visible { outline: 2px solid var(--pri-ring); outline-offset: 2px; }
+.sch-chip b { font-size: .88rem; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.sch-chip small { font-size: .7rem; color: var(--muted); line-height: 1.25; }
+.sch-chip small.sch-note { color: var(--ink-2); font-style: italic; }
+.sch-chip.mine { background: linear-gradient(180deg, var(--surface), rgba(var(--pri-rgb), .07)); border-color: rgba(var(--pri-rgb), .4); }
+.sch-mark { margin-top: 3px; padding: 1px 6px; white-space: nowrap; border-radius: 999px; font: 700 .64rem/1.5 var(--sans); letter-spacing: .03em; background: var(--ok-soft); color: var(--ok); }
+.sch-chip.is-late, .sch-chip.is-notin { box-shadow: inset 3px 0 0 var(--warn), var(--pill); }
+.sch-chip.is-late .sch-mark, .sch-chip.is-notin .sch-mark { background: var(--warn-soft); color: var(--warn); }
+.sch-chip.is-absent { box-shadow: inset 3px 0 0 var(--danger), var(--pill); }
+.sch-chip.is-absent .sch-mark { background: var(--danger-soft); color: var(--danger); }
+.sch-chip.swapping { border-style: dashed; }
+.sch-swap { position: absolute; top: 5px; right: 6px; color: var(--pri-text); }
+.sch-swap .ico { width: 13px; height: 13px; }
+.sch-add { display: inline-flex; align-items: center; justify-content: center; width: 100%; height: 26px; padding: 0; border-radius: 9px; cursor: pointer;
+  color: var(--muted); background: transparent; border: 1px dashed var(--line-2); opacity: .55; transition: opacity .15s var(--ease), color .15s var(--ease); }
+.sch-add .ico { width: 14px; height: 14px; }
+.sch-cell:hover .sch-add, .sch-add:focus-visible { opacity: 1; color: var(--pri-text); border-color: rgba(var(--pri-rgb), .45); }
+
+/* ---------- the week day by day, for a phone ---------- */
+.sch-days { display: none; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.sch-day { padding: 10px 12px 12px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--pill); }
+.sch-day.today { border-color: rgba(var(--pri-rgb), .45); box-shadow: inset 3px 0 0 rgba(var(--pri-rgb), .6), var(--pill); }
+.sch-day-h { display: flex; align-items: baseline; gap: 8px; margin: 0 0 8px; font-size: .95rem; }
+.sch-day-h b { font: 700 .74rem/1.4 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--pri-text); }
+.sch-day-h span { color: var(--muted); font-weight: 500; }
+.sch-day-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.sch-day-list li { display: grid; grid-template-columns: minmax(0, 7.5em) minmax(0, 1fr); gap: 8px; align-items: center; }
+.sch-day-list .sch-chip { margin: 0; }
+.sch-who { font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; }
+.sch-day-add { margin-top: 8px; gap: 5px; }
+.sch-day-add .ico { width: 14px; height: 14px; }
+
+/* ---------- the person's own shifts, and the requests ---------- */
+.sch-mine, .sch-swaps, .sch-plan { margin-bottom: 14px; }
+.sch-mine-list, .sch-reqs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.sch-mine-row, .sch-req { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 12px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line-soft); }
+.sch-mine-day, .sch-req-t { flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.sch-mine-day b, .sch-req-t b { font-weight: 600; color: var(--ink); line-height: 1.3; }
+.sch-mine-day small, .sch-req-t small { color: var(--muted); }
+.sch-req-emo { font-size: 1.1rem; }
+.sch-req-keys { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+.sch-mine-row .key.sm, .sch-req .key.sm { gap: 5px; padding-left: 9px; padding-right: 10px; }
+.sch-mine-row .ico, .sch-req .ico { width: 14px; height: 14px; }
+.sch-sub { margin: 10px 0 6px; font: 700 .7rem/1.4 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.sch-times { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.sch-times .field { margin-top: .4rem; }
+
+@media (max-width: 760px) {
+  .sch-wrap { display: none; }
+  .sch-days { display: flex; }
+  .sch-bar { padding: 10px 12px; }
+  .sch-tools { width: 100%; }
+}
+:root[data-theme="night"] .sch-chip { background: var(--surface); }
+:root[data-theme="night"] .sch-cell.past { background: rgba(255, 255, 255, .02); }
+@media (prefers-reduced-motion: reduce) { .sch-chip, .sch-add { transition: none; } }
+@media print { .sch-add, .sch-tools, .sch-nav .icon-key { display: none; } .sch-wrap { box-shadow: none; } }

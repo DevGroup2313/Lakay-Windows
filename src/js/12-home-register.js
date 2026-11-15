@@ -221,6 +221,8 @@
       var mine = E.train.statusOf(B.user);
       trained = mine.items.length > 0 || mine.refresh.length > 0;
     }
+    /* the person's next shift, a colleague's request, and for leaders the swaps that wait for them (Build 20) */
+    if (E.schedule && B.user) E.schedule.homeRows(need).forEach(function (x) { list.push(x); });
     /* a person's lessons still to take (Build 17), when nothing has been assigned to them */
     if (staff && E.learn && !trained) {
       var left = E.learn.leftFor(B.user).length;
