@@ -18,8 +18,13 @@
 
   /* ---------- the rail ---------- */
   var KEYS = [["notes", "🗒️", "rail.notes"], ["sale", "🛒", "rail.sale"], ["find", "🔎", "rail.find"]];
+  /* On a phone the three keys would stand over the page, so a phone starts with them laid down: one press of the small
+     key stands them up, and the device remembers the choice (the owner, 15 November 2026). A computer and a tablet start
+     with them standing, as before. */
+  function phone() { try { return !!(window.matchMedia && window.matchMedia("(max-width: 760px)").matches); } catch (e) { return false; } }
+  R.isDown = function () { var pref = U.prefGet("railDown", ""); return pref ? pref === "1" : phone(); };
   R.build = function () {
-    var down = U.prefGet("railDown", "0") === "1";
+    var down = R.isDown();
     var box = h("div#rail.rail" + (down ? ".down" : ""), { role: "toolbar", "aria-label": t("rail.label") });
     /* the new-sale key only for those who sell */
     var keys = KEYS.filter(function (k) { return k[0] !== "sale" || !B.isOpen || B.can("sell"); });
@@ -30,7 +35,7 @@
       box.appendChild(b);
     });
     var chev = h("button#railChevron", { type: "button", title: t(down ? "rail.up" : "rail.down"), "aria-label": t(down ? "rail.up" : "rail.down"), "aria-expanded": String(!down), onclick: function () {
-      U.prefSet("railDown", U.prefGet("railDown", "0") === "1" ? "0" : "1"); closePop(); R.refresh();
+      U.prefSet("railDown", R.isDown() ? "0" : "1"); closePop(); R.refresh();
     } }, down ? "‹" : "›");
     chev.style.bottom = "calc(" + (52 + keys.length * 56) + "px + env(safe-area-inset-bottom, 0px))";
     box.appendChild(chev);

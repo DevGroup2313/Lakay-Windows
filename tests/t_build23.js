@@ -53,6 +53,22 @@ const wait = (p, ms) => p.waitForTimeout(ms);
   const v = await p.evaluate(() => E.books.verify().then(r => ({ ok: r.ok, n: r.problems.length })));
   ok(v.ok && v.n === 0, "Verify finds nothing wrong");
 
+  console.log("The keys at the right edge");
+  ok(!(await p.evaluate(() => document.getElementById("rail").classList.contains("down"))), "on a computer, the three keys stand at the right edge, as before");
+  const ph = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
+  const q = await ph.newPage(); q.on("pageerror", e => errors.push(e.message));
+  await q.goto(PAGE); await q.waitForSelector("#introEnter", { timeout: 20000 });
+  await q.evaluate(() => E.books.openPractice().then(() => E.app.opened(true)));
+  await q.waitForSelector(".shell", { timeout: 90000 });
+  ok(await q.evaluate(() => document.getElementById("rail").classList.contains("down")) && await q.locator("#railChevron").isVisible(), "on a phone they start laid down, with the small key at the edge");
+  await q.click("#railChevron"); await wait(q, 400);
+  ok(!(await q.evaluate(() => document.getElementById("rail").classList.contains("down"))) && await q.locator("#rail-find").isVisible(), "one press stands them up");
+  await q.reload(); await q.waitForSelector("#introEnter", { timeout: 20000 });
+  await q.evaluate(() => E.books.openPractice().then(() => E.app.opened(true)));
+  await q.waitForSelector(".shell", { timeout: 90000 });
+  ok(!(await q.evaluate(() => document.getElementById("rail").classList.contains("down"))), "and the phone remembers the choice");
+  await ph.close();
+
   console.log("Three languages");
   const keysOk = await p.evaluate(() => {
     const d = E.dict, miss = [], same = [];

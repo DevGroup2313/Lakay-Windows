@@ -12,8 +12,9 @@ The owner's answer of 15 November 2026: only the commission counts as the store'
 - **When the store keeps it**, the fee counts in Earnings with the commission ("in customers' fees the store keeps", with the provider's name), the table marks that provider's fees as the store's, and the fees are no longer part of what is held for the provider: what is owed to it goes down by as much. The provider's card says so, with the fees kept in all.
 - The choice is the owner's alone and a ledger line (`provider.setup` carries it). Verify finds nothing wrong after it.
 - Every word is in English, French and Kreyòl (11 new phrases; the Kreyòl is marked for review by a native speaker).
-- tests/t_build23.js: 17 checks.
-- Shown with this build, for the owner to decide: the green emoji beside periwinkle versions, side by side; and the keys at the right edge on a phone, as they stand now and laid down.
+- **On a phone, the three keys at the right edge start laid down** (the sticky notes, a new sale, Price check), so they no longer stand over the page. One press of the small key at the edge stands them up, and the device remembers the choice. A computer and a tablet start with them standing, as before.
+- **The green emoji stay.** Shown beside periwinkle versions, the owner chose the green ones (✅, 💵, 💱): "it works well with the periwinkle and compliments the app."
+- tests/t_build23.js: 21 checks.
 
 ## Build 22 (15 November 2026): Travel, a short record of each flight booked for a client
 

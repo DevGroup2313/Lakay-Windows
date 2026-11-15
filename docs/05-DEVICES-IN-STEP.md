@@ -2,7 +2,9 @@
 
 Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt.
 
-Written 15 November 2026. Nothing here is built yet. It is a proposal, to be approved before any of it is made.
+Written 15 November 2026. The owner approved its recommendations the same day: the books join first (stage 1), then
+pairing and carrying the changes by file (stage 2), then a relay on the Mac mini at the store (stage 3). Questions 1, 3
+and 4 below are still open; they matter from stage 2 on.
 
 ## What the owner asked
 
