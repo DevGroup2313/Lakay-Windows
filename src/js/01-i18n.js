@@ -1563,6 +1563,7 @@
     ["sch.keepP", "The next weeks can then be filled from it in one press. The usual week kept before is replaced.", "Les semaines suivantes pourront alors être remplies d'un seul geste. La semaine habituelle gardée avant est remplacée.", "Apre sa, ou ka ranpli semèn k ap vini yo ak yon sèl peze. Semèn abityèl ou te kenbe anvan an ranplase."],
     ["sch.kept", "This week is now the usual week.", "Cette semaine est maintenant la semaine habituelle.", "Semèn sa a se semèn abityèl la kounye a."],
     ["sch.swapOpen", "A swap is asked", "Un échange est demandé", "Yo mande yon boukantaj"],
+    ["sch.swapShort", "Swap", "Échange", "Boukantaj"],
     ["sch.hours", "Hours", "Heures", "Lè"],
     ["sch.noneDay", "No shift", "Aucun service", "Pa gen sèvis"],
     ["sch.mineH", "Your shifts", "Vos services", "Sèvis ou yo"],

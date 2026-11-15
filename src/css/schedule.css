@@ -50,12 +50,13 @@
 .sch-chip.is-absent { box-shadow: inset 3px 0 0 var(--danger), var(--pill); }
 .sch-chip.is-absent .sch-mark { background: var(--danger-soft); color: var(--danger); }
 .sch-chip.swapping { border-style: dashed; }
-.sch-swap { position: absolute; top: 5px; right: 6px; color: var(--pri-text); }
-.sch-swap .ico { width: 13px; height: 13px; }
+.sch-mark.sch-swap { display: inline-flex; align-items: center; gap: 3px; background: rgba(var(--pri-rgb), .1); color: var(--pri-text); }
+.sch-swap .ico { width: 11px; height: 11px; }
 .sch-add { display: inline-flex; align-items: center; justify-content: center; width: 100%; height: 26px; padding: 0; border-radius: 9px; cursor: pointer;
   color: var(--muted); background: transparent; border: 1px dashed var(--line-2); opacity: .55; transition: opacity .15s var(--ease), color .15s var(--ease); }
 .sch-add .ico { width: 14px; height: 14px; }
 .sch-cell:hover .sch-add, .sch-add:focus-visible { opacity: 1; color: var(--pri-text); border-color: rgba(var(--pri-rgb), .45); }
+/* a day that already has a shift has no plus key: a second shift that day is added with Add a shift, at the top */
 
 /* ---------- the week day by day, for a phone ---------- */
 .sch-days { display: none; flex-direction: column; gap: 10px; margin-bottom: 16px; }

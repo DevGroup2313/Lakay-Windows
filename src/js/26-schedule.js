@@ -96,7 +96,7 @@
     var kids = [h("b", null, tm(sl.day, sl.from)), h("small", null, t("sch.until", { t: tm(sl.day, sl.to) }))];
     if (sl.note) kids.push(h("small.sch-note", null, sl.note));
     if (m) kids.push(h("span.sch-mark", null, m.text));
-    if (sw) kids.push(h("span.sch-swap", { "aria-hidden": "true" }, U.icon("swap")));
+    if (sw) kids.push(h("span.sch-mark.sch-swap", null, [U.icon("swap"), t("sch.swapShort")]));
     return h("button.sch-chip" + (mine ? ".mine" : "") + (m ? m.cls : "") + (sw ? ".swapping" : ""), { type: "button", "data-slot": sl.id, title: title, "aria-label": title,
       onclick: function (e) { e.stopPropagation(); if (lead && sl.day >= U.dayKey()) S.slotForm(sl); else if (can) S.askForm(sl); else details(sl); } }, kids);
   }
@@ -119,7 +119,7 @@
         var cells = ds.map(function (d) {
           var k = U.dayKey(d), list = all.filter(function (x) { return x.user === u.id && x.day === k; });
           list.forEach(function (x) { mins += B.slotMins(x); });
-          var add = lead && k >= today ? h("button.sch-add", { type: "button", "aria-label": t("sch.addFor", { name: u.name, day: dayName(k) }), title: t("sch.add"), onclick: function () { S.slotForm(null, { user: u.id, day: k }); } }, U.icon("plus")) : null;
+          var add = lead && k >= today && !list.length ? h("button.sch-add", { type: "button", "aria-label": t("sch.addFor", { name: u.name, day: dayName(k) }), title: t("sch.add"), onclick: function () { S.slotForm(null, { user: u.id, day: k }); } }, U.icon("plus")) : null;
           return h("td.sch-cell" + (k === today ? ".today" : "") + (k < today ? ".past" : ""), { "data-day": k, "data-person": u.id }, list.map(function (x) { return chip(x, lead); }).concat([add]));
         });
         return h("tr" + (u.id === B.user.id ? ".me" : ""), { "data-person": u.id }, [h("th.sch-person", { scope: "row", title: ui.personTag(u) }, [h("b", null, u.name), h("small", null, t("people.id", { n: B.numberOf(u) }))])]
