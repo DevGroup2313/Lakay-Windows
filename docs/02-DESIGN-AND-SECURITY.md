@@ -198,6 +198,17 @@ has agreed and someone with the team's hours has approved, and it is checked aga
 still theirs, still to come, and no one would hold two at once). No one approves their own request, the owner aside.
 The time clock is never changed by the schedule: "late" and "missed" are read from the clock's own records.
 
+## 6d. Earnings, providers and pay (Build 21)
+
+How each provider settles (`prov`), each settlement (`settle`), each statement checked (`stmt`), the pay settings
+(`payset`), each person's rates (`rate`) and each period marked paid (`paid`) are sealed records like every other, and
+every change is a ledger line with the person who made it. Nothing is erased: a settlement or a period marked paid is
+voided with a reason and stays in the books. What is held for a provider is never typed in; it is worked out from the
+log of transfers and top-ups and the settlements, so a statement can be checked against it, and the check is kept.
+Only the owner says how a provider settles. "Pay" is a kind of access no level holds and only the owner gives. No one
+sets their own rate, marks their own pay paid, or undoes it, the owner aside (the owner has no pay in Lakay). Verify
+replays every settlement and every period marked paid against the ledger. During an exercise none of this is written.
+
 ## 7. Protection against attacks and malware
 
 - **No code from outside.** The app's page carries all its own code. A Content Security Policy forbids scripts and
@@ -264,6 +275,13 @@ Encryption protects data at rest and in transit. It cannot protect against every
 - Emporium does not file taxes, move money or replace the provider systems of RIA, CAM, Unitransfer or Boss Revolution.
 - **A leader's limits are kept by Lakay, like every person's.** The books refuse what a leader may not do, but anyone
   who holds a key holds the Store Key. Give The people and Backups only to someone you would trust with the store.
+- **Pay in Lakay is an estimate**, from the time clock at the rates set, before taxes and deductions. Lakay does not
+  do payroll taxes, withholding or filings, and it does not know the overtime rules where the store is. It starts with
+  overtime after 40 hours in a week at one and a half times; the owner should confirm what applies with an accountant
+  or the labour office. The rates are kept apart by Lakay like the costs: anyone who holds a key holds the Store Key.
+- **The store's earnings from transfers count only the commissions written.** A cashier cannot write a commission;
+  until someone with the reports writes it from the provider's statement, that entry counts as nothing, and the room
+  says how many there are.
 - **Notes are kept apart by Lakay, not by a key of each person's own.** Every person who can open the books holds the
   Store Key, so someone who signs in and uses a browser's developer tools could, with effort, read another person's
   sealed notes on that device. Lakay never opens or shows them, but the seal itself is shared by everyone with a key.

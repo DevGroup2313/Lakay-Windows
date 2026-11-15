@@ -4,6 +4,28 @@ Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED.
 
 The newest build is first. The build number also shows in Lakay's About.
 
+## Build 21 (15 November 2026): Earnings, settling with each provider, and each person's pay
+
+The owner's answers of 15 November 2026: earnings means both the store's own earnings from transfers, top-ups and bookings (apart from its sales) and each employee's pay; for settling with the providers, "I want the option to do any of them".
+
+- **Earnings, a new room in the menu**, after Schedule, with tabs: My pay, The store, Providers and Pay. Each person sees what their access opens. A cashier sees only their own pay.
+- **The store: earned apart from sales.** For today, this week, last week, this month, last month or this year: the commission on transfers and top-ups, provider by provider, and the fees customers paid (counted as the providers' money, as the reports have done since Build 15). For those who see the costs, it is set beside the profit on sales: earned in all. For those who also see pay: what is left after pay, with the note that pay is an estimate and that rent, power and the goods bought are not counted. Bookings join this when travel bookings come (Build 22).
+- **Commissions written afterwards.** A cashier records a transfer without its commission, which is the store's own figure. Those who see the reports now write it afterwards, from the provider's statement: Write the commissions lists the entries without one. One ledger line holds them all, and a commission already written is never changed this way.
+- **Providers: each one's account, settled the owner's way.** For each provider the store works with: what was taken in and paid out, what was paid to it, and what is still its money in the store's hands (or, when the store paid out more than it took in, what the provider owes the store). The owner says, provider by provider, how it settles: the provider takes the money from the store's bank, the store deposits it, or the store keeps a prepaid balance with it; and whether the commission is taken off at once or paid to the store each month. The choice can change at any time, and the account is worked out again from the log.
+- **Record a payment:** paid to the provider (taken from the bank, deposited, or added to the prepaid balance), returned to the store, or a commission received. The window starts at what Lakay works out is held or due. A payment cannot be dated in the future. A mistake is voided with a reason and stays in the log, struck through.
+- **Check a statement:** type what the provider's statement says, with a minus sign if the provider owes the store. Lakay says at once whether it matches what it works out, or by how much it differs. The check is kept, and the provider's card shows the last one.
+- **Pay, from the time clock.** Each person's hours, breaks left out, at the rate in force on the day of each shift, with overtime counted by the store's week. Those given "pay" choose how often pay is worked out (each week, every two weeks, twice a month or each month) and the overtime (at first after 40 hours in a week, at one and a half times; another limit, twice the rate, or none). A rate is set from a day on, and earlier shifts keep their rate. A period is marked paid once the pay is handed over, with the amount, how (cash, check, bank transfer or another way) and a reference. Undone with a reason, it stays in the books.
+- **My pay:** each person's own hours, overtime, rate and estimate for the period, and the periods before with what was marked paid.
+- **Pay is an estimate before taxes and deductions.** Lakay does not do payroll taxes, and says so wherever pay shows.
+- **"Pay", a new kind of access**, held by no level: only the owner gives it, and a manager who looks after the people cannot give it. No one sets their own rate, marks their own pay paid, or undoes it. The books refuse it, not only the screens.
+- **The Home** says when the last period's pay is not yet marked paid for someone, and when a prepaid balance is used up.
+- **Nothing of this is written during an exercise.** Verify replays every settlement and every period marked paid, and finds one changed outside the books.
+- **The practice store** settles each provider its own way: RIA by deposit, its commission paid monthly; CAM taken from the bank; Unitransfer by deposit; Boss Revolution a prepaid balance (given $300, then $150). A week ago Jean settled what was owed until then. Pay is weekly with overtime after 40 hours; Marie at $15.50 an hour, Jean at $19.00; last week's pay is marked paid. A practice store made by an earlier build is given these once, as it opens.
+- **A fix in the practice store's sample transfers.** The dice that placed them lost their last digits, so every entry fell at ten in the morning, written by Marie, with no commission. They now fall through the day, and the owner's carry a commission.
+- **Every step is a ledger line:** `provider.setup`, `provider.settled`, `provider.settleVoided`, `provider.checked`, `service.commission`, `pay.settings`, `pay.rate`, `pay.paid`, `pay.voided`.
+- A chapter in the Guidebook, Earnings, providers and pay; three tips. Every word is in English, French and Kreyòl (222 new phrases; the Kreyòl is marked for review by a native speaker).
+- tests/t_build21.js: 77 checks. Every suite passes: 781 checks in all.
+
 ## Build 20 (15 November 2026): the Schedule, with shift swaps approved by a leader
 
 The owner's request: "generate schedules for my employees and be able to manage their shifts and be able to restructure their schedules and swap their shifts or reschedule them when needed".

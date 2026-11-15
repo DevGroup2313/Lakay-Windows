@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-UyVaLRbmlvei/TwvO4AJuz01H1I6XCuDeBa6g68VtbA='; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-+MnVVPL0sZJ3SqhL0TsTvVmVRqnDamr9hwyRl2StWZw='; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#f5f4f8">
 <meta name="application-name" content="Lakay">
-<meta name="lakay-build" content="20">
-<!-- LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt. Build 20 (2026-11-15). -->
+<meta name="lakay-build" content="21">
+<!-- LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt. Build 21 (2026-11-15). -->
 <title>Lakay</title>
 <!-- Lakay's logo, inside the page (the page's own policy shows only pictures it carries): the square tile, filled edge to
      edge with the coin's periwinkle, for the shortcuts a browser makes on a home screen; the round coin, on nothing, for the
@@ -1137,6 +1137,139 @@ button.hx-item:hover { transform: translateY(-1px); box-shadow: var(--pill); }
 .alerts-sec.rail-pop-in .rp-head { margin-bottom: 2px; }
 .alerts-sec.rail-pop-in .rp-head h3 { font: 600 .98rem/1.2 var(--serif); letter-spacing: .05em; }
 .alerts-sec.rail-pop-in .rp-emo { font-size: .95rem; }
+
+/* LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt.
+   Earnings (Build 21): the tabs, the figures, the store's earnings for a period, each provider's account as a white
+   slab, the payments log, and everyone's pay. White slabs and pearl, the periwinkle woven in; paid wears the
+   periwinkle check, money owed the amber, a balance used up the brick, never green. */
+
+/* ---------- the tabs and their panes ---------- */
+.ea-tabs { margin-top: 4px; }
+.ea-pane { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.ea-pane > .card { margin-bottom: 0; }
+.ea-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.ea-sec .card-head { margin-bottom: 6px; }
+.ea-intro { margin: 0; padding: 10px 14px; border-radius: 14px; color: var(--ink-2); line-height: 1.45; background: var(--surface); border: 1px solid var(--line); box-shadow: inset 3px 0 0 rgba(var(--pri-rgb), .55); }
+.ea-empty p { display: flex; align-items: center; gap: 10px; margin: 0; color: var(--ink-2); line-height: 1.45; }
+
+/* ---------- figures ---------- */
+.ea-figs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin: 4px 0 10px; }
+.ea-figs.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ea-fig { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: 4px 16px 6px; border-left: 1px solid var(--line); }
+.ea-figs > .ea-fig:first-child { border-left: 0; padding-left: 2px; }
+.ea-fig-l { color: var(--muted); font: 600 .8rem/1.3 var(--sans); }
+.ea-fig-v { font: 700 1.6rem/1.15 var(--serif); color: var(--ink); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.ea-fig-s { color: var(--muted); font-size: .76rem; line-height: 1.35; }
+.ea-fig.good .ea-fig-v { color: var(--pri-text); }
+.ea-fig.warn .ea-fig-v { color: var(--warn); }
+.ea-fig.bad .ea-fig-v { color: var(--danger); }
+.ea-span { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 0 0 6px; color: var(--ink-2); font-weight: 600; }
+.ea-dot { color: var(--muted); font-weight: 400; }
+
+/* ---------- my pay, period by period ---------- */
+.ea-rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.ea-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 9px 12px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line-soft); }
+.ea-row-t { flex: 1 1 200px; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.ea-row-t b { color: var(--ink); font-weight: 600; line-height: 1.3; }
+.ea-row-t small { color: var(--muted); }
+.ea-row-amt { font: 700 1.05rem/1.2 var(--serif); color: var(--ink); font-variant-numeric: tabular-nums; min-width: 6.5em; text-align: right; }
+.ea-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 999px; white-space: nowrap; font: 600 .74rem/1.6 var(--sans);
+  color: var(--ink-2); background: var(--surface); border: 1px solid var(--line); }
+.ea-chip .ico { width: 12px; height: 12px; }
+.ea-chip.paid { color: var(--pri-text); background: rgba(var(--pri-rgb), .09); border-color: rgba(var(--pri-rgb), .25); }
+.ea-chip.warn { color: var(--warn); background: var(--warn-soft); border-color: transparent; }
+
+/* ---------- the store ---------- */
+.ea-spanbar { display: flex; align-items: center; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; }
+.ea-range { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--ink-2); font-weight: 600; }
+.ea-hero { display: flex; flex-direction: column; gap: 10px; background: linear-gradient(165deg, var(--surface) 55%, rgba(var(--pri-rgb), .07)); }
+.ea-hero-t .label-caps { margin-bottom: 2px; }
+.ea-big { margin: 0; font: 700 2.5rem/1.1 var(--serif); color: var(--pri-text); font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.ea-sub { margin: 2px 0 0; color: var(--ink-2); }
+.ea-sum { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 6px 4px; margin: 2px 0 8px; }
+.ea-sum .ea-fig { border-left: 0; padding: 4px 10px; flex: 1 1 150px; }
+.ea-sum .ea-fig:first-child { padding-left: 2px; }
+.ea-op { font: 600 1.4rem/1 var(--serif); color: var(--muted); padding: 0 4px; margin-top: 1.55rem; }
+
+/* ---------- the providers ---------- */
+.ea-provs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.ea-prov { display: flex; flex-direction: column; gap: 6px; min-width: 0; padding: 14px 16px 14px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--sh-card); }
+.ea-prov.prepaid { background: linear-gradient(180deg, var(--surface), rgba(var(--pri-rgb), .035)); }
+.ea-prov-h { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.ea-prov-h h3 { margin: 0; font: 600 1.15rem/1.25 var(--serif); color: var(--ink); }
+.ea-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.ea-prov .ea-figs { margin: 2px 0 2px; }
+.ea-prov .ea-fig-v { font-size: 1.4rem; }
+.ea-facts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; color: var(--ink-2); font-size: .84rem; line-height: 1.4; }
+.ea-facts li { padding-left: 14px; position: relative; }
+.ea-facts li::before { content: ""; position: absolute; left: 2px; top: .6em; width: 5px; height: 5px; border-radius: 50%; background: rgba(var(--pri-rgb), .45); }
+.ea-facts li.off { color: var(--warn); }
+.ea-facts li.off::before { background: var(--warn); }
+.ea-keys { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.ea-keys .key.sm, .ea-set .key.sm { gap: 5px; padding-left: 9px; padding-right: 10px; }
+.ea-keys .ico, .ea-set .ico { width: 14px; height: 14px; }
+.ea-hint { margin: .3rem 0 .6rem; }
+.dialog .seg + .ea-hint { margin-top: .45rem; }
+.dialog .label-caps + .seg { margin-bottom: .2rem; }
+.ea-check { margin: .3rem 0 .4rem; min-height: 1.4em; font-weight: 600; }
+.ea-check.same { color: var(--pri-text); }
+.ea-check.off { color: var(--warn); }
+#eaLogT tr.voided td { color: var(--muted); }
+#eaLogT tr.voided td:not(:nth-child(3)) { text-decoration: line-through; text-decoration-color: var(--line-2); }
+.ea-void-why { display: block; color: var(--muted); font-style: italic; }
+#eaLogT .row-key .ico { width: 14px; height: 14px; color: var(--muted); }
+#eaLogT .row-key:hover .ico, #eaLogT .row-key:focus-visible .ico { color: var(--danger); }
+
+/* ---------- pay ---------- */
+.ea-set { display: flex; align-items: center; gap: 12px 16px; flex-wrap: wrap; }
+.ea-set-t { flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.ea-set-t .label-caps { margin-bottom: 2px; }
+.ea-set-t b { color: var(--ink); font-weight: 600; }
+.ea-set-t small { color: var(--muted); }
+.ea-set-pick { min-width: 0; flex: 0 1 300px; }
+.ea-pay th[scope="row"] b, .ea-pay td b { display: block; font-weight: 600; color: var(--ink); }
+.ea-pay th[scope="row"] { white-space: normal; }
+.ea-pay small { display: block; color: var(--muted); font-size: .74rem; font-weight: 500; }
+.ea-pay small.warn { color: var(--warn); }
+.ea-pay tfoot th, .ea-pay tfoot td { border-top: 1px solid var(--line-2); border-bottom: 0; color: var(--ink); font-weight: 600; }
+.ea-pay .row-key .ico { width: 14px; height: 14px; }
+.ea-pay .key.sm { white-space: nowrap; }
+.ea-paid { color: var(--pri-text); }
+.ea-ot { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.ea-ot[hidden], .field[hidden] { display: none; }
+#ppOtRow { margin: .6rem 0 .2rem; }
+.ea-hist { margin-top: .6rem; }
+.ea-hist .label-caps { font-size: .9rem; }
+.ea-dl { display: grid; grid-template-columns: minmax(0, 9em) minmax(0, 1fr); gap: 6px 14px; margin: 0; }
+.ea-dl dt { color: var(--muted); font-weight: 600; font-size: .86rem; }
+.ea-dl dd { margin: 0; color: var(--ink); overflow-wrap: anywhere; }
+
+@media (max-width: 900px) { .ea-provs { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 760px) {
+  .ea-figs { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 10px; }
+  .ea-figs > .ea-fig:nth-child(odd) { border-left: 0; padding-left: 2px; }
+  .ea-big { font-size: 2.1rem; }
+  .ea-op { display: none; }
+  .ea-sum .ea-fig { flex: 1 1 40%; }
+  .ea-row-amt { min-width: 0; text-align: left; }
+}
+@media (max-width: 480px) { .ea-ot { grid-template-columns: 1fr; } .ea-dl { grid-template-columns: minmax(0, 1fr); } .ea-dl dd { margin-bottom: 6px; } }
+:root[data-theme="night"] .ea-hero { background: linear-gradient(165deg, var(--surface) 55%, rgba(var(--pri-rgb), .12)); }
+@media print { .ea-keys, .ea-set .key, #eaLogT .row-key { display: none; } .ea-prov, .ea-sec { box-shadow: none; } }
+
+/* ---------- commissions written afterwards ---------- */
+.ea-unknown { align-items: center; flex-wrap: wrap; }
+.ea-unknown > span:not(.emo) { flex: 1 1 260px; }
+.ea-unknown .key.sm { gap: 5px; padding-left: 9px; padding-right: 10px; }
+.ea-unknown .ico { width: 14px; height: 14px; }
+.ea-facts li.off .row-key { color: var(--pri-text); font-size: .84rem; }
+.ea-cm td { vertical-align: middle; }
+.ea-cm-in { width: 7.5em; }
+.ea-cm-in[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 2px var(--danger-soft); }
+/* a word kept for screen readers inside a table that scrolls stays inside it (on a phone, it widened the page) */
+.ea-sec .table-wrap { position: relative; }
+#eaLogT td:first-child, #eaLogT td.num, .ea-pay td.num { white-space: nowrap; }
+.ea-pay .row-key { white-space: nowrap; }
 
 /* LAKAY | Home (Build 13, 12-home-register.js): the shell's own colours, worn the way Ingenium and Carpe Diem wear
    theirs. The large surfaces are white slabs with crisp hairline rims; the cards set inside them and the keys that act
@@ -2594,7 +2727,7 @@ html.drilling .shell { outline: 3px solid rgba(var(--pri-rgb), .35); outline-off
 "use strict";
 
 var E = window.Emporium = window.Emporium || {};
-E.BUILD = { number: "20", date: "2026-11-15" };
+E.BUILD = { number: "21", date: "2026-11-15" };
 
 /* ---------- drawing: every piece of text goes in as text, never as markup ---------- */
 function $(sel, root) { return (root || document).querySelector(sel); }
@@ -2687,6 +2820,8 @@ var ICONS = {
   play: "M8 5.5v13l10.5-6.5z",
   /* the schedule (Build 20): a calendar page */
   calendar: "M4.5 6h15v14h-15zM4.5 10.5h15M8.5 3.5v5M15.5 3.5v5M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01",
+  /* earnings (Build 21): two stacks of coins */
+  coins: "M9 4c3.6 0 6.5 1.1 6.5 2.5S12.6 9 9 9 2.5 7.9 2.5 6.5 5.4 4 9 4zM2.5 6.5V11c0 1.4 2.9 2.5 6.5 2.5M15.5 6.5V9M2.5 11v4.5C2.5 16.9 5.4 18 9 18M15 11c3.6 0 6.5 1.1 6.5 2.5S18.6 16 15 16s-6.5-1.1-6.5-2.5S11.4 11 15 11zM8.5 13.5V18c0 1.4 2.9 2.5 6.5 2.5s6.5-1.1 6.5-2.5v-4.5",
   /* the Author Studio's colours (Build 18): a painter's palette */
   palette: "M12 3.5a8.5 8.5 0 1 0 0 17c1.3 0 1.9-1 1.5-2.1-.5-1.3.4-2.6 1.8-2.6h1.6a3.6 3.6 0 0 0 3.6-3.6C20.5 7.3 16.7 3.5 12 3.5zM7.6 12.2h.01M9.2 8.2h.01M13.7 7.4h.01M16.9 10h.01"
 };
@@ -4422,6 +4557,203 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     ["guide.schedule.b", "Schedule, in the menu, shows the week's shifts: a line for each person and a column for each day. On a phone it shows the week day by day. The arrows move to the week before or after.\nThose given the team's hours plan the week. The plus key in a day adds a shift: who, the day, from and to, and a note if it helps. Press a shift to change it or remove it. Keep as the usual week keeps the week shown as the store's pattern; Fill from the usual week then fills a new week in one press, and Copy the week before does the same from the week just past. Only today and the days to come are filled, and no one is ever given two shifts at once.\nEveryone sees their own shifts at the top. A shift you cannot work: press Ask to swap. Someone may cover it, or you may trade it for one of theirs. They answer first; then a leader approves, and only then do the shifts change hands. No one approves their own request, the owner aside.\nA shift that has begun shows how it went, from the time clock: on time, late by some minutes, not in yet, or missed. Planned and worked sets the hours planned beside the hours the clock counted. The clock itself is never changed by the schedule.", "Planning, dans le menu, montre les services de la semaine : une ligne par personne et une colonne par jour. Sur un téléphone, il montre la semaine jour par jour. Les flèches passent à la semaine d'avant ou d'après.\nCeux qui ont les heures de l'équipe préparent la semaine. La touche plus d'un jour ajoute un service : qui, le jour, de quelle heure à quelle heure, et une note si cela aide. Appuyez sur un service pour le modifier ou le retirer. Garder comme semaine habituelle garde la semaine affichée comme modèle du magasin ; Remplir depuis la semaine habituelle remplit alors une nouvelle semaine d'un seul geste, et Copier la semaine d'avant fait de même depuis la semaine passée. Seuls aujourd'hui et les jours à venir sont remplis, et personne ne reçoit jamais deux services en même temps.\nChacun voit ses propres services en haut. Un service que vous ne pouvez pas faire : appuyez sur Demander un échange. Quelqu'un peut vous remplacer, ou vous pouvez l'échanger contre un des siens. La personne répond d'abord ; puis un responsable approuve, et alors seulement les services changent de mains. Personne n'approuve sa propre demande, sauf le propriétaire.\nUn service commencé montre comment il s'est passé, d'après la pointeuse : à l'heure, en retard de quelques minutes, pas encore là, ou manqué. Prévu et travaillé met les heures prévues à côté des heures comptées par la pointeuse. Le planning ne change jamais la pointeuse elle-même.", "Orè, nan meni an, montre sèvis semèn nan: yon liy pou chak moun ak yon kolòn pou chak jou. Sou yon telefòn, li montre semèn nan jou pa jou. Flèch yo mennen nan semèn anvan an oswa semèn apre a.\nMoun ki gen lè travay ekip la prepare semèn nan. Bouton plis nan yon jou ajoute yon sèvis: ki moun, jou a, soti ki lè rive ki lè, ak yon nòt si sa ede. Peze yon sèvis pou chanje l oswa retire l. Kenbe kòm semèn abityèl kenbe semèn ki parèt la kòm modèl magazen an; Ranpli ak semèn abityèl la ranpli yon nouvo semèn ak yon sèl peze, epi Kopye semèn anvan an fè menm bagay la ak semèn ki sot pase a. Se sèlman jodi a ak jou k ap vini yo ki ranpli, epi pèsonn pa janm resevwa de sèvis an menm tan.\nChak moun wè pwòp sèvis yo anwo a. Yon sèvis ou pa ka fè: peze Mande boukante. Yon moun ka ranplase w, oswa ou ka boukante l ak youn nan sèvis pa l. Moun nan reponn anvan; apre sa yon chèf apwouve, epi se lè sa a sèlman sèvis yo chanje men. Pèsonn pa apwouve pwòp demann li, sof mèt la.\nYon sèvis ki kòmanse montre kijan l te pase, dapre revèy travay la: a lè, an reta kèk minit, poko rive, oswa rate. Prevwa ak travay mete lè ki te prevwa yo bò kote lè revèy la konte. Orè a pa janm chanje revèy travay la li menm."],
     ["guide.schedule.tip", "Plan one good week, keep it as the usual week, and each new week fills in one press.", "Préparez une bonne semaine, gardez-la comme semaine habituelle, et chaque nouvelle semaine se remplit d'un seul geste.", "Prepare yon bon semèn, kenbe l kòm semèn abityèl, epi chak nouvo semèn ap ranpli ak yon sèl peze."]
   );
+  /* Earnings, settling with the providers, and pay (Build 21). The Kreyòl is marked for review by a native speaker. */
+  add(
+    ["room.earnings", "Earnings", "Gains", "Benefis"],
+    ["lede.earnings", "What the store earns apart from its sales, settling with each provider, and everyone's pay from the time clock.", "Ce que le magasin gagne en dehors de ses ventes, les règlements avec chaque fournisseur, et la paie de chacun d'après la pointeuse.", "Sa magazen an fè an deyò vant li yo, regleman ak chak konpayi, ak salè chak moun dapre revèy travay la."],
+    ["tip.earnings.t", "How earnings work", "Comment marchent les gains", "Kijan benefis yo mache"],
+    ["tip.earnings.b", "My pay shows your own hours and an estimate of your pay, before taxes. The store shows what the store earned apart from its sales: the commission on transfers and top-ups. Providers shows what is still each provider's money in the store's hands, and lets you record a payment or check a statement. Pay is for those the owner allows: rates, hours, and marking pay as paid.", "Ma paie montre vos propres heures et une estimation de votre paie, avant impôts. Le magasin montre ce que le magasin a gagné en dehors de ses ventes : la commission sur les transferts et les recharges. Fournisseurs montre ce qui est encore l'argent de chaque fournisseur entre les mains du magasin, et permet de noter un paiement ou de vérifier un relevé. La paie est pour les personnes autorisées par le propriétaire : les taux, les heures, et la paie marquée comme payée.", "Salè mwen montre pwòp lè travay ou ak yon estimasyon salè ou, anvan taks. Magazen an montre sa magazen an fè an deyò vant li yo: komisyon sou transfè ak rechaj yo. Konpayi yo montre sa ki toujou lajan chak konpayi nan men magazen an, epi li kite w note yon peman oswa verifye yon relve. Salè yo se pou moun mèt la pèmèt: to yo, lè travay yo, ak make salè a peye."],
+    ["ea.tab.mine", "My pay", "Ma paie", "Salè mwen"], ["ea.tab.store", "The store", "Le magasin", "Magazen an"],
+    ["ea.tab.providers", "Providers", "Fournisseurs", "Konpayi yo"], ["ea.tab.pay", "Pay", "Paie", "Salè yo"],
+    ["ea.perHour", "{m} an hour", "{m} de l'heure", "{m} pa èdtan"],
+    ["ea.otNone", "No overtime rate.", "Pas de taux d'heures supplémentaires.", "Pa gen to pou lè siplemantè."],
+    ["ea.otRule", "Overtime after {n} hours in a week, at {x}.", "Heures supplémentaires après {n} heures dans la semaine, à {x}.", "Lè siplemantè apre {n} è nan yon semèn, a {x}."],
+    ["ea.x150", "one and a half times the rate", "une fois et demie le taux", "yon fwa edmi to a"],
+    ["ea.x200", "twice the rate", "deux fois le taux", "de fwa to a"],
+    ["ea.xPct", "{n}% of the rate", "{n} % du taux", "{n}% to a"],
+    ["ea.err.amount", "Type an amount, such as 120.00.", "Tapez un montant, par exemple 120,00.", "Tape yon montan, tankou 120.00."],
+    ["ea.err.future", "Choose today or a day gone by.", "Choisissez aujourd'hui ou un jour passé.", "Chwazi jodi a oswa yon jou ki pase."],
+    ["ea.err.already", "This period is already marked paid for this person.", "Cette période est déjà marquée payée pour cette personne.", "Peryòd sa a deja make peye pou moun sa a."],
+    ["ea.err.rate", "Type a rate per hour, such as 15.50.", "Tapez un taux horaire, par exemple 15,50.", "Tape yon to pa èdtan, tankou 15.50."],
+    ["ea.err.overtime", "Overtime begins after 1 to 80 hours in a week.", "Les heures supplémentaires commencent après 1 à 80 heures dans la semaine.", "Lè siplemantè kòmanse apre 1 a 80 è nan yon semèn."],
+    ["ea.err.self", "No one sets their own pay. The owner, or another person allowed, does it.", "Personne ne fixe sa propre paie. Le propriétaire, ou une autre personne autorisée, s'en charge.", "Pèsonn pa fikse pwòp salè pa l. Mèt la, oswa yon lòt moun ki gen dwa, fè l."],
+    ["ea.err.note", "Say why, in a few words.", "Dites pourquoi, en quelques mots.", "Di poukisa, an kèk mo."],
+    ["ea.err.period", "This period is not valid.", "Cette période n'est pas valide.", "Peryòd sa a pa valab."],
+    ["ea.mine.now", "This pay period", "Cette période de paie", "Peryòd salè sa a"],
+    ["ea.period.weekly", "Paid every week", "Payé chaque semaine", "Peye chak semèn"],
+    ["ea.period.biweekly", "Paid every two weeks", "Payé toutes les deux semaines", "Peye chak de semèn"],
+    ["ea.period.semimonthly", "Paid twice a month", "Payé deux fois par mois", "Peye de fwa pa mwa"],
+    ["ea.period.monthly", "Paid every month", "Payé chaque mois", "Peye chak mwa"],
+    ["ea.hours", "Hours", "Heures", "Lè travay"], ["ea.ot", "Overtime", "Heures sup.", "Lè siplemantè"],
+    ["ea.shifts", "{n} shifts", "{n} services", "{n} sèvis"], ["ea.shifts1", "1 shift", "1 service", "1 sèvis"],
+    ["ea.rate", "Rate", "Taux", "To"], ["ea.estimate", "Estimate", "Estimation", "Estimasyon"],
+    ["ea.beforeTax", "before taxes and deductions", "avant impôts et retenues", "anvan taks ak retni"],
+    ["ea.mine.open", "You are on the clock now. This shift counts once you clock out.", "Vous êtes en service. Ce service compte dès que vous pointez la sortie.", "Ou nan sèvis kounye a. Sèvis sa a konte depi ou make sòti."],
+    ["ea.mine.noRate", "Your rate has not been set in Lakay yet. Your hours are counted; ask the owner about the rate.", "Votre taux n'est pas encore fixé dans Lakay. Vos heures sont comptées ; demandez le taux au propriétaire.", "To ou poko fikse nan Lakay. Lè travay ou yo konte; mande mèt la pou to a."],
+    ["ea.mine.honest", "An estimate from the time clock, breaks left out. {rule} Your pay slip is what counts.", "Une estimation d'après la pointeuse, pauses déduites. {rule} Votre bulletin de paie fait foi.", "Yon estimasyon dapre revèy travay la, san poz yo. {rule} Fich salè ou se li ki konte."],
+    ["ea.mine.past", "Period by period", "Période par période", "Peryòd pa peryòd"],
+    ["ea.mine.slip", "In Lakay, only you, the owner and the people the owner allows see your pay.", "Dans Lakay, seuls vous, le propriétaire et les personnes autorisées par le propriétaire voient votre paie.", "Nan Lakay, se sèlman ou menm, mèt la ak moun mèt la pèmèt ki wè salè ou."],
+    ["ea.thisPeriod", "This period", "Cette période", "Peryòd sa a"], ["ea.lastPeriod", "Last period", "Période précédente", "Dènye peryòd"],
+    ["ea.otShort", "{d} overtime", "{d} en heures sup.", "{d} siplemantè"],
+    ["ea.paidOn", "Paid {m} · {how} · {d}", "Payé {m} · {how} · {d}", "Peye {m} · {how} · {d}"],
+    ["ea.paidShort", "{m} · {how}", "{m} · {how}", "{m} · {how}"],
+    ["ea.inProgress", "In progress", "En cours", "Ap kontinye"], ["ea.notPaid", "Not marked paid yet", "Pas encore marqué payé", "Poko make peye"],
+    ["ea.noHours", "No hours", "Aucune heure", "Pa gen lè"],
+    ["ea.wm.cash", "Cash", "Espèces", "Kach"], ["ea.wm.check", "Check", "Chèque", "Chèk"],
+    ["ea.wm.transfer", "Bank transfer", "Virement", "Virman labank"], ["ea.wm.other", "Other", "Autre", "Lòt"],
+    ["ea.spanH", "Period", "Période", "Peryòd"],
+    ["ea.apart", "Earned apart from sales", "Gagné en dehors des ventes", "Sa n fè an deyò vant yo"],
+    ["ea.apartSub", "Commission on {n} transfers and top-ups", "Commission sur {n} transferts et recharges", "Komisyon sou {n} transfè ak rechaj"],
+    ["ea.apartSub1", "Commission on 1 transfer or top-up", "Commission sur 1 transfert ou recharge", "Komisyon sou 1 transfè oswa rechaj"],
+    ["ea.apartNone", "No transfers or top-ups in this period.", "Aucun transfert ni recharge sur cette période.", "Pa gen transfè ni rechaj nan peryòd sa a."],
+    ["ea.unknown", "{n} entries have no commission written; they count as nothing here.", "{n} opérations n'ont pas de commission notée ; elles comptent pour rien ici.", "{n} operasyon pa gen komisyon ekri; yo pa konte isit la."],
+    ["ea.unknown1", "1 entry has no commission written; it counts as nothing here.", "1 opération n'a pas de commission notée ; elle compte pour rien ici.", "1 operasyon pa gen komisyon ekri; li pa konte isit la."],
+    ["ea.feesNote", "The fees customers pay are counted as the providers' money, as in the reports. Only the commission is the store's.", "Les frais payés par les clients comptent comme l'argent des fournisseurs, comme dans les rapports. Seule la commission est au magasin.", "Frè kliyan yo peye konte kòm lajan konpayi yo, menm jan ak nan rapò yo. Se komisyon an sèlman ki pou magazen an."],
+    ["ea.allH", "With the sales", "Avec les ventes", "Ak vant yo"],
+    ["ea.salesProfit", "Profit on sales", "Bénéfice sur les ventes", "Benefis sou vant yo"],
+    ["ea.salesN", "{n} sales", "{n} ventes", "{n} vant"], ["ea.salesN1", "1 sale", "1 vente", "1 vant"],
+    ["ea.apartShort", "Apart from sales", "Hors ventes", "An deyò vant"], ["ea.allEarned", "Earned in all", "Gagné en tout", "Total benefis"],
+    ["ea.afterH", "After pay", "Après la paie", "Apre salè yo"], ["ea.payEst", "Pay, estimated", "Paie estimée", "Salè, estimasyon"],
+    ["ea.afterPay", "Left after pay", "Reste après la paie", "Sa ki rete apre salè"],
+    ["ea.someNoRate", "{n} shifts have no rate set, so they are not counted in the pay.", "{n} services n'ont pas de taux : ils ne comptent pas dans la paie.", "{n} sèvis pa gen to: yo pa konte nan salè a."],
+    ["ea.afterNote", "Pay is an estimate from the time clock, before taxes. Rent, power and the goods you buy are not counted here.", "La paie est une estimation d'après la pointeuse, avant impôts. Le loyer, l'électricité et la marchandise achetée ne sont pas comptés ici.", "Salè a se yon estimasyon dapre revèy travay la, anvan taks. Lwaye, kouran ak machandiz ou achte pa konte isit la."],
+    ["ea.provNone", "No transfers or top-ups yet. Once the store records some, each provider has its account here.", "Aucun transfert ni recharge pour l'instant. Dès que le magasin en note, chaque fournisseur a son compte ici.", "Poko gen transfè ni rechaj. Depi magazen an note kèk, chak konpayi ap gen kont li isit la."],
+    ["ea.provIntro", "What is still each provider's money in the store's hands, worked out from every transfer, top-up and payment written in the books.", "Ce qui est encore l'argent de chaque fournisseur entre les mains du magasin, calculé à partir de chaque transfert, recharge et paiement écrit dans les livres.", "Sa ki toujou lajan chak konpayi nan men magazen an, kalkile ak chak transfè, rechaj ak peman ki ekri nan liv yo."],
+    ["ea.balance", "Prepaid balance left", "Solde prépayé restant", "Balans peye davans ki rete"],
+    ["ea.balanceOut", "Used up: add to it before the next top-up.", "Épuisé : alimentez-le avant la prochaine recharge.", "Fini: mete ladan l anvan pwochen rechaj la."],
+    ["ea.balanceSub", "What the store paid in, less what was used", "Ce que le magasin a versé, moins ce qui a été utilisé", "Sa magazen an te peye, mwens sa ki itilize"],
+    ["ea.held", "Held for {p}", "Gardé pour {p}", "Kenbe pou {p}"],
+    ["ea.heldSub", "Still the provider's money, to be paid", "Encore l'argent du fournisseur, à régler", "Toujou lajan konpayi an, pou peye"],
+    ["ea.owesStore", "{p} owes the store", "{p} doit au magasin", "{p} dwe magazen an"],
+    ["ea.owesSub", "The store paid more than it collected", "Le magasin a payé plus qu'il n'a encaissé", "Magazen an peye plis pase sa l te resevwa"],
+    ["ea.comDue", "Commission due to the store", "Commission due au magasin", "Komisyon yo dwe magazen an"],
+    ["ea.comDueSub", "{m} received so far", "{m} reçus jusqu'ici", "{m} resevwa deja"],
+    ["ea.comKept", "Commission kept", "Commission gardée", "Komisyon kenbe"],
+    ["ea.comKeptSub", "In all, from the first entry", "En tout, depuis la première opération", "Antou, depi premye operasyon an"],
+    ["ea.tookIn", "Took in {a} in {n} entries", "Encaissé {a} en {n} opérations", "Resevwa {a} nan {n} operasyon"],
+    ["ea.paidOut", "Paid out {b} in {n} entries", "Versé {b} en {n} opérations", "Peye {b} nan {n} operasyon"],
+    ["ea.inOut", "Took in {a}, paid out {b}, in {n} entries", "Encaissé {a}, versé {b}, en {n} opérations", "Resevwa {a}, peye {b}, nan {n} operasyon"],
+    ["ea.lastReturned", "Last returned on {d} · {m} in all", "Dernier retour le {d} · {m} en tout", "Dènye fwa yo remèt {d} · {m} antou"],
+    ["ea.lastPaid", "Last paid on {d} · {m} in all", "Dernier paiement le {d} · {m} en tout", "Dènye peman {d} · {m} antou"],
+    ["ea.lastAdded", "Last added on {d} · {m} in all", "Dernier versement le {d} · {m} en tout", "Dènye fwa yo mete {d} · {m} antou"],
+    ["ea.neverPaid", "No payment written yet", "Aucun paiement écrit pour l'instant", "Poko gen peman ekri"],
+    ["ea.checkOk", "Statement checked on {d}: it matched", "Relevé vérifié le {d} : il concordait", "Relve verifye {d}: li te matche"],
+    ["ea.checkOff", "Statement checked on {d}: off by {m}", "Relevé vérifié le {d} : écart de {m}", "Relve verifye {d}: diferans {m}"],
+    ["ea.record", "Record a payment", "Noter un paiement", "Note yon peman"], ["ea.check", "Check a statement", "Vérifier un relevé", "Verifye yon relve"],
+    ["ea.setup", "How it settles", "Mode de règlement", "Kijan pou regle"],
+    ["ea.notSet", "How it settles: not set", "Règlement : non défini", "Regleman: poko fikse"],
+    ["ea.how.sweep", "Takes it from the bank", "Prélève à la banque", "Pran l labank"],
+    ["ea.how.deposit", "The store deposits", "Le magasin dépose", "Magazen an depoze"],
+    ["ea.how.prepaid", "Prepaid balance", "Solde prépayé", "Balans peye davans"],
+    ["ea.com.deducted", "Commission taken off at once", "Commission retenue tout de suite", "Komisyon retire touswit"],
+    ["ea.com.monthly", "Commission paid monthly", "Commission payée chaque mois", "Komisyon peye chak mwa"],
+    ["ea.howH", "How the money goes to the provider", "Comment l'argent va au fournisseur", "Kijan lajan an ale bay konpayi an"],
+    ["ea.comH", "How the store gets its commission", "Comment le magasin reçoit sa commission", "Kijan magazen an resevwa komisyon li"],
+    ["ea.howD.sweep", "The provider takes what it is owed from the store's bank account, often each day or each week.", "Le fournisseur prélève ce qui lui est dû sur le compte bancaire du magasin, souvent chaque jour ou chaque semaine.", "Konpayi an pran sa yo dwe l nan kont labank magazen an, souvan chak jou oswa chak semèn."],
+    ["ea.howD.deposit", "The store pays the provider itself: a deposit at the bank, or a transfer.", "Le magasin paie lui-même le fournisseur : un dépôt à la banque, ou un virement.", "Magazen an peye konpayi an li menm: yon depo labank, oswa yon virman."],
+    ["ea.howD.prepaid", "The store pays in advance, and each top-up or transfer uses the balance.", "Le magasin paie d'avance, et chaque recharge ou transfert utilise le solde.", "Magazen an peye davans, epi chak rechaj oswa transfè itilize balans lan."],
+    ["ea.comD.deducted", "The store keeps its commission when it pays the provider, so it pays less.", "Le magasin garde sa commission quand il paie le fournisseur : il paie donc moins.", "Magazen an kenbe komisyon li lè l peye konpayi an, kidonk li peye mwens."],
+    ["ea.comD.monthly", "The store pays the provider in full, and the provider pays the commission each month.", "Le magasin paie le fournisseur en entier, et le fournisseur paie la commission chaque mois.", "Magazen an peye konpayi an tout, epi konpayi an peye komisyon an chak mwa."],
+    ["ea.setupNotePh", "A note, such as the day it settles", "Une note, par exemple le jour du règlement", "Yon nòt, tankou jou regleman an"],
+    ["ea.setupH", "How {p} settles", "Règlement avec {p}", "Kijan pou regle ak {p}"],
+    ["ea.setupSaved", "Saved. The account is worked out again.", "Enregistré. Le compte est recalculé.", "Anrejistre. Kont lan kalkile ankò."],
+    ["ea.kindH", "What happened", "Ce qui s'est passé", "Sa k te pase"],
+    ["ea.k.paid.sweep", "Taken from the bank", "Prélevé à la banque", "Pran labank"],
+    ["ea.k.paid.deposit", "Paid to the provider", "Payé au fournisseur", "Peye konpayi an"],
+    ["ea.k.paid.prepaid", "Added to the balance", "Ajouté au solde", "Mete nan balans lan"],
+    ["ea.k.returned", "Returned to the store", "Rendu au magasin", "Remèt magazen an"],
+    ["ea.k.commission", "Commission received", "Commission reçue", "Komisyon resevwa"],
+    ["ea.amount", "Amount", "Montant", "Montan"], ["ea.day", "Day", "Jour", "Jou"], ["ea.ref", "Reference", "Référence", "Referans"], ["ea.note", "Note", "Note", "Nòt"],
+    ["ea.refHint", "The deposit slip, the bank's reference, or the provider's.", "Le bordereau de dépôt, la référence de la banque, ou celle du fournisseur.", "Fich depo a, referans labank lan, oswa referans konpayi an."],
+    ["ea.refPh", "Such as DEP-1115", "Par exemple DEP-1115", "Tankou DEP-1115"],
+    ["ea.hint.held", "Lakay works out {m} held for {p} now.", "Lakay calcule {m} gardés pour {p} maintenant.", "Lakay kalkile {m} kenbe pou {p} kounye a."],
+    ["ea.hint.prepaid", "The balance left is {m}.", "Le solde restant est de {m}.", "Balans ki rete a se {m}."],
+    ["ea.hint.comDue", "Commission due to the store: {m}.", "Commission due au magasin : {m}.", "Komisyon yo dwe magazen an: {m}."],
+    ["ea.hint.comAtOnce", "This provider's commission is taken off at once. Write here only a commission it paid apart.", "La commission de ce fournisseur est retenue tout de suite. N'écrivez ici qu'une commission payée à part.", "Komisyon konpayi sa a retire touswit. Ekri isit la sèlman yon komisyon li peye apa."],
+    ["ea.hint.returned", "Money {p} gave back to the store, such as a refund or a correction.", "L'argent que {p} a rendu au magasin, par exemple un remboursement ou une correction.", "Lajan {p} remèt magazen an, tankou yon ranbousman oswa yon koreksyon."],
+    ["ea.settleH", "A payment with {p}", "Un paiement avec {p}", "Yon peman ak {p}"],
+    ["ea.settled", "Written. {p}'s account is up to date.", "Écrit. Le compte de {p} est à jour.", "Ekri. Kont {p} ajou."],
+    ["ea.checkH", "Check {p}'s statement", "Vérifier le relevé de {p}", "Verifye relve {p}"],
+    ["ea.check.intro", "Lakay works out that the store holds {m} for {p}. Type what {p}'s statement says the store owes.", "Lakay calcule que le magasin garde {m} pour {p}. Tapez ce que le relevé de {p} dit que le magasin doit.", "Lakay kalkile magazen an kenbe {m} pou {p}. Tape sa relve {p} di magazen an dwe."],
+    ["ea.check.introPre", "Lakay works out that {m} is left of the prepaid balance with {p}. Type the balance {p}'s statement shows.", "Lakay calcule qu'il reste {m} du solde prépayé chez {p}. Tapez le solde que montre le relevé de {p}.", "Lakay kalkile rete {m} nan balans peye davans ak {p}. Tape balans relve {p} montre."],
+    ["ea.check.says", "The statement says the store owes", "Le relevé dit que le magasin doit", "Relve a di magazen an dwe"],
+    ["ea.check.saysPre", "The statement shows a balance of", "Le relevé montre un solde de", "Relve a montre yon balans"],
+    ["ea.check.minus", "If the provider owes the store, put a minus sign first.", "Si le fournisseur doit au magasin, mettez d'abord un signe moins.", "Si konpayi an dwe magazen an, mete yon siy mwens devan."],
+    ["ea.check.same", "It matches what Lakay works out.", "Cela correspond au calcul de Lakay.", "Li matche ak sa Lakay kalkile."],
+    ["ea.check.diff", "It differs from Lakay by {m}.", "Écart de {m} avec Lakay.", "Li diferan de Lakay pa {m}."],
+    ["ea.check.save", "Keep the check", "Garder la vérification", "Kenbe verifikasyon an"],
+    ["ea.check.okToast", "The statement matches. The check is kept.", "Le relevé concorde. La vérification est gardée.", "Relve a matche. Verifikasyon an kenbe."],
+    ["ea.check.offToast", "The statement is off by {m}. The check is kept, so it can be looked into.", "Le relevé a un écart de {m}. La vérification est gardée, pour qu'on puisse l'examiner.", "Relve a gen yon diferans {m}. Verifikasyon an kenbe pou yo ka gade l."],
+    ["ea.logH", "Payments with the providers", "Paiements avec les fournisseurs", "Peman ak konpayi yo"],
+    ["ea.logNone", "No payment written yet.", "Aucun paiement écrit pour l'instant.", "Poko gen peman ekri."],
+    ["ea.logMore", "And {n} earlier.", "Et {n} plus anciens.", "Ak {n} pi ansyen."],
+    ["ea.when", "When", "Quand", "Ki lè"], ["ea.what", "What", "Quoi", "Kisa"], ["ea.by", "By", "Par", "Pa"], ["ea.void", "Void", "Annuler", "Anile"],
+    ["ea.voidT", "Void this payment", "Annuler ce paiement", "Anile peman sa a"],
+    ["ea.voidQ", "Void {m} with {p}, on {d}? It stays in the books, struck through, with the reason.", "Annuler {m} avec {p}, le {d} ? Il reste dans les livres, barré, avec la raison.", "Anile {m} ak {p}, {d}? Li rete nan liv yo, bare, ak rezon an."],
+    ["ea.voidWhy", "Why", "Pourquoi", "Poukisa"], ["ea.voidPh", "Such as: typed twice", "Par exemple : tapé deux fois", "Tankou: tape de fwa"],
+    ["ea.voided", "Voided: {why}", "Annulé : {why}", "Anile: {why}"],
+    ["ea.voidedToast", "Voided. The account is worked out again.", "Annulé. Le compte est recalculé.", "Anile. Kont lan kalkile ankò."],
+    ["ea.paidH", "How pay works", "Fonctionnement de la paie", "Kijan salè a mache"],
+    ["ea.periodPick", "Pay period", "Période de paie", "Peryòd salè"], ["ea.change", "Change", "Modifier", "Chanje"],
+    ["ea.noStaff", "No one works here yet but the owner. Add the staff in Team.", "Personne d'autre que le propriétaire ne travaille ici pour l'instant. Ajoutez le personnel dans Équipe.", "Poko gen pèsonn ki travay isit la apa mèt la. Ajoute anplwaye yo nan Ekip."],
+    ["ea.setRate", "Set a rate", "Fixer un taux", "Fikse yon to"], ["ea.markPaid", "Mark paid", "Marquer payé", "Make peye"],
+    ["ea.open", "{n} shifts still open", "{n} services encore ouverts", "{n} sèvis toujou louvri"], ["ea.open1", "1 shift still open", "1 service encore ouvert", "1 sèvis toujou louvri"],
+    ["ea.noRate", "{n} shifts with no rate", "{n} services sans taux", "{n} sèvis san to"], ["ea.noRate1", "1 shift with no rate", "1 service sans taux", "1 sèvis san to"],
+    ["ea.payH", "Pay for {p}", "Paie {p}", "Salè {p}"],
+    ["ea.person", "Person", "Personne", "Moun"], ["ea.paidCol", "Paid", "Payé", "Peye"], ["ea.total", "Total", "Total", "Total"],
+    ["ea.paidSum", "{m} paid", "{m} payés", "{m} peye"],
+    ["ea.openNote", "A shift still open counts once the person clocks out.", "Un service encore ouvert compte dès que la personne pointe la sortie.", "Yon sèvis ki toujou louvri ap konte depi moun nan make sòti."],
+    ["ea.payHonest", "An estimate from the time clock, breaks left out, before taxes and deductions. Lakay does not do payroll taxes: your payroll service or accountant does. Check the overtime rules that apply to your store.", "Une estimation d'après la pointeuse, pauses déduites, avant impôts et retenues. Lakay ne calcule pas les charges sur les salaires : votre service de paie ou votre comptable s'en charge. Vérifiez les règles d'heures supplémentaires qui s'appliquent à votre magasin.", "Yon estimasyon dapre revèy travay la, san poz yo, anvan taks ak retni. Lakay pa kalkile taks sou salè: sèvis pewòl ou oswa kontab ou fè l. Verifye règ lè siplemantè ki aplike pou magazen ou."],
+    ["ea.setH", "How pay is worked out", "Calcul de la paie", "Kijan salè a kalkile"],
+    ["ea.periodH", "How often", "À quelle fréquence", "Chak konbyen tan"],
+    ["ea.anchor", "First day of a two-week period", "Premier jour d'une période de deux semaines", "Premye jou yon peryòd de semèn"],
+    ["ea.anchorHint", "Any first day of a pay period, past or to come.", "N'importe quel premier jour d'une période de paie, passé ou à venir.", "Nenpòt premye jou yon peryòd salè, pase oswa k ap vini."],
+    ["ea.otOn", "Overtime at a higher rate", "Heures supplémentaires à un taux plus élevé", "Lè siplemantè a yon to ki pi wo"],
+    ["ea.otOnD", "Hours past a limit in one week are paid at more than the rate.", "Les heures au-delà d'une limite dans la semaine sont payées plus que le taux.", "Lè ki depase yon limit nan yon semèn peye plis pase to a."],
+    ["ea.otAfter", "After how many hours in a week", "Après combien d'heures dans la semaine", "Apre konbyen è nan yon semèn"],
+    ["ea.otTimes", "Overtime rate", "Taux des heures supplémentaires", "To lè siplemantè"],
+    ["ea.otCheck", "Lakay starts with overtime after 40 hours in a week, at one and a half times the rate. Check what applies to your store.", "Lakay commence avec des heures supplémentaires après 40 heures dans la semaine, à une fois et demie le taux. Vérifiez ce qui s'applique à votre magasin.", "Lakay kòmanse ak lè siplemantè apre 40 è nan yon semèn, a yon fwa edmi to a. Verifye sa ki aplike pou magazen ou."],
+    ["ea.setSaved", "Saved. Pay is worked out again.", "Enregistré. La paie est recalculée.", "Anrejistre. Salè a kalkile ankò."],
+    ["ea.rateH", "{name}'s rate", "Taux de {name}", "To {name}"],
+    ["ea.rateField", "Rate per hour", "Taux horaire", "To pa èdtan"],
+    ["ea.rateHint", "Before taxes, such as 15.50.", "Avant impôts, par exemple 15,50.", "Anvan taks, tankou 15.50."],
+    ["ea.rateFrom", "From", "À partir du", "Apati"],
+    ["ea.rateFromHint", "Shifts from this day on use this rate. Earlier shifts keep the rate they had.", "Les services à partir de ce jour utilisent ce taux. Les services plus anciens gardent leur taux.", "Sèvis apati jou sa a sèvi ak to sa a. Sèvis ki te avan yo kenbe to yo te genyen an."],
+    ["ea.rateHist", "Rates so far", "Taux jusqu'ici", "To yo jiska prezan"],
+    ["ea.rateFromLine", "From {d}: {m}", "Depuis le {d} : {m}", "Apati {d}: {m}"],
+    ["ea.rateSaved", "{name}'s rate is saved.", "Le taux de {name} est enregistré.", "To {name} anrejistre."],
+    ["ea.markH", "Pay for {name}", "Paie de {name}", "Salè {name}"],
+    ["ea.markIntro", "{name} worked {d}, {p}. Lakay's estimate is {m}.", "{name} a travaillé {d} {p}. L'estimation de Lakay est de {m}.", "{name} travay {d}, {p}. Estimasyon Lakay se {m}."],
+    ["ea.notOver", "This period is not over yet.", "Cette période n'est pas encore finie.", "Peryòd sa a poko fini."],
+    ["ea.amountPaid", "Amount paid", "Montant payé", "Montan peye"],
+    ["ea.amountHint", "What was handed over. It may differ from the estimate, after taxes or an advance.", "Ce qui a été remis. Il peut différer de l'estimation, après impôts ou une avance.", "Sa yo te remèt. Li ka diferan de estimasyon an, apre taks oswa yon avans."],
+    ["ea.method", "How", "Comment", "Kijan"], ["ea.mpRefPh", "Such as the check number", "Par exemple le numéro du chèque", "Tankou nimewo chèk la"],
+    ["ea.marked", "{name}'s pay is marked paid.", "La paie de {name} est marquée payée.", "Salè {name} make peye."],
+    ["ea.paidViewH", "Pay handed to {name}", "Paie remise à {name}", "Salè yo remèt {name}"],
+    ["ea.periodWord", "Period", "Période", "Peryòd"], ["ea.paidWhen", "Marked paid", "Marqué payé", "Make peye"],
+    ["ea.undoPaid", "Undo", "Annuler", "Anile"],
+    ["ea.undoQ", "Undo the {m} marked paid to {name}? It stays in the books, struck through, with the reason.", "Annuler les {m} marqués payés à {name} ? Cela reste dans les livres, barré, avec la raison.", "Anile {m} ki make peye bay {name}? Li rete nan liv yo, bare, ak rezon an."],
+    ["ea.undone", "Undone. The period can be marked paid again.", "Annulé. La période peut être marquée payée de nouveau.", "Anile. Yo ka make peryòd la peye ankò."],
+    ["ea.home", "Last period's pay: {n} people not marked paid", "Paie de la période précédente : {n} personnes pas encore marquées payées", "Salè dènye peryòd la: {n} moun poko make peye"],
+    ["ea.home1", "Last period's pay: 1 person not marked paid", "Paie de la période précédente : 1 personne pas encore marquée payée", "Salè dènye peryòd la: 1 moun poko make peye"],
+    ["ea.homeOut", "{p}: the prepaid balance is used up", "{p} : le solde prépayé est épuisé", "{p}: balans peye davans lan fini"],
+    ["ea.homeOutSub", "Add to it before the next top-up or transfer.", "Alimentez-le avant la prochaine recharge ou le prochain transfert.", "Mete ladan l anvan pwochen rechaj oswa transfè a."],
+    ["ea.cmKey", "Write the commissions", "Écrire les commissions", "Ekri komisyon yo"],
+    ["ea.cmH", "Commissions to write", "Commissions à écrire", "Komisyon pou ekri"],
+    ["ea.cmIntro", "These entries were recorded without a commission, often by a cashier. Write each one from the provider's statement; leave blank what you do not know yet.", "Ces opérations ont été notées sans commission, souvent par un caissier. Écrivez chacune d'après le relevé du fournisseur ; laissez vide ce que vous ne savez pas encore.", "Operasyon sa yo te note san komisyon, souvan pa yon kesye. Ekri chak komisyon dapre relve konpayi an; kite vid sa ou poko konnen."],
+    ["ea.cmFor", "Commission for {p}, {m}, {d}", "Commission pour {p}, {m}, le {d}", "Komisyon pou {p}, {m}, {d}"],
+    ["ea.cmMore", "And {n} more, shown once these are written.", "Et {n} de plus, montrées une fois celles-ci écrites.", "Ak {n} lòt ankò, y ap parèt lè sa yo fin ekri."],
+    ["ea.cmSaved", "{n} commissions written. The earnings are worked out again.", "{n} commissions écrites. Les gains sont recalculés.", "{n} komisyon ekri. Benefis yo kalkile ankò."],
+    ["ea.cmSaved1", "1 commission written. The earnings are worked out again.", "1 commission écrite. Les gains sont recalculés.", "1 komisyon ekri. Benefis yo kalkile ankò."],
+    ["access.pay.s", "Pay", "Paie", "Salè"],
+    ["access.pay.d", "Everyone's pay rates and hours, and marking pay as paid. Only the owner gives it, and no one sets their own pay.", "Les taux et les heures de chacun, et la paie marquée comme payée. Seul le propriétaire le donne, et personne ne fixe sa propre paie.", "To ak lè travay tout moun, ak make salè peye. Se mèt la sèlman ki bay li, epi pèsonn pa fikse pwòp salè pa l."],
+    ["tips.earnings.1", "Record each deposit or bank sweep as it happens. The amount held for each provider then stays right.", "Notez chaque dépôt ou prélèvement au moment où il se fait. Le montant gardé pour chaque fournisseur reste alors juste.", "Note chak depo oswa chak fwa labank pran lajan, lè sa rive. Konsa montan ki kenbe pou chak konpayi an rete kòrèk."],
+    ["tips.earnings.2", "When a provider's statement comes, press Check a statement. The check is kept, matched or not.", "Quand le relevé d'un fournisseur arrive, appuyez sur Vérifier un relevé. La vérification est gardée, qu'elle concorde ou non.", "Lè relve yon konpayi rive, peze Verifye yon relve. Verifikasyon an kenbe, kit li matche kit li pa matche."],
+    ["tips.earnings.3", "Pay comes from the time clock. A forgotten clock out changes the hours, so fix it in Team first.", "La paie vient de la pointeuse. Un départ oublié change les heures : corrigez-le d'abord dans Équipe.", "Salè a soti nan revèy travay la. Yon sòti moun bliye make chanje lè yo, kidonk korije l nan Ekip anvan."],
+    ["guide.earnings.t", "Earnings, providers and pay", "Gains, fournisseurs et paie", "Benefis, konpayi ak salè"],
+    ["guide.earnings.b", "Earnings, in the menu, gathers the money that is not a sale. Each person sees what their access opens.\nMy pay shows your own hours in this pay period, your rate, and an estimate of your pay. It comes from the time clock, with breaks left out. It is an estimate before taxes and deductions; your pay slip is what counts.\nThe store shows what the store earned apart from its sales: the commission on transfers and top-ups, provider by provider. The fees customers pay count as the providers' money. Those who see the costs also see it with the profit on sales and, with pay, what is left after pay.\nProviders shows each provider's account: what was collected for it, what was paid to it, and what is still its money in the store's hands. The owner says how each one settles: it takes the money from the bank, the store deposits it, or the store keeps a prepaid balance with it; and whether the commission is taken off at once or paid each month. Record a payment as it happens. When a statement comes, check it: Lakay keeps the check and shows any difference.\nPay is for the owner and the people the owner allows. It shows everyone's hours, overtime, rate and estimate for a period. A rate is set from a day on, and earlier shifts keep their rate. Mark a period paid once the pay is handed over, with how it was paid. A mistake is undone with a reason, and stays in the books struck through. No one sets their own pay.\nLakay does not do payroll taxes. It starts with overtime after 40 hours in a week, at one and a half times the rate; check what applies to your store.", "Gains, dans le menu, rassemble l'argent qui n'est pas une vente. Chacun voit ce que son accès lui ouvre.\nMa paie montre vos propres heures sur la période de paie, votre taux, et une estimation de votre paie. Elle vient de la pointeuse, pauses déduites. C'est une estimation avant impôts et retenues ; votre bulletin de paie fait foi.\nLe magasin montre ce que le magasin a gagné en dehors de ses ventes : la commission sur les transferts et les recharges, fournisseur par fournisseur. Les frais payés par les clients comptent comme l'argent des fournisseurs. Ceux qui voient les coûts le voient aussi avec le bénéfice sur les ventes et, avec la paie, ce qui reste après la paie.\nFournisseurs montre le compte de chaque fournisseur : ce qui a été encaissé pour lui, ce qui lui a été payé, et ce qui est encore son argent entre les mains du magasin. Le propriétaire indique comment chacun se règle : il prélève à la banque, le magasin dépose, ou le magasin garde un solde prépayé chez lui ; et si la commission est retenue tout de suite ou payée chaque mois. Notez un paiement au moment où il se fait. Quand un relevé arrive, vérifiez-le : Lakay garde la vérification et montre tout écart.\nLa paie est pour le propriétaire et les personnes autorisées par le propriétaire. Elle montre les heures, les heures supplémentaires, le taux et l'estimation de chacun pour une période. Un taux est fixé à partir d'un jour, et les services plus anciens gardent leur taux. Marquez une période payée une fois la paie remise, avec la façon dont elle a été payée. Une erreur s'annule avec une raison, et reste dans les livres, barrée. Personne ne fixe sa propre paie.\nLakay ne calcule pas les charges sur les salaires. Lakay commence avec des heures supplémentaires après 40 heures dans la semaine, à une fois et demie le taux ; vérifiez ce qui s'applique à votre magasin.", "Benefis, nan meni an, rasanble lajan ki pa yon vant. Chak moun wè sa aksè yo louvri pou yo.\nSalè mwen montre pwòp lè travay ou nan peryòd salè a, to ou, ak yon estimasyon salè ou. Li soti nan revèy travay la, san poz yo. Se yon estimasyon anvan taks ak retni; fich salè ou se li ki konte.\nMagazen an montre sa magazen an fè an deyò vant li yo: komisyon sou transfè ak rechaj yo, konpayi pa konpayi. Frè kliyan yo peye konte kòm lajan konpayi yo. Moun ki wè pri achte yo wè l tou ak benefis sou vant yo epi, ak salè yo, sa ki rete apre salè.\nKonpayi yo montre kont chak konpayi: sa yo te resevwa pou li, sa yo te peye l, ak sa ki toujou lajan l nan men magazen an. Mèt la di kijan chak konpayi regle: li pran lajan an labank, magazen an depoze l, oswa magazen an kenbe yon balans peye davans avè l; epi si komisyon an retire touswit oswa peye chak mwa. Note yon peman lè sa rive. Lè yon relve rive, verifye l: Lakay kenbe verifikasyon an epi li montre nenpòt diferans.\nSalè yo se pou mèt la ak moun mèt la pèmèt. Li montre lè travay, lè siplemantè, to ak estimasyon chak moun pou yon peryòd. Yo fikse yon to apati yon jou, epi sèvis ki te avan yo kenbe to yo. Make yon peryòd peye lè yo fin remèt salè a, ak kijan yo te peye l. Yon erè anile ak yon rezon, epi li rete nan liv yo, bare. Pèsonn pa fikse pwòp salè pa l.\nLakay pa kalkile taks sou salè. Li kòmanse ak lè siplemantè apre 40 è nan yon semèn, a yon fwa edmi to a; verifye sa ki aplike pou magazen ou."],
+    ["guide.earnings.tip", "Record each payment to a provider as it happens, and check each statement when it comes.", "Notez chaque paiement à un fournisseur au moment où il se fait, et vérifiez chaque relevé quand il arrive.", "Note chak peman bay yon konpayi lè sa rive, epi verifye chak relve lè l rive."]
+  );
   E.t = function (key, vars) {
     var c = E.custom && E.custom.words && E.custom.words[E.lang], s = c && typeof c[key] === "string" && c[key] ? c[key] : DICT[E.lang][key];
     if (s === undefined) s = DICT.en[key];
@@ -4836,7 +5168,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   function load(vault, key, userId) {
     ID = vault.storeId;
     return D.entries("rec").then(function (entries) {
-      var st = { settings: null, users: {}, cats: {}, items: {}, sales: [], moves: [], shifts: [], services: [], train: {}, plans: {}, course: null, slots: [], rota: null, swaps: [], counters: {}, pad: {}, notes: {}, head: null, unreadable: [] };
+      var st = { settings: null, users: {}, cats: {}, items: {}, sales: [], moves: [], shifts: [], services: [], train: {}, plans: {}, course: null, slots: [], rota: null, swaps: [], provs: {}, settles: [], stmts: [], payset: null, rates: {}, paids: [], counters: {}, pad: {}, notes: {}, head: null, unreadable: [] };
       /* each person's notes are their own: a sign-in opens only the notes of the one signing in (the practice store opens
          all of its sample people's, since it changes from one to another) */
       var mine = "notes:" + (userId || "owner"), practice = B.mode === "practice";
@@ -4851,6 +5183,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
         st.services.sort(function (a, b) { return a.at < b.at ? -1 : a.at > b.at ? 1 : 0; });
         st.slots.sort(slotOrder);
         st.swaps.sort(function (a, b) { return a.at < b.at ? -1 : a.at > b.at ? 1 : 0; });
+        [st.settles, st.stmts, st.paids].forEach(function (list) { list.sort(function (a, b) { return a.at < b.at ? -1 : a.at > b.at ? 1 : 0; }); });
         if (!st.head || !st.settings) throw err("damaged");
         return D.get("journal", st.head.seq).then(function (env) {
           if (!env) { st.headProblem = true; return; }
@@ -4887,6 +5220,13 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     else if (kind === "slot") { st.slots = st.slots || []; var si = st.slots.findIndex(function (x) { return x.id === v.id; }); if (si >= 0) st.slots[si] = v; else { st.slots.push(v); st.slots.sort(slotOrder); } }
     else if (kind === "rota") st.rota = v;
     else if (kind === "swap") { st.swaps = st.swaps || []; var wi = st.swaps.findIndex(function (x) { return x.id === v.id; }); if (wi >= 0) st.swaps[wi] = v; else st.swaps.push(v); }
+    else if (kind === "prov") { st.provs = st.provs || {}; st.provs[id] = v; }
+    else if (kind === "rate") { st.rates = st.rates || {}; st.rates[id] = v; }
+    else if (kind === "payset") st.payset = v;
+    else if (kind === "settle" || kind === "stmt" || kind === "paid") {
+      var key = kind === "settle" ? "settles" : kind === "stmt" ? "stmts" : "paids"; st[key] = st[key] || [];
+      var pi = st[key].findIndex(function (x) { return x.id === v.id; }); if (pi >= 0) st[key][pi] = v; else st[key].push(v);
+    }
     else if (kind === "counter") st.counters[id] = v;
     else if (kind === "pad") st.pad[id] = v;
     else if (kind === "notes") st.notes[id] = (v && Array.isArray(v.notes)) ? v.notes : [];
@@ -4983,6 +5323,8 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     }
     /* and a practice store made before Build 20, its schedule */
     if (!state.rota && !(state.slots || []).length) c = c.then(sampleSchedule);
+    /* and before Build 21, its providers and its pay */
+    if (!Object.keys(state.provs || {}).length && !state.payset) c = c.then(sampleMoney);
     return c.then(function () { B._at = null; B.user = state.users.owner; return state; },
       function (e) { console.warn(e); B._at = null; if (state) B.user = state.users.owner; return state; });
   }
@@ -5024,6 +5366,54 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       .then(as(marie, hour(yesterday, 10), function () { return mon && sat ? B.askSwap({ slot: mon.id, to: jean, kind: "cover", note: "" }) : Promise.resolve(); }))
       .then(as(jean, hour(yesterday, 14), function () { var w = B.swaps(function (x) { return x.from === marie && x.status === "asked"; })[0]; return w ? B.answerSwap(w.id, true) : Promise.resolve(); }))
       .then(as(jean, hour(yesterday, 16), function () { return sat && tue ? B.askSwap({ slot: sat.id, to: marie, kind: "trade", theirSlot: tue.id, note: "" }) : Promise.resolve(); }));
+  }
+  /* the practice store's providers and pay (Build 21). RIA: the store deposits, and RIA pays the commission each month;
+     CAM takes it from the bank, commission taken off at once; Unitransfer: deposits, commission at once; Boss
+     Revolution: a prepaid balance. A week ago everything collected until the day before was settled, so what is held
+     now is the last week's; Boss Revolution was given $300, then $150. Pay is weekly, overtime after 40 hours at one
+     and a half times; Marie at $15.50 an hour, Jean at $19.00; last week's pay is marked paid. */
+  function sampleMoney() {
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    function at(back, hh) { var d = U.addDays(today, -back); d.setHours(hh, 0, 0, 0); return d; }
+    function as(id, when, fn) { return function () { B._at = when.toISOString(); B.user = state.users[id] || state.users.owner; return fn().then(function () { B.user = state.users.owner; }); }; }
+    var setups = [["ria", "deposit", "monthly"], ["cam", "sweep", "deducted"], ["unitransfer", "deposit", "deducted"], ["boss", "prepaid", "deducted"]];
+    var cut = U.dayKey(U.addDays(today, -8)), c = Promise.resolve();
+    setups.forEach(function (x) { c = c.then(as("owner", at(15, 9), function () { return B.setProvSetup(x[0], { how: x[1], com: x[2], note: "" }); })); });
+    setups.forEach(function (x) {
+      if (x[1] === "prepaid") return;
+      c = c.then(function () {
+        var owed = 0;
+        (state.services || []).forEach(function (v) {
+          if (v.provider !== x[0] || v.status === "void" || v.day > cut) return;
+          var m = B.svcCash(v); owed += m.cashIn - m.cashOut - (x[2] === "deducted" ? (v.commission || 0) : 0);
+        });
+        if (!owed) return null;
+        var kind = owed > 0 ? "paid" : "returned", amount = Math.abs(owed);
+        if (x[1] === "deposit" && kind === "paid") amount = Math.floor(amount / 100) * 100;
+        return amount ? as(SAMPLE_PEOPLE[1][0], at(7, 11), function () { return B.settle({ provider: x[0], kind: kind, amount: amount, ref: (x[0] === "cam" ? "SWP-" : "DEP-") + U.dayKey(at(7, 11)).slice(5).replace("-", ""), note: "", day: U.dayKey(at(7, 11)) }); })() : null;
+      });
+    });
+    c = c.then(as("owner", at(15, 10), function () { return B.settle({ provider: "boss", kind: "paid", amount: 30000, ref: "BR-PRE-1", note: "", day: U.dayKey(at(15, 10)) }); }));
+    c = c.then(as("owner", at(6, 10), function () { return B.settle({ provider: "boss", kind: "paid", amount: 15000, ref: "BR-PRE-2", note: "", day: U.dayKey(at(6, 10)) }); }));
+    /* RIA paid the commission of the month before, on the third of this month (or an hour ago, early in the month) */
+    c = c.then(function () {
+      var m0 = new Date(today.getFullYear(), today.getMonth(), 1), k0 = U.dayKey(m0), due = 0, when = new Date(today.getFullYear(), today.getMonth(), 3, 15, 0, 0);
+      if (when.getTime() > Date.now() - 3600000) when = new Date(Date.now() - 3600000);
+      (state.services || []).forEach(function (v) { if (v.provider === "ria" && v.status !== "void" && v.day < k0 && v.commission) due += v.commission; });
+      return due ? as("owner", when, function () { return B.settle({ provider: "ria", kind: "commission", amount: due, ref: "RIA-COM-" + k0.slice(0, 7), note: "", day: U.dayKey(when) }); })() : null;
+    });
+    c = c.then(as("owner", at(15, 9), function () { return B.setPaySettings({ period: "weekly", anchor: B.weekStartKey(today), otAfter: 40, otTimes: 150 }); }));
+    c = c.then(as("owner", at(15, 9), function () { return B.setRate(SAMPLE_PEOPLE[0][0], 1550, U.dayKey(at(15, 9))); }));
+    c = c.then(as("owner", at(15, 9), function () { return B.setRate(SAMPLE_PEOPLE[1][0], 1900, U.dayKey(at(15, 9))); }));
+    /* last week's pay, handed over on the first day of this week at five, or an hour ago if that is still to come */
+    c = c.then(function () {
+      var wk = U.fromDayKey(B.weekStartKey(today)), last = { from: U.dayKey(U.addDays(wk, -7)), to: U.dayKey(U.addDays(wk, -1)) }, d = new Date(wk); d.setHours(17, 0, 0, 0);
+      if (d.getTime() > Date.now() - 3600000) d = new Date(Date.now() - 3600000);
+      return [[SAMPLE_PEOPLE[0][0], "cash", ""], [SAMPLE_PEOPLE[1][0], "check", "1042"]].reduce(function (p, x) {
+        return p.then(as("owner", d, function () { var e = B.payFor(x[0], last.from, last.to); return B.markPaid({ user: x[0], from: last.from, to: last.to, amount: e.gross, method: x[1], ref: x[2], note: "" }); }));
+      }, Promise.resolve());
+    });
+    return c;
   }
   /* The practice store's sample people: [user id, staff number, name, level of access]. */
   var SAMPLE_PEOPLE = [["u_practice_marie", 1002, "Marie", "cashier"], ["u_practice_jean", 1003, "Jean", "manager"]];
@@ -5110,6 +5500,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     chain = chain.then(function () { return sampleTraining(); });
     chain = chain.then(function () { return sampleCourse(); });
     chain = chain.then(function () { return sampleSchedule(); });
+    chain = chain.then(function () { return sampleMoney(); });
     return chain.then(function () { B._at = null; B.user = state.users.owner; return state; }, function (e) { B._at = null; B.user = state && state.users.owner; throw e; });
   }
   /* The practice store's money transfers and top-ups: a few a day for two weeks, with made-up fees and references.
@@ -5118,7 +5509,8 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     ["unitransfer", "payout", 10000, 0, 200], ["ria", "send", 5000, 600, 150], ["boss", "topup", 1000, 0, 80], ["cam", "payout", 25000, 0, 300]];
   function sampleServices() {
     var seed = 20261115, c = Promise.resolve(), today = new Date(); today.setHours(0, 0, 0, 0);
-    function rnd(n) { seed = (seed * 1103515245 + 12345) % 2147483648; return seed % n; }
+    /* Build 21: whole 32-bit arithmetic, so the low bits are kept (before, every entry fell at ten o'clock, Marie's) */
+    function rnd(n) { seed = (Math.imul(seed, 1103515245) + 12345) & 0x7fffffff; return (seed >>> 8) % n; }
     for (var d = 14; d >= 0; d--) {
       var day = new Date(today.getTime() - d * 86400000), n = 1 + rnd(3);
       for (var k = 0; k < n; k++) (function (at, s, j) {
@@ -5207,8 +5599,10 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
      "people" (adding the staff, their first passwords, taking a key back) and "backup" (saving a sealed backup). A
      team leader trains and leads; a manager may also look after the people, within limits the books keep: a person with
      "people" gives only what they have themselves, never "people", and manages no one who holds more, nor the owner. */
-  B.ACCESS = ["sell", "items", "receive", "adjust", "costs", "reports", "team", "train", "people", "backup"];
-  B.PRESETS = { cashier: ["sell"], stock: ["sell", "items", "receive", "adjust"], lead: ["sell", "items", "receive", "adjust", "team", "train"], manager: B.ACCESS.slice() };
+  B.ACCESS = ["sell", "items", "receive", "adjust", "costs", "reports", "team", "train", "people", "backup", "pay"];
+  /* Build 21: "pay" (everyone's pay rates and pay, and marking it paid) is given one by one: no level holds it */
+  B.PRESETS = { cashier: ["sell"], stock: ["sell", "items", "receive", "adjust"], lead: ["sell", "items", "receive", "adjust", "team", "train"],
+    manager: ["sell", "items", "receive", "adjust", "costs", "reports", "team", "train", "people", "backup"] };
   B.isOwner = function () { return !!(B.user && B.user.role === "owner"); };
   B.can = function (what) {
     var u = B.user; if (!u) return false;
@@ -5221,7 +5615,8 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     if (!B.user) return [];
     if (B.isOwner()) return B.ACCESS.slice();
     if (!B.can("people")) return [];
-    return B.ACCESS.filter(function (a) { return a !== "people" && (B.user.access || []).indexOf(a) >= 0; });
+    /* "people" and "pay" (Build 21) are the owner's to give */
+    return B.ACCESS.filter(function (a) { return a !== "people" && a !== "pay" && (B.user.access || []).indexOf(a) >= 0; });
   };
   /* whether the person signed in may change this person, give them a first password or take their key back */
   B.canManage = function (u) {
@@ -6127,9 +6522,224 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       return { type: "service.voided", data: { id: id, reason: v.voidReason }, recs: [{ kind: "svc", id: id, value: v }], result: v };
     });
   };
+  /* the commission of entries written without one (a cashier records a transfer, the commission is the store's own
+     figure): those who see the reports write it afterwards, from the provider's statement (Build 21). One ledger line
+     holds them all; an entry voided, or one that already has its commission, is left as it is. */
+  B.setSvcCommissions = function (list) {
+    return B.change(function (st) {
+      need("reports");
+      var recs = [], done = [];
+      (list || []).forEach(function (x) {
+        var cur = (st.services || []).find(function (v) { return v.id === x.id; }); if (!cur) throw err("nosvc");
+        if (!Number.isSafeInteger(x.commission) || x.commission < 0) throw err("commission");
+        if (cur.status === "void" || (cur.commission !== null && cur.commission !== undefined)) return;
+        var v = clone(cur); v.commission = x.commission; v.comBy = B.user.id; v.comAt = clock().toISOString();
+        recs.push({ kind: "svc", id: v.id, value: v }); done.push({ id: v.id, commission: v.commission });
+      });
+      if (!recs.length) return null;
+      return { type: "service.commission", data: { list: done }, recs: recs, result: done.length };
+    });
+  };
   B.services = function (filter) { return state ? (state.services || []).filter(function (x) { return !filter || filter(x); }) : []; };
   /* what one entry did to the drawer: money in (the amount sent or put on a phone, and the fee) or out (a payout) */
   B.svcCash = function (v) { return { cashIn: (v.kind === "payout" ? 0 : v.amount) + (v.fee || 0), cashOut: v.kind === "payout" ? v.amount : 0 }; };
+
+  /* ---------- settling with the providers, and the store's own earnings from them (Build 21) ----------
+     How each provider settles is the owner's to say, one provider at a time: it takes the money from the store's bank
+     ("sweep"), the store deposits it ("deposit"), or the store keeps a prepaid balance with it ("prepaid"); and the
+     store's commission is taken off at once ("deducted") or paid to the store each month ("monthly"). A settlement is
+     written as it happens: money paid to the provider, money the provider returned, or a commission it paid. What is
+     still the provider's in the store's hands is worked out from the log of transfers and top-ups and the settlements;
+     a provider's statement can be checked against it, and the check is kept. A mistake is voided with a reason. */
+  B.PROV_HOW = ["sweep", "deposit", "prepaid"];
+  B.PROV_COM = ["deducted", "monthly"];
+  B.SETTLE_KINDS = ["paid", "returned", "commission"];
+  B.provSetup = function (id) { var x = state && state.provs && state.provs[id]; return x ? clone(x) : null; };
+  B.setProvSetup = function (id, f) {
+    return B.change(function (st) {
+      need("owner");
+      if (B.PROVIDERS.indexOf(id) < 0) throw err("provider");
+      if (B.PROV_HOW.indexOf(f.how) < 0 || B.PROV_COM.indexOf(f.com) < 0) throw err("how");
+      var cur = (st.provs || {})[id] || null, v = { id: id, how: f.how, com: f.com, note: plain(f.note, 120), at: clock().toISOString(), by: B.user.id };
+      if (cur && cur.how === v.how && cur.com === v.com && (cur.note || "") === v.note) return null;
+      return { type: "provider.setup", data: { provider: id, how: v.how, com: v.com, was: cur ? [cur.how, cur.com] : null }, recs: [{ kind: "prov", id: id, value: v }], result: v };
+    });
+  };
+  B.settle = function (f) {
+    return B.change(function (st) {
+      need("reports");
+      if (B.PROVIDERS.indexOf(f.provider) < 0) throw err("provider");
+      if (B.SETTLE_KINDS.indexOf(f.kind) < 0) throw err("kind");
+      if (!Number.isSafeInteger(f.amount) || f.amount <= 0) throw err("amount");
+      var now = clock(), day = dueDay(f.day) || U.dayKey(now);
+      if (day > U.dayKey(now)) throw err("future");
+      var x = { id: U.uid("p"), provider: f.provider, kind: f.kind, amount: f.amount, ref: plain(f.ref, 40), note: plain(f.note, 200), day: day, at: now.toISOString(), by: B.user.id, status: "done" };
+      return { type: "provider.settled", data: { settle: clone(x) }, recs: [{ kind: "settle", id: x.id, value: x }], result: x };
+    });
+  };
+  B.voidSettle = function (id, reason) {
+    return B.change(function (st) {
+      need("reports");
+      var cur = (st.settles || []).filter(function (x) { return x.id === id; })[0]; if (!cur) throw err("nosettle");
+      if (cur.status === "void") return null;
+      reason = plain(reason, 200); if (!reason) throw err("note");
+      var x = clone(cur); x.status = "void"; x.voidedBy = B.user.id; x.voidedAt = clock().toISOString(); x.voidReason = reason;
+      return { type: "provider.settleVoided", data: { id: id, reason: reason }, recs: [{ kind: "settle", id: id, value: x }], result: x };
+    });
+  };
+  B.settlements = function (filter) { return state ? (state.settles || []).filter(function (x) { return !filter || filter(x); }).map(clone) : []; };
+  /* a provider's account, from the store's first day: what was collected for it (money in less payouts), the commission,
+     what was paid to it and returned by it, and what is still its money in the store's hands ("held"; with a prepaid
+     balance, a negative "held" is the balance left) */
+  B.providerAccount = function (id) {
+    var st = state, setup = (st && st.provs && st.provs[id]) || null, com = setup ? setup.com : "deducted";
+    var a = { id: id, setup: setup ? clone(setup) : null, count: 0, cashIn: 0, cashOut: 0, collected: 0, fees: 0, commission: 0, unknown: 0, paid: 0, returned: 0, comReceived: 0,
+      lastPaid: null, lastReturned: null, lastEntry: null };
+    if (!st) return a;
+    (st.services || []).forEach(function (v) {
+      if (v.provider !== id || v.status === "void") return;
+      var c = B.svcCash(v); a.count++; a.cashIn += c.cashIn; a.cashOut += c.cashOut; a.collected += c.cashIn - c.cashOut; a.fees += v.fee || 0;
+      if (v.commission === null || v.commission === undefined) a.unknown++; else a.commission += v.commission;
+      if (!a.lastEntry || v.at > a.lastEntry) a.lastEntry = v.at;
+    });
+    (st.settles || []).forEach(function (x) {
+      if (x.provider !== id || x.status === "void") return;
+      if (x.kind === "paid") { a.paid += x.amount; if (!a.lastPaid || x.day > a.lastPaid) a.lastPaid = x.day; }
+      else if (x.kind === "returned") { a.returned += x.amount; if (!a.lastReturned || x.day > a.lastReturned) a.lastReturned = x.day; }
+      else if (x.kind === "commission") a.comReceived += x.amount;
+    });
+    a.kept = com === "deducted" ? a.commission : 0;
+    a.held = a.collected - a.kept - a.paid + a.returned;
+    a.comDue = com === "monthly" ? a.commission - a.comReceived : 0;
+    a.lastCheck = (st.stmts || []).filter(function (x) { return x.provider === id; }).map(clone).pop() || null;
+    return a;
+  };
+  /* a provider's statement, checked: what it says against what Lakay works out, kept with who checked it */
+  B.checkStatement = function (id, says, note) {
+    return B.change(function (st) {
+      need("reports");
+      if (B.PROVIDERS.indexOf(id) < 0) throw err("provider");
+      if (!Number.isSafeInteger(says)) throw err("amount");
+      var a = B.providerAccount(id), prepaid = a.setup && a.setup.how === "prepaid", lakay = prepaid ? -a.held : a.held, now = clock();
+      var x = { id: U.uid("c"), provider: id, says: says, lakay: lakay, diff: says - lakay, prepaid: !!prepaid, note: plain(note, 200), day: U.dayKey(now), at: now.toISOString(), by: B.user.id };
+      return { type: "provider.checked", data: { check: clone(x) }, recs: [{ kind: "stmt", id: x.id, value: x }], result: x };
+    });
+  };
+
+  /* ---------- each person's pay (Build 21) ----------
+     Pay is worked out from the time clock: the hours each person worked (breaks left out), at the rate in force on the
+     day of each shift, with the overtime the owner sets (after so many hours in a week, at so many times the rate).
+     It is an estimate before taxes and deductions: Lakay does not do payroll taxes. Those given "pay" set the rates and
+     the period and mark a period paid; each person sees their own. Every change is a ledger line. */
+  B.PAY_PERIODS = ["weekly", "biweekly", "semimonthly", "monthly"];
+  /* how a person's pay was handed over (not B.PAY_METHODS, the ways a customer pays, Build 16) */
+  B.WAGE_METHODS = ["cash", "check", "transfer", "other"];
+  B.paySettings = function () {
+    var p = (state && state.payset) || {};
+    return { period: B.PAY_PERIODS.indexOf(p.period) >= 0 ? p.period : "weekly", anchor: dueDay(p.anchor) ? p.anchor : B.weekStartKey(),
+      otAfter: p.otAfter === null ? null : Number.isSafeInteger(p.otAfter) ? p.otAfter : 40, otTimes: Number.isSafeInteger(p.otTimes) ? p.otTimes : 150 };
+  };
+  B.setPaySettings = function (f) {
+    return B.change(function (st) {
+      need("pay");
+      if (B.PAY_PERIODS.indexOf(f.period) < 0) throw err("period");
+      var after = f.otAfter === null || f.otAfter === "" ? null : Math.round(Number(f.otAfter)), times = Math.round(Number(f.otTimes || 150));
+      if (after !== null && !(after >= 1 && after <= 80)) throw err("overtime");
+      if (!(times >= 100 && times <= 300)) throw err("overtime");
+      var v = { period: f.period, anchor: dueDay(f.anchor) ? B.weekStartKey(U.fromDayKey(f.anchor)) : B.weekStartKey(clock()), otAfter: after, otTimes: times, at: clock().toISOString(), by: B.user.id };
+      return { type: "pay.settings", data: { period: v.period, otAfter: after, otTimes: times }, recs: [{ kind: "payset", id: "main", value: v }], result: v };
+    });
+  };
+  /* the pay period that holds a day */
+  B.payPeriodOf = function (dayKey) {
+    var s = B.paySettings(), d = U.fromDayKey(dayKey);
+    if (s.period === "monthly") return { from: U.dayKey(new Date(d.getFullYear(), d.getMonth(), 1)), to: U.dayKey(new Date(d.getFullYear(), d.getMonth() + 1, 0)) };
+    if (s.period === "semimonthly") return d.getDate() <= 15 ? { from: U.dayKey(new Date(d.getFullYear(), d.getMonth(), 1)), to: U.dayKey(new Date(d.getFullYear(), d.getMonth(), 15)) }
+      : { from: U.dayKey(new Date(d.getFullYear(), d.getMonth(), 16)), to: U.dayKey(new Date(d.getFullYear(), d.getMonth() + 1, 0)) };
+    var wk = U.fromDayKey(B.weekStartKey(d));
+    if (s.period === "biweekly") { var n = Math.round((wk.getTime() - U.fromDayKey(s.anchor).getTime()) / 86400000 / 7); if (((n % 2) + 2) % 2 === 1) wk = U.addDays(wk, -7);
+      return { from: U.dayKey(wk), to: U.dayKey(U.addDays(wk, 13)) }; }
+    return { from: U.dayKey(wk), to: U.dayKey(U.addDays(wk, 6)) };
+  };
+  /* this period and the ones before it, newest first */
+  B.payPeriods = function (n) {
+    var out = [], p = B.payPeriodOf(U.dayKey(clock()));
+    for (var i = 0; i < (n || 6); i++) { out.push(p); p = B.payPeriodOf(U.dayKey(U.addDays(U.fromDayKey(p.from), -1))); }
+    return out;
+  };
+  B.rateOf = function (userId, dayKey) {
+    var r = state && state.rates && state.rates[userId], list = (r && r.list) || [], best = null;
+    list.forEach(function (x) { if (x.from <= dayKey && (!best || x.from >= best.from)) best = x; });
+    return best ? best.rate : null;
+  };
+  B.rates = function (userId) { var r = state && state.rates && state.rates[userId]; return r ? clone(r.list) : []; };
+  B.setRate = function (userId, rate, from) {
+    return B.change(function (st) {
+      need("pay");
+      var u = st.users[userId]; if (!u || u.role === "owner") throw err("noperson");
+      /* no one sets their own pay */
+      if (u.id === B.user.id) throw err("self");
+      if (!Number.isSafeInteger(rate) || rate < 0 || rate > 100000) throw err("rate");
+      from = dueDay(from) || U.dayKey(clock());
+      var rec = clone((st.rates && st.rates[userId]) || { user: userId, list: [] });
+      rec.list = rec.list.filter(function (x) { return x.from !== from; });
+      rec.list.push({ from: from, rate: rate, by: B.user.id, at: clock().toISOString() });
+      rec.list.sort(function (a, b) { return a.from < b.from ? -1 : 1; });
+      return { type: "pay.rate", data: { user: userId, from: from, rate: rate }, recs: [{ kind: "rate", id: userId, value: rec }], result: rec };
+    });
+  };
+  /* a person's pay for a period: hours from the clock's closed shifts, overtime by the store's week (the week's earlier
+     shifts count toward the limit even when they fall before the period), each shift at the rate of its day */
+  B.payFor = function (userId, fromKey, toKey) {
+    var s = B.paySettings(), out = { user: userId, from: fromKey, to: toKey, regMin: 0, otMin: 0, gross: 0, shifts: 0, open: 0, noRate: 0, paid: null };
+    if (!state) return out;
+    var lim = s.otAfter === null ? Infinity : s.otAfter * 60, byWeek = {}, sum = 0;
+    state.shifts.filter(function (x) { return x.user === userId; }).sort(function (a, b) { return a.in < b.in ? -1 : 1; }).forEach(function (x) {
+      if (!x.out) { if (x.day >= fromKey && x.day <= toKey) out.open++; return; }
+      var wk = B.weekStartKey(U.fromDayKey(x.day)); (byWeek[wk] = byWeek[wk] || []).push(x);
+    });
+    Object.keys(byWeek).forEach(function (wk) {
+      var acc = 0;
+      byWeek[wk].forEach(function (x) {
+        var m = Math.round(B.shiftMs(x) / 60000), reg = Math.max(0, Math.min(m, lim - acc)), ot = m - reg; acc += m;
+        if (x.day < fromKey || x.day > toKey) return;
+        out.shifts++; out.regMin += reg; out.otMin += ot;
+        var r = B.rateOf(userId, x.day);
+        if (r === null) { out.noRate++; return; }
+        sum += reg * r * 100 + ot * r * s.otTimes;
+      });
+    });
+    out.gross = Math.round(sum / 6000);
+    out.paid = (state.paids || []).filter(function (x) { return x.user === userId && x.from === fromKey && x.to === toKey && x.status !== "void"; }).map(clone)[0] || null;
+    return out;
+  };
+  B.markPaid = function (f) {
+    return B.change(function (st) {
+      need("pay");
+      var u = st.users[f.user]; if (!u || u.role === "owner") throw err("noperson");
+      if (u.id === B.user.id) throw err("self");
+      if (!dueDay(f.from) || !dueDay(f.to) || f.to < f.from) throw err("period");
+      if (!Number.isSafeInteger(f.amount) || f.amount < 0) throw err("amount");
+      if (B.WAGE_METHODS.indexOf(f.method) < 0) throw err("method");
+      if ((st.paids || []).some(function (x) { return x.user === f.user && x.from === f.from && x.to === f.to && x.status !== "void"; })) throw err("already");
+      var est = B.payFor(f.user, f.from, f.to), now = clock();
+      var x = { id: U.uid("y"), user: f.user, from: f.from, to: f.to, amount: f.amount, method: f.method, ref: plain(f.ref, 40), note: plain(f.note, 200),
+        minutes: est.regMin + est.otMin, otMinutes: est.otMin, estimate: est.gross, day: U.dayKey(now), at: now.toISOString(), by: B.user.id, status: "done" };
+      return { type: "pay.paid", data: { paid: clone(x) }, recs: [{ kind: "paid", id: x.id, value: x }], result: x };
+    });
+  };
+  B.voidPaid = function (id, reason) {
+    return B.change(function (st) {
+      need("pay");
+      var cur = (st.paids || []).filter(function (x) { return x.id === id; })[0]; if (!cur) throw err("nopaid");
+      if (cur.user === B.user.id) throw err("self");
+      if (cur.status === "void") return null;
+      reason = plain(reason, 200); if (!reason) throw err("note");
+      var x = clone(cur); x.status = "void"; x.voidedBy = B.user.id; x.voidedAt = clock().toISOString(); x.voidReason = reason;
+      return { type: "pay.voided", data: { id: id, reason: reason }, recs: [{ kind: "paid", id: id, value: x }], result: x };
+    });
+  };
+  B.paids = function (filter) { return state ? (state.paids || []).filter(function (x) { return !filter || filter(x); }).map(clone) : []; };
 
   /* ---------- payments (Build 16) ----------
      Lakay never touches a card. The store's own card machine (Square, Clover, SumUp, a bank's terminal: any of them)
@@ -6314,14 +6924,14 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     var key = KEY, id = ID, st = state;
     if (!key) return Promise.reject(err("locked"));
     return D.entries("journal").then(function (entries) {
-      var res = { ok: true, lines: entries.length, problems: [] }, prev = ZERO, expect = 1, items = {}, svcs = {}, train = {}, i = 0;
+      var res = { ok: true, lines: entries.length, problems: [] }, prev = ZERO, expect = 1, items = {}, svcs = {}, train = {}, money = { settle: {}, paid: {} }, i = 0;
       function next() {
         if (i >= entries.length) return Promise.resolve();
         var e = entries[i++];
         return C.open(key, e[1], aadLine(id, e[0])).then(function (line) {
           if (line.seq !== e[0] || e[0] !== expect) res.problems.push({ seq: e[0], what: "order" });
           if (line.prev !== prev) res.problems.push({ seq: e[0], what: "chain" });
-          replay(items, line, res, svcs, train);
+          replay(items, line, res, svcs, train, money);
           expect = e[0] + 1;
           return U.sha256hex(U.canon(line)).then(function (hsh) { prev = hsh; });
         }, function () { res.problems.push({ seq: e[0], what: "unreadable" }); prev = null; expect = e[0] + 1; }).then(function () {
@@ -6348,6 +6958,17 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
           delete svcs[v.id];
         });
         Object.keys(svcs).forEach(function (k) { res.problems.push({ svc: k, what: "extra" }); });
+        /* the settlements with the providers and the pay marked paid (Build 21), each as the ledger wrote it last */
+        [["settle", st.settles, ["provider", "kind", "amount", "day", "status"]], ["paid", st.paids, ["user", "from", "to", "amount", "method", "status"]]].forEach(function (g) {
+          var want = money[g[0]];
+          (g[1] || []).forEach(function (v) {
+            var b = want[v.id];
+            if (!b) { res.problems.push({ money: g[0], id: v.id, what: "missing" }); return; }
+            g[2].forEach(function (f) { if (JSON.stringify(v[f]) !== JSON.stringify(b[f])) res.problems.push({ money: g[0], id: v.id, what: "differs", field: f }); });
+            delete want[v.id];
+          });
+          Object.keys(want).forEach(function (k) { res.problems.push({ money: g[0], id: k, what: "extra" }); });
+        });
         /* each person's marks (Build 17 lessons; Build 19 exercises and the store's tasks): the ones the ledger wrote last */
         Object.keys(st.train || {}).forEach(function (u) {
           var r = st.train[u] || {}, have = {}, want = train[u] || {};
@@ -6370,14 +6991,19 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       });
     });
   };
-  function replay(items, line, res, svcs, train) {
+  function replay(items, line, res, svcs, train, money) {
     var d = line.data || {};
     switch (line.type) {
+      case "provider.settled": if (money && d.settle) money.settle[d.settle.id] = clone(d.settle); break;
+      case "provider.settleVoided": if (money) { if (money.settle[d.id]) money.settle[d.id].status = "void"; else res.problems.push({ seq: line.seq, what: "void" }); } break;
+      case "pay.paid": if (money && d.paid) money.paid[d.paid.id] = clone(d.paid); break;
+      case "pay.voided": if (money) { if (money.paid[d.id]) money.paid[d.id].status = "void"; else res.problems.push({ seq: line.seq, what: "void" }); } break;
       case "training.completed": if (train && d.user && d.lesson) { train[d.user] = train[d.user] || {}; train[d.user]["l:" + d.lesson] = { score: d.score, of: d.of }; } break;
       case "training.exercise": if (train && d.user && d.exercise) { train[d.user] = train[d.user] || {}; train[d.user]["x:" + d.exercise] = {}; } break;
       case "training.task": if (train && d.user && d.task) { train[d.user] = train[d.user] || {}; train[d.user]["t:" + d.task] = { by: d.by }; } break;
       case "service.recorded": if (d.svc) svcs[d.svc.id] = clone(d.svc); break;
       case "service.voided": if (svcs[d.id]) svcs[d.id].status = "void"; else res.problems.push({ seq: line.seq, what: "void" }); break;
+      case "service.commission": (d.list || []).forEach(function (x) { if (svcs[x.id]) svcs[x.id].commission = x.commission; else res.problems.push({ seq: line.seq, what: "commission" }); }); break;
       case "item.created": items[d.item.id] = clone(d.item); break;
       case "item.updated": if (items[d.id]) Object.keys(d.changes).forEach(function (k) { items[d.id][k] = clone(d.changes[k][1]); }); break;
       case "item.archived": if (items[d.id]) items[d.id].archived = d.archived; break;
@@ -6816,7 +7442,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
 
   /* ---------- emojis (drawn by the device's own emoji font; hidden from screen readers, the words carry the meaning) ---------- */
   ui.emo = function (ch, cls) { return h("span.emo" + (cls ? "." + cls : ""), { "aria-hidden": "true" }, ch); };
-  ui.ROOM_EMO = { home: "🏠", register: "🛒", inventory: "📦", reports: "📊", team: "👥", schedule: "🗓️", learn: "🎓", guide: "📖", settings: "⚙️", studio: "⚒️" };
+  ui.ROOM_EMO = { home: "🏠", register: "🛒", inventory: "📦", reports: "📊", team: "👥", schedule: "🗓️", earnings: "💰", learn: "🎓", guide: "📖", settings: "⚙️", studio: "⚒️" };
   /* the departments' signs: no fruit or food as decoration (the owner, 13 November 2026), only what each one holds */
   ui.CAT_EMO = { music: "🎵", movies: "🎬", perfume: "🌸", grocery: "🧺", drinks: "🥤", food: "🍽️", services: "💱", other: "🛍️" };
   ui.catEmo = function (c) { return ui.CAT_EMO[c] || "🏷️"; };
@@ -7005,7 +7631,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   };
 
   /* ---------- the shell, after Ingenium's (the side menu of plain words) with Carpe Diem's capsule of top keys ---------- */
-  var GROUPS = [["nav.g.store", [["home", "home"], ["register", "register"], ["inventory", "box"], ["reports", "chart"], ["team", "people"], ["schedule", "calendar"]]],
+  var GROUPS = [["nav.g.store", [["home", "home"], ["register", "register"], ["inventory", "box"], ["reports", "chart"], ["team", "people"], ["schedule", "calendar"], ["earnings", "coins"]]],
                 ["nav.g.learn", [["learn", "cap"], ["guide", "book"], ["settings", "gear"]]],
                 ["nav.g.owner", [["studio", "edit"]]]];
   ui.rooms = {};
@@ -8030,6 +8656,8 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     }
     /* the person's next shift, a colleague's request, and for leaders the swaps that wait for them (Build 20) */
     if (E.schedule && B.user) E.schedule.homeRows(need).forEach(function (x) { list.push(x); });
+    /* last period's pay not yet marked paid, and a prepaid balance used up (Build 21) */
+    if (E.earnings && B.user) E.earnings.homeRows(need).forEach(function (x) { list.push(x); });
     /* a person's lessons still to take (Build 17), when nothing has been assigned to them */
     if (staff && E.learn && !trained) {
       var left = E.learn.leftFor(B.user).length;
@@ -9320,8 +9948,8 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   }
 
   /* ---------- the Guidebook ---------- */
-  var ARTICLES = ["start", "learn", "train", "door", "team", "clock", "schedule", "master", "sale", "pay", "items", "receive", "correct", "depts", "svc", "reports", "notes", "backup", "sealed", "verify", "display", "studio", "build", "limits"];
-  var ART_EMO = { start: "🌟", learn: "🎓", train: "📋", door: "🚪", team: "👥", clock: "🕘", schedule: "🗓️", master: "🗝️", sale: "🛒", pay: "💳", items: "🏷️", receive: "🚚", correct: "✏️", depts: "🗂️", svc: "💱", reports: "📊", notes: "🗒️", backup: "💾", sealed: "🔐", verify: "🛡️", display: "🎨", studio: "⚒️", build: "🔢", limits: "🧭" };
+  var ARTICLES = ["start", "learn", "train", "door", "team", "clock", "schedule", "earnings", "master", "sale", "pay", "items", "receive", "correct", "depts", "svc", "reports", "notes", "backup", "sealed", "verify", "display", "studio", "build", "limits"];
+  var ART_EMO = { start: "🌟", learn: "🎓", train: "📋", door: "🚪", team: "👥", clock: "🕘", schedule: "🗓️", earnings: "💰", master: "🗝️", sale: "🛒", pay: "💳", items: "🏷️", receive: "🚚", correct: "✏️", depts: "🗂️", svc: "💱", reports: "📊", notes: "🗒️", backup: "💾", sealed: "🔐", verify: "🛡️", display: "🎨", studio: "⚒️", build: "🔢", limits: "🧭" };
   E.guideCount = function () { return ARTICLES.length; };
   ui.rooms.guide = function (main) {
     var q = ui.input({ id: "guideSearch", type: "search", placeholder: t("guide.searchPh"), "aria-label": t("guide.search") });
@@ -11874,7 +12502,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   };
 
   /* ---------- tips at the foot of each room ---------- */
-  var TIPS = { home: 4, register: 4, inventory: 4, reports: 3, team: 3, schedule: 3, learn: 3, guide: 2, settings: 3, studio: 2 };
+  var TIPS = { home: 4, register: 4, inventory: 4, reports: 3, team: 3, schedule: 3, earnings: 3, learn: 3, guide: 2, settings: 3, studio: 2 };
   var tipAt = {};
   L.tipsOn = function () { return U.prefGet("tips", "1") === "1"; };
   /* fresh: a new visit to the room shows its next tip; a room drawn again keeps the one it shows */
@@ -12673,6 +13301,460 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     if (B.can("team")) {
       var waiting = B.swaps(function (w) { return w.status === "agreed" && (B.isOwner() || (w.from !== me.id && w.to !== me.id)); }).length;
       if (waiting) out.push(need("🔁", t(waiting === 1 ? "sch.homeApprove1" : "sch.homeApprove", { n: waiting }), t("sch.homeApproveSub"), "warn", [t("home.open"), function () { ui.go("schedule"); }]));
+    }
+    return out;
+  };
+})();
+
+/* LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt.
+   Earnings (Build 21): what the store earns apart from its sales (the commission on transfers and top-ups), settling
+   with each provider in the way the owner chose for it, and each person's pay from the time clock. The room has tabs:
+   My pay (each person's own), The store (its earnings for a period), Providers (what is held for each, the payments,
+   the statements checked) and Pay (everyone's hours, rates and pay, for those given "pay"). Pay is an estimate before
+   taxes and deductions: Lakay does not do payroll taxes, and says so wherever pay is shown. */
+"use strict";
+(function () {
+  var U = E.util, h = U.h, t = E.t, B = E.books, ui = E.ui, money = U.money;
+  var EA = E.earnings = { tab: null, period: "month", payAt: 0 };
+
+  /* ---------- small helpers ---------- */
+  function nameOf(id) { var u = B.state().users[id]; return u ? u.name : id; }
+  function staff() { return B.people().filter(function (u) { return u.role !== "owner" && u.active !== false; }); }
+  function today() { return U.dayKey(); }
+  /* a day as "9 Nov", with the year only when it is not this year's */
+  function dshort(k) {
+    var d = typeof k === "string" ? U.fromDayKey(k) : k, s = E.fmtDate(d, "short"), y = " " + new Date().getFullYear();
+    return s.slice(-y.length) === y ? s.slice(0, -y.length) : s;
+  }
+  function span(p) { return p.from === p.to ? dshort(p.from) : t("rep.range", { a: dshort(p.from), b: dshort(p.to) }); }
+  function dur(min) { return ui.dur(min * 60000); }
+  function perHour(c) { return t("ea.perHour", { m: money(c) }); }
+  /* the overtime rule, in words */
+  function otRule(s) { return s.otAfter === null ? t("ea.otNone") : t("ea.otRule", { n: s.otAfter, x: s.otTimes === 200 ? t("ea.x200") : s.otTimes === 150 ? t("ea.x150") : t("ea.xPct", { n: s.otTimes }) }); }
+  var ERR = { amount: "ea.err.amount", future: "ea.err.future", already: "ea.err.already", rate: "ea.err.rate", overtime: "ea.err.overtime",
+    self: "ea.err.self", note: "ea.err.note", period: "ea.err.period", drill: "ex.busy", noperson: "sch.err.person" };
+  function failed(e) { var k = e && ERR[e.code]; if (k) ui.toast(t(k), "bad"); else ui.failed(e); }
+  function redraw() { if (ui.current === "earnings") ui.refresh(); }
+  function fig(label, value, tone, id, sub) {
+    return h("div.ea-fig" + (tone ? "." + tone : ""), id ? { id: id } : null, [h("span.ea-fig-l", null, label), h("b.ea-fig-v", null, value), sub ? h("small.ea-fig-s", null, sub) : null]);
+  }
+  function card(id, emo, title, kids, cls) {
+    return h("section.card.ea-sec" + (cls ? "." + cls : ""), { id: id, "aria-labelledby": id + "H" }, [h("div.card-head", null, h("h2", { id: id + "H" }, [ui.emo(emo), title]))].concat(kids));
+  }
+  /* a statement's figure may be below zero (the provider owes the store): a leading minus is kept */
+  function parseSigned(v) { var s = String(v || "").trim(), neg = /^[-−]/.test(s), c = U.parseMoney(neg ? s.slice(1) : s); return c === null ? null : neg ? -c : c; }
+
+  /* ---------- the room and its tabs ---------- */
+  var TABS = [["mine", "clock"], ["store", "coins"], ["providers", "swap"], ["pay", "people"]];
+  function tabsFor() {
+    return TABS.filter(function (x) {
+      if (x[0] === "mine") return !B.isOwner();
+      if (x[0] === "pay") return B.can("pay");
+      return B.can("reports");
+    });
+  }
+  var PANES = {};
+  ui.rooms.earnings = function (main) {
+    var list = tabsFor();
+    if (!EA.tab || !list.some(function (x) { return x[0] === EA.tab; })) EA.tab = list[0][0];
+    main.appendChild(ui.roomHead("room.earnings", "tip.earnings"));
+    if (list.length > 1) {
+      var unpaid = B.can("pay") ? unpaidLast().length : 0;
+      var tabs = h("div.inv-tabs", { role: "tablist", "aria-label": t("room.earnings") });
+      list.forEach(function (x) {
+        var n = x[0] === "pay" ? unpaid : 0;
+        tabs.appendChild(h("button.inv-tab#eaTab-" + x[0], { type: "button", role: "tab", "aria-selected": String(EA.tab === x[0]), tabindex: EA.tab === x[0] ? "0" : "-1", "aria-controls": "earnPane", "data-tab": x[0],
+          onclick: function () { EA.tab = x[0]; ui.refresh(); var b = document.getElementById("eaTab-" + x[0]); if (b) try { b.focus({ preventScroll: true }); } catch (e) { } } },
+          [h("span.dept-jewel.sm", { "aria-hidden": "true" }, U.icon(x[1])), h("span.inv-tab-name", null, t("ea.tab." + x[0])), n ? h("span.inv-tab-n", null, String(n)) : null]));
+      });
+      tabs.addEventListener("keydown", function (e) {
+        var ids = list.map(function (x) { return x[0]; }), i = ids.indexOf(EA.tab), to = null;
+        if (e.key === "ArrowRight") to = ids[(i + 1) % ids.length]; else if (e.key === "ArrowLeft") to = ids[(i - 1 + ids.length) % ids.length];
+        if (to) { e.preventDefault(); EA.tab = to; ui.refresh(); var b = document.getElementById("eaTab-" + to); if (b) try { b.focus({ preventScroll: true }); } catch (x2) { } }
+      });
+      main.appendChild(h("div.inv-tabs-wrap.ea-tabs", null, tabs));
+    }
+    var pane = h("div.ea-pane#earnPane", list.length > 1 ? { role: "tabpanel", "aria-labelledby": "eaTab-" + EA.tab } : null);
+    main.appendChild(pane);
+    PANES[EA.tab](pane);
+  };
+  /* another person signed in: the room opens on their own first tab */
+  B.on("user", function () { EA.tab = null; EA.payAt = 0; });
+  B.on("lock", function () { EA.tab = null; EA.payAt = 0; });
+
+  /* ---------- My pay: the person's own hours and pay ---------- */
+  PANES.mine = function (pane) {
+    var u = B.user, s = B.paySettings(), periods = B.payPeriods(6), cur = periods[0], e = B.payFor(u.id, cur.from, cur.to), rate = B.rateOf(u.id, today());
+    pane.appendChild(card("eaMine", "🕘", t("ea.mine.now"), [
+      h("p.ea-span", null, [span(cur), h("span.ea-dot", { "aria-hidden": "true" }, "·"), t("ea.period." + s.period)]),
+      h("div.ea-figs", null, [
+        fig(t("ea.hours"), dur(e.regMin), null, "eaMyHours", t(e.shifts === 1 ? "ea.shifts1" : "ea.shifts", { n: e.shifts })),
+        fig(t("ea.ot"), e.otMin ? dur(e.otMin) : "—", null, "eaMyOt"),
+        fig(t("ea.rate"), rate === null ? "—" : perHour(rate), null, "eaMyRate"),
+        fig(t("ea.estimate"), rate === null ? "—" : money(e.gross), "good", "eaMyEst", t("ea.beforeTax"))]),
+      e.open ? h("p.note", null, [ui.emo("🕘"), t("ea.mine.open")]) : null,
+      rate === null ? h("p.note#eaNoRate", null, [ui.emo("ℹ️"), t("ea.mine.noRate")]) : null,
+      h("p.hint", null, t("ea.mine.honest", { rule: otRule(s) }))]));
+    var rows = [];
+    periods.forEach(function (p, i) {
+      var x = B.payFor(u.id, p.from, p.to), none = !x.shifts || x.noRate === x.shifts;
+      /* a period gone by with no hours and no pay is left out */
+      if (i > 0 && !x.shifts && !x.paid) return;
+      rows.push(h("li.ea-row", { "data-from": p.from }, [
+        h("div.ea-row-t", null, [h("b", null, i === 0 ? t("ea.thisPeriod") : span(p)), h("small", null, (i === 0 ? span(p) + " · " : "") + dur(x.regMin + x.otMin) + (x.otMin ? " · " + t("ea.otShort", { d: dur(x.otMin) }) : ""))]),
+        h("span.ea-row-amt", null, none ? "—" : money(x.gross)),
+        x.paid ? h("span.ea-chip.paid", null, [U.icon("check"), t("ea.paidOn", { m: money(x.paid.amount), d: dshort(x.paid.day), how: t("ea.wm." + x.paid.method) })])
+          : h("span.ea-chip", null, i === 0 ? t("ea.inProgress") : x.shifts ? t("ea.notPaid") : t("ea.noHours"))]));
+    });
+    pane.appendChild(card("eaMyPeriods", "🧾", t("ea.mine.past"), [h("ul.ea-rows", null, rows), h("p.hint", null, t("ea.mine.slip"))]));
+  };
+
+  /* ---------- The store: what it earned in a period ---------- */
+  var SPANS = ["today", "week", "lastweek", "month", "lastmonth", "year"];
+  PANES.store = function (pane) {
+    var rg = E.reports.range(EA.period), r = B.report(rg.from, rg.to, null, null), sv = r.services;
+    var unknownList = noCommission(function (v) { return v.day >= rg.from && v.day <= rg.to; }), unknown = unknownList.length;
+    var chips = h("div.chips.ea-spans", { role: "group", "aria-label": t("ea.spanH") }, SPANS.map(function (p) {
+      return h("button.chip", { type: "button", "data-p": p, "aria-pressed": String(EA.period === p), onclick: function () { EA.period = p; redraw(); } }, t("rep.p." + p));
+    }));
+    pane.appendChild(h("div.ea-spanbar", null, [chips, h("p.ea-range#eaRange", null, [ui.emo("📅"), rg.label])]));
+    /* apart from the sales: the commission on transfers and top-ups (Build 22 adds the travel bookings) */
+    var provs = Object.keys(sv.byProvider).sort(function (a, b) { return sv.byProvider[b].commission - sv.byProvider[a].commission; });
+    pane.appendChild(h("section.card.ea-hero#eaApartCard", { "aria-labelledby": "eaApartH" }, [
+      h("div.ea-hero-t", null, [h("p.label-caps#eaApartH", null, [ui.emo("💱"), t("ea.apart")]), h("p.ea-big#eaApart", null, money(sv.commission)),
+        h("p.ea-sub", null, sv.count ? t(sv.count === 1 ? "ea.apartSub1" : "ea.apartSub", { n: sv.count }) : t("ea.apartNone"))]),
+      provs.length ? h("div.table-wrap", null, h("table.grid.compact#eaByProv", null, [
+        h("thead", null, h("tr", null, [h("th", null, t("svc.provider")), h("th.num", null, t("svc.entries")), h("th.num", null, t("svc.commission")), h("th.num", null, t("svc.fees"))])),
+        h("tbody", null, provs.map(function (p) { var x = sv.byProvider[p]; return h("tr", null, [h("td", null, t("svc.p." + p)), h("td.num", null, String(x.count)), h("td.num", null, money(x.commission)), h("td.num", null, money(x.fees))]); }))])) : null,
+      unknown ? h("div.note.ea-unknown#eaUnknown", null, [ui.emo("ℹ️"), h("span", null, t(unknown === 1 ? "ea.unknown1" : "ea.unknown", { n: unknown })),
+        h("button.key.sm#eaWriteCom", { type: "button", onclick: function () { EA.comForm(unknownList); } }, [U.icon("edit"), t("ea.cmKey")])]) : null,
+      h("p.hint", null, t("ea.feesNote"))]));
+    /* with the sales, for those who see the costs; and after pay, for those who also see it */
+    if (B.can("costs")) {
+      var all = r.profit + sv.commission;
+      pane.appendChild(card("eaAll", "📈", t("ea.allH"), [h("div.ea-sum", null, [
+        fig(t("ea.salesProfit"), money(r.profit), r.profit < 0 ? "bad" : null, "eaProfit", t(r.count === 1 ? "ea.salesN1" : "ea.salesN", { n: r.count })),
+        h("span.ea-op", { "aria-hidden": "true" }, "+"), fig(t("ea.apartShort"), money(sv.commission), null, "eaApart2"),
+        h("span.ea-op", { "aria-hidden": "true" }, "="), fig(t("ea.allEarned"), money(all), all < 0 ? "bad" : "good", "eaAllEarned")]),
+        r.noCost ? h("p.note", null, [ui.emo("ℹ️"), t("rep.noCostNote", { m: money(r.noCost) })]) : null]));
+      if (B.can("pay")) {
+        var w = staff().reduce(function (m, u) { var x = B.payFor(u.id, rg.from, rg.to); m.gross += x.gross; m.min += x.regMin + x.otMin; m.noRate += x.noRate; return m; }, { gross: 0, min: 0, noRate: 0 });
+        pane.appendChild(card("eaAfter", "🧮", t("ea.afterH"), [h("div.ea-sum", null, [
+          fig(t("ea.allEarned"), money(all), null, "eaAllEarned2"), h("span.ea-op", { "aria-hidden": "true" }, "−"),
+          fig(t("ea.payEst"), money(w.gross), null, "eaWages", dur(w.min)), h("span.ea-op", { "aria-hidden": "true" }, "="),
+          fig(t("ea.afterPay"), money(all - w.gross), all - w.gross < 0 ? "bad" : "good", "eaAfterPay")]),
+          w.noRate ? h("p.note", null, [ui.emo("ℹ️"), t("ea.someNoRate", { n: w.noRate })]) : null,
+          h("p.hint", null, t("ea.afterNote"))]));
+      }
+    }
+  };
+
+  /* the entries written without a commission (a cashier recorded them), oldest first */
+  function noCommission(more) {
+    return B.services(function (v) { return v.status !== "void" && (v.commission === null || v.commission === undefined) && (!more || more(v)); })
+      .slice().sort(function (a, b) { return a.at < b.at ? -1 : 1; });
+  }
+  /* writing their commission, from the provider's statement */
+  EA.comForm = function (list) {
+    if (!B.can("reports") || !list || !list.length) return;
+    var rowsList = list.slice(0, 40), inputs = {};
+    var rows = rowsList.map(function (v) {
+      var inp = ui.input({ id: "cm-" + v.id, inputmode: "decimal", class: "money-in ea-cm-in", "aria-label": t("ea.cmFor", { p: t("svc.p." + v.provider), m: money(v.amount), d: dshort(v.day) }) });
+      inputs[v.id] = inp;
+      return h("tr", { "data-id": v.id }, [h("td", null, dshort(v.day) + ", " + E.fmtTime(new Date(v.at))), h("td", null, t("svc.p." + v.provider)), h("td", null, t("svc.k." + v.kind)),
+        h("td.num", null, money(v.amount)), h("td.num", null, money(v.fee || 0)), h("td", null, inp)]);
+    });
+    ui.dialog({ title: t("ea.cmH"), emoji: "✍️", wide: true, body: [h("p", null, t("ea.cmIntro")), h("div.table-wrap", null, h("table.grid.compact.ea-cm#cmT", null, [
+      h("thead", null, h("tr", null, [h("th", null, t("ea.when")), h("th", null, t("svc.provider")), h("th", null, t("svc.kind")), h("th.num", null, t("svc.amount")), h("th.num", null, t("svc.fee")), h("th", null, t("svc.commission"))])),
+      h("tbody", null, rows)])), list.length > rowsList.length ? h("p.hint", null, t("ea.cmMore", { n: list.length - rowsList.length })) : null],
+      actions: [{ label: t("cancel") }, { label: t("save"), kind: "primary", id: "cmSave", onClick: function (close, btn) {
+        var out = [], bad = null;
+        rowsList.forEach(function (v) {
+          var x = inputs[v.id].value.trim(); inputs[v.id].removeAttribute("aria-invalid"); if (!x) return;
+          var c = U.parseMoney(x); if (c === null) { if (!bad) bad = inputs[v.id]; inputs[v.id].setAttribute("aria-invalid", "true"); return; }
+          out.push({ id: v.id, commission: c });
+        });
+        if (bad) { ui.toast(t("ea.err.amount"), "bad"); bad.focus(); return false; }
+        if (!out.length) { close(); return false; }
+        btn.disabled = true;
+        B.setSvcCommissions(out).then(function () { close(); ui.toast(t(out.length === 1 ? "ea.cmSaved1" : "ea.cmSaved", { n: out.length }), "good"); redraw(); }, function (e) { btn.disabled = false; failed(e); });
+        return false;
+      } }], focus: ".ea-cm-in" });
+  };
+
+  /* ---------- Providers: what is held for each, and settling with it ---------- */
+  function shown() { return B.PROVIDERS.filter(function (id) { var a = B.providerAccount(id); return a.count || a.setup || a.paid || a.returned || a.comReceived; }); }
+  PANES.providers = function (pane) {
+    var ids = shown();
+    if (!ids.length) { pane.appendChild(h("section.card.ea-empty", null, [h("p", null, [ui.emo("💱"), t("ea.provNone")])])); return; }
+    pane.appendChild(h("p.ea-intro", null, t("ea.provIntro")));
+    pane.appendChild(h("div.ea-provs#eaProvs", null, ids.map(provCard)));
+    pane.appendChild(settleLog());
+  };
+  function provCard(id) {
+    var a = B.providerAccount(id), s = a.setup, prepaid = s && s.how === "prepaid", name = t("svc.p." + id), main, com;
+    if (prepaid) main = fig(t("ea.balance"), money(-a.held), -a.held <= 0 ? "bad" : null, "eaBal-" + id, -a.held <= 0 ? t("ea.balanceOut") : t("ea.balanceSub"));
+    else if (a.held >= 0) main = fig(t("ea.held", { p: name }), money(a.held), null, "eaHeld-" + id, t("ea.heldSub"));
+    else main = fig(t("ea.owesStore", { p: name }), money(-a.held), null, "eaHeld-" + id, t("ea.owesSub"));
+    if (s && s.com === "monthly") com = fig(t("ea.comDue"), money(a.comDue), a.comDue > 0 ? "warn" : null, "eaCom-" + id, t("ea.comDueSub", { m: money(a.comReceived) }));
+    else com = fig(t("ea.comKept"), money(a.kept), null, "eaCom-" + id, t("ea.comKeptSub"));
+    var chk = a.lastCheck, facts = [
+      h("li", null, t(!a.cashOut ? "ea.tookIn" : !a.cashIn ? "ea.paidOut" : "ea.inOut", { a: money(a.cashIn), b: money(a.cashOut), n: a.count })),
+      h("li", null, a.lastPaid ? t(prepaid ? "ea.lastAdded" : "ea.lastPaid", { d: dshort(a.lastPaid), m: money(a.paid) })
+        : a.lastReturned ? t("ea.lastReturned", { d: dshort(a.lastReturned), m: money(a.returned) }) : t("ea.neverPaid")),
+      chk ? h("li" + (chk.diff ? ".off" : ""), null, chk.diff ? t("ea.checkOff", { d: dshort(chk.day), m: money(Math.abs(chk.diff)) }) : t("ea.checkOk", { d: dshort(chk.day) })) : null,
+      a.unknown ? h("li.off", null, [t(a.unknown === 1 ? "ea.unknown1" : "ea.unknown", { n: a.unknown }), " ",
+        h("button.row-key#eaWriteCom-" + id, { type: "button", onclick: function () { EA.comForm(noCommission(function (v) { return v.provider === id; })); } }, h("span", null, t("ea.cmKey")))]) : null];
+    var keys = [h("button.key.sm.primary#eaSettle-" + id, { type: "button", onclick: function () { EA.settleForm(id); } }, [U.icon("plus"), t("ea.record")]),
+      h("button.key.sm#eaCheck-" + id, { type: "button", onclick: function () { EA.checkForm(id); } }, [U.icon("check"), t("ea.check")])];
+    if (B.isOwner()) keys.push(h("button.key.sm#eaSetup-" + id, { type: "button", onclick: function () { EA.setupForm(id); } }, [U.icon("gear"), t("ea.setup")]));
+    return h("article.ea-prov" + (prepaid ? ".prepaid" : ""), { id: "eaProv-" + id, "data-provider": id, "aria-labelledby": "eaProvH-" + id }, [
+      h("div.ea-prov-h", null, [h("h3", { id: "eaProvH-" + id }, name), h("div.ea-tags", null, s ? [h("span.ea-chip", null, t("ea.how." + s.how)), h("span.ea-chip", null, t("ea.com." + s.com))]
+        : [h("span.ea-chip.warn", null, t("ea.notSet"))])]),
+      h("div.ea-figs.two", null, [main, com]), h("ul.ea-facts", null, facts), h("div.ea-keys", null, keys)]);
+  }
+  function settleLog() {
+    var list = B.settlements().sort(function (a, b) { return a.day !== b.day ? (a.day < b.day ? 1 : -1) : (a.at < b.at ? 1 : -1); }), shownList = list.slice(0, 40);
+    if (!list.length) return card("eaLog", "🗂️", t("ea.logH"), [h("p.muted", null, t("ea.logNone"))]);
+    return card("eaLog", "🗂️", t("ea.logH"), [h("div.table-wrap", null, h("table.grid.compact#eaLogT", null, [
+      h("thead", null, h("tr", null, [h("th", null, t("ea.when")), h("th", null, t("svc.provider")), h("th", null, t("ea.what")), h("th.num", null, t("svc.amount")), h("th", null, t("ea.ref")), h("th", null, t("ea.by")), h("th", null, h("span.ea-sr", null, t("ea.void")))])),
+      h("tbody", null, shownList.map(function (x) {
+        var void_ = x.status === "void", how = (B.provSetup(x.provider) || {}).how || "deposit";
+        return h("tr" + (void_ ? ".voided" : ""), { "data-id": x.id }, [h("td", null, dshort(x.day)), h("td", null, t("svc.p." + x.provider)),
+          h("td", null, [t(x.kind === "paid" ? "ea.k.paid." + how : "ea.k." + x.kind), void_ ? h("small.ea-void-why", null, t("ea.voided", { why: x.voidReason || "" })) : null]),
+          h("td.num", null, money(x.amount)), h("td", null, x.ref || "—"), h("td", null, nameOf(x.by)),
+          h("td", null, void_ ? null : h("button.row-key", { type: "button", title: t("ea.voidT"), "aria-label": t("ea.voidT"), onclick: function () { voidSettle(x); } }, U.icon("x")))]);
+      }))])), list.length > shownList.length ? h("p.hint", null, t("ea.logMore", { n: list.length - shownList.length })) : null]);
+  }
+  function voidSettle(x) {
+    var why = ui.input({ id: "vdWhy", maxlength: "200", placeholder: t("ea.voidPh") });
+    ui.dialog({ title: t("ea.voidT"), emoji: "↩️", body: [h("p", null, t("ea.voidQ", { m: money(x.amount), p: t("svc.p." + x.provider), d: dshort(x.day) })), ui.field("ea.voidWhy", why, { required: true })],
+      actions: [{ label: t("cancel") }, { label: t("ea.void"), kind: "danger", id: "vdSave", onClick: function (close, btn) {
+        if (!why.value.trim()) { ui.fieldError(why, t("ea.err.note")); return false; }
+        btn.disabled = true;
+        B.voidSettle(x.id, why.value).then(function () { close(); ui.toast(t("ea.voidedToast")); redraw(); }, function (e) { btn.disabled = false; failed(e); });
+        return false;
+      } }], focus: "#vdWhy" });
+  }
+
+  /* recording a payment to or from a provider */
+  EA.settleForm = function (id, kind0) {
+    if (!B.can("reports")) return;
+    var a = B.providerAccount(id), s = a.setup || { how: "deposit", com: "deducted" }, name = t("svc.p." + id), kind = kind0 || "paid";
+    var seg = ui.seg([["paid", t("ea.k.paid." + s.how)], ["returned", t("ea.k.returned")], ["commission", t("ea.k.commission")]], kind, function (v) { kind = v; prefill(); }, t("ea.kindH"));
+    seg.id = "stKind";
+    var amount = ui.input({ id: "stAmount", inputmode: "decimal", class: "money-in" });
+    var day = h("input#stDay", { type: "date", value: today(), max: today() });
+    var ref = ui.input({ id: "stRef", maxlength: "40", placeholder: t("ea.refPh") });
+    var note = ui.input({ id: "stNote", maxlength: "200" });
+    var hint = h("p.hint.ea-hint#stHint");
+    function prefill() {
+      var v = kind === "paid" ? (s.how === "prepaid" ? 0 : Math.max(0, a.held)) : kind === "commission" ? Math.max(0, a.comDue) : 0;
+      amount.value = v ? U.moneyPlain(v) : "";
+      hint.textContent = kind === "paid" ? (s.how === "prepaid" ? t("ea.hint.prepaid", { m: money(-a.held) }) : t("ea.hint.held", { m: money(a.held), p: name }))
+        : kind === "commission" ? (s.com === "monthly" ? t("ea.hint.comDue", { m: money(a.comDue) }) : t("ea.hint.comAtOnce")) : t("ea.hint.returned", { p: name });
+    }
+    prefill();
+    ui.dialog({ title: t("ea.settleH", { p: name }), emoji: "🏦", body: [h("p.label-caps", null, t("ea.kindH")), seg, ui.field("ea.amount", amount, { required: true }), hint,
+      ui.field("ea.day", day), ui.field("ea.ref", ref, { hint: t("ea.refHint") }), ui.field("ea.note", note)],
+      actions: [{ label: t("cancel") }, { label: t("save"), kind: "primary", id: "stSave", onClick: function (close, btn) {
+        ui.fieldError(amount, ""); ui.fieldError(day, "");
+        var c = U.parseMoney(amount.value);
+        if (c === null || c <= 0) { ui.fieldError(amount, t("ea.err.amount")); return false; }
+        if (!day.value || day.value > today()) { ui.fieldError(day, t("ea.err.future")); return false; }
+        btn.disabled = true;
+        B.settle({ provider: id, kind: kind, amount: c, ref: ref.value, note: note.value, day: day.value }).then(function () { close(); ui.toast(t("ea.settled", { p: name }), "good"); redraw(); },
+          function (e) { btn.disabled = false; failed(e); });
+        return false;
+      } }], focus: "#stAmount" });
+  };
+  /* checking a provider's statement against what Lakay works out */
+  EA.checkForm = function (id) {
+    if (!B.can("reports")) return;
+    var a = B.providerAccount(id), prepaid = a.setup && a.setup.how === "prepaid", lakay = prepaid ? -a.held : a.held, name = t("svc.p." + id);
+    var says = ui.input({ id: "ckSays", inputmode: "decimal", class: "money-in" });
+    var note = ui.input({ id: "ckNote", maxlength: "200" });
+    var out = h("p.ea-check#ckOut", { role: "status", "aria-live": "polite" });
+    says.addEventListener("input", function () {
+      var c = parseSigned(says.value);
+      out.className = "ea-check" + (c === null ? "" : c === lakay ? " same" : " off");
+      out.textContent = c === null ? "" : c === lakay ? t("ea.check.same") : t("ea.check.diff", { m: money(Math.abs(c - lakay)) });
+    });
+    ui.dialog({ title: t("ea.checkH", { p: name }), emoji: "🔎", body: [h("p", null, t(prepaid ? "ea.check.introPre" : "ea.check.intro", { p: name, m: money(lakay) })),
+      ui.field(prepaid ? "ea.check.saysPre" : "ea.check.says", says, { required: true, hint: t("ea.check.minus") }), out, ui.field("ea.note", note)],
+      actions: [{ label: t("cancel") }, { label: t("ea.check.save"), kind: "primary", id: "ckSave", onClick: function (close, btn) {
+        var c = parseSigned(says.value);
+        if (c === null) { ui.fieldError(says, t("ea.err.amount")); return false; }
+        btn.disabled = true;
+        B.checkStatement(id, c, note.value).then(function (x) {
+          close(); ui.toast(x.diff ? t("ea.check.offToast", { m: money(Math.abs(x.diff)) }) : t("ea.check.okToast"), x.diff ? "warn" : "good"); redraw();
+        }, function (e) { btn.disabled = false; failed(e); });
+        return false;
+      } }], focus: "#ckSays" });
+  };
+  /* how a provider settles: the owner's to say */
+  EA.setupForm = function (id) {
+    if (!B.isOwner()) return;
+    var cur = B.provSetup(id) || { how: "deposit", com: "deducted", note: "" }, how = cur.how, com = cur.com;
+    var d1 = h("p.hint.ea-hint#psHowD"), d2 = h("p.hint.ea-hint#psComD");
+    function desc() { d1.textContent = t("ea.howD." + how); d2.textContent = t("ea.comD." + com); }
+    var howSeg = ui.seg(B.PROV_HOW.map(function (k) { return [k, t("ea.how." + k)]; }), how, function (v) { how = v; desc(); }, t("ea.howH")); howSeg.id = "psHow";
+    var comSeg = ui.seg(B.PROV_COM.map(function (k) { return [k, t("ea.com." + k)]; }), com, function (v) { com = v; desc(); }, t("ea.comH")); comSeg.id = "psCom";
+    var note = ui.input({ id: "psNote", maxlength: "120", value: cur.note || "", placeholder: t("ea.setupNotePh") });
+    desc();
+    ui.dialog({ title: t("ea.setupH", { p: t("svc.p." + id) }), emoji: "⚙️", body: [h("p.label-caps", null, t("ea.howH")), howSeg, d1, h("p.label-caps", null, t("ea.comH")), comSeg, d2, ui.field("ea.note", note)],
+      actions: [{ label: t("cancel") }, { label: t("save"), kind: "primary", id: "psSave", onClick: function (close, btn) {
+        btn.disabled = true;
+        B.setProvSetup(id, { how: how, com: com, note: note.value }).then(function () { close(); ui.toast(t("ea.setupSaved"), "good"); redraw(); }, function (e) { btn.disabled = false; failed(e); });
+        return false;
+      } }] });
+  };
+
+  /* ---------- Pay: everyone's hours, rates and pay, for those given "pay" ---------- */
+  /* the people with hours in the last period that has ended, not yet marked paid */
+  function unpaidLast() {
+    var p = B.payPeriods(2)[1]; if (!p) return [];
+    return staff().filter(function (u) { if (u.id === B.user.id && !B.isOwner()) return false; var e = B.payFor(u.id, p.from, p.to); return e.shifts > 0 && !e.paid; });
+  }
+  PANES.pay = function (pane) {
+    var s = B.paySettings(), periods = B.payPeriods(6);
+    if (EA.payAt >= periods.length) EA.payAt = 0;
+    var p = periods[EA.payAt], over = p.to < today(), rateDay = p.to < today() ? p.to : today();
+    var pick = ui.select(periods.map(function (x, i) { return [String(i), (i === 0 ? t("ea.thisPeriod") + " · " : i === 1 ? t("ea.lastPeriod") + " · " : "") + span(x)]; }), String(EA.payAt), { id: "eaPeriod" });
+    pick.addEventListener("change", function () { EA.payAt = +pick.value; redraw(); });
+    pane.appendChild(h("section.card.ea-set#eaPaySet", null, [
+      h("div.ea-set-t", null, [h("p.label-caps", null, [ui.emo("🗓️"), t("ea.paidH")]), h("b#eaPayRule", null, t("ea.period." + s.period)), h("small", null, otRule(s))]),
+      h("div.ea-set-pick", null, [h("label.ea-sr", { for: "eaPeriod" }, t("ea.periodPick")), pick]),
+      h("button.key.sm#eaPaySetKey", { type: "button", onclick: EA.settingsForm }, [U.icon("gear"), t("ea.change")])]));
+    var rows = staff().map(function (u) { return { u: u, e: B.payFor(u.id, p.from, p.to), rate: B.rateOf(u.id, rateDay), self: u.id === B.user.id && !B.isOwner() }; });
+    var tot = rows.reduce(function (m, r) { m.reg += r.e.regMin; m.ot += r.e.otMin; m.gross += r.e.gross; m.paid += r.e.paid ? r.e.paid.amount : 0; m.open += r.e.open; m.noRate += r.e.noRate; return m; }, { reg: 0, ot: 0, gross: 0, paid: 0, open: 0, noRate: 0 });
+    if (!rows.length) { pane.appendChild(h("section.card.ea-empty", null, h("p", null, [ui.emo("👥"), t("ea.noStaff")]))); return; }
+    var body = rows.map(function (r) {
+      var u = r.u, e = r.e, rateKey = r.self ? h("span.muted", { title: t("ea.err.self") }, r.rate === null ? "—" : perHour(r.rate))
+        : h("button.row-key#eaRate-" + u.id, { type: "button", onclick: function () { EA.rateForm(u.id); } }, [U.icon("edit"), h("span", null, r.rate === null ? t("ea.setRate") : perHour(r.rate))]);
+      var paid = e.paid ? h("button.row-key.ea-paid#eaPaid-" + u.id, { type: "button", onclick: function () { EA.paidView(e.paid); } }, [U.icon("check"), h("span", null, t("ea.paidShort", { m: money(e.paid.amount), how: t("ea.wm." + e.paid.method) }))])
+        : r.self ? h("span.muted", null, t("ea.notPaid")) : e.shifts ? h("button.key.sm#eaMark-" + u.id, { type: "button", onclick: function () { EA.markForm(u.id, p); } }, t("ea.markPaid")) : h("span.muted", null, t("ea.noHours"));
+      var warn = [];
+      if (e.open) warn.push(t(e.open === 1 ? "ea.open1" : "ea.open", { n: e.open }));
+      if (e.noRate) warn.push(t(e.noRate === 1 ? "ea.noRate1" : "ea.noRate", { n: e.noRate }));
+      return h("tr", { "data-user": u.id }, [h("th", { scope: "row" }, [h("b", null, u.name), h("small", null, t("people.id", { n: B.numberOf(u) }))]), h("td", null, rateKey),
+        h("td.num", null, [dur(e.regMin), h("small", null, t(e.shifts === 1 ? "ea.shifts1" : "ea.shifts", { n: e.shifts }))]), h("td.num", null, e.otMin ? dur(e.otMin) : "—"),
+        h("td.num", null, [h("b", null, e.shifts && e.noRate === e.shifts ? "—" : money(e.gross)), warn.length ? h("small.warn", null, warn.join(" · ")) : null]), h("td", null, paid)]);
+    });
+    pane.appendChild(h("section.card.ea-sec#eaPayCard", { "aria-labelledby": "eaPayH" }, [
+      h("div.card-head", null, [h("h2#eaPayH", null, [ui.emo("👥"), t("ea.payH", { p: span(p) })]), over ? null : h("span.ea-chip", null, t("ea.inProgress"))]),
+      h("div.table-wrap", null, h("table.grid.compact.ea-pay#eaPayT", null, [
+        h("thead", null, h("tr", null, [h("th", null, t("ea.person")), h("th", null, t("ea.rate")), h("th.num", null, t("ea.hours")), h("th.num", null, t("ea.ot")), h("th.num", null, t("ea.estimate")), h("th", null, t("ea.paidCol"))])),
+        h("tbody", null, body),
+        h("tfoot", null, h("tr", null, [h("th", { scope: "row" }, t("ea.total")), h("td"), h("td.num", null, dur(tot.reg)), h("td.num", null, tot.ot ? dur(tot.ot) : "—"), h("td.num#eaPayTotal", null, h("b", null, money(tot.gross))),
+          h("td", null, tot.paid ? t("ea.paidSum", { m: money(tot.paid) }) : "")]))])),
+      tot.open ? h("p.note", null, [ui.emo("🕘"), t("ea.openNote")]) : null,
+      h("p.hint", null, t("ea.payHonest"))]));
+  };
+  /* how often pay is worked out, and the overtime */
+  EA.settingsForm = function () {
+    if (!B.can("pay")) return;
+    var s = B.paySettings();
+    var period = ui.select(B.PAY_PERIODS.map(function (k) { return [k, t("ea.period." + k)]; }), s.period, { id: "ppPeriod" });
+    var anchor = h("input#ppAnchor", { type: "date", value: s.anchor });
+    var anchorBox = ui.field("ea.anchor", anchor, { hint: t("ea.anchorHint") });
+    function showAnchor() { anchorBox.hidden = period.value !== "biweekly"; }
+    period.addEventListener("change", showAnchor); showAnchor();
+    var ot = h("input#ppOt", { type: "checkbox" }); ot.checked = s.otAfter !== null;
+    var after = ui.input({ id: "ppAfter", inputmode: "numeric", value: String(s.otAfter === null ? 40 : s.otAfter), maxlength: "2" });
+    var times = ui.select([["150", t("ea.x150")], ["200", t("ea.x200")]], String(s.otTimes === 200 ? 200 : 150), { id: "ppTimes" });
+    var otBox = h("div.ea-ot", null, [ui.field("ea.otAfter", after), ui.field("ea.otTimes", times)]);
+    function showOt() { otBox.hidden = !ot.checked; }
+    ot.addEventListener("change", showOt); showOt();
+    ui.dialog({ title: t("ea.setH"), emoji: "🗓️", body: [ui.field("ea.periodH", period), anchorBox,
+      h("label.access-row#ppOtRow", { for: "ppOt" }, [ot, h("span", null, [h("b", null, t("ea.otOn")), h("small", null, t("ea.otOnD"))])]), otBox, h("p.hint", null, t("ea.otCheck"))],
+      actions: [{ label: t("cancel") }, { label: t("save"), kind: "primary", id: "ppSave", onClick: function (close, btn) {
+        ui.fieldError(after, "");
+        var n = parseInt(after.value, 10);
+        if (ot.checked && !(n >= 1 && n <= 80)) { ui.fieldError(after, t("ea.err.overtime")); return false; }
+        btn.disabled = true;
+        B.setPaySettings({ period: period.value, anchor: anchor.value, otAfter: ot.checked ? n : null, otTimes: +times.value }).then(function () { close(); EA.payAt = 0; ui.toast(t("ea.setSaved"), "good"); redraw(); },
+          function (e) { btn.disabled = false; failed(e); });
+        return false;
+      } }] });
+  };
+  /* a person's rate, from a day on (the days before keep the rate they had) */
+  EA.rateForm = function (uid) {
+    var u = B.state().users[uid]; if (!u || !B.can("pay")) return;
+    if (uid === B.user.id && !B.isOwner()) { ui.toast(t("ea.err.self"), "bad"); return; }
+    var cur = B.rateOf(uid, today()), list = B.rates(uid).slice().reverse();
+    var rate = ui.input({ id: "rtRate", inputmode: "decimal", class: "money-in", value: cur !== null ? U.moneyPlain(cur) : "" });
+    var from = h("input#rtFrom", { type: "date", value: today() });
+    ui.dialog({ title: t("ea.rateH", { name: u.name }), emoji: "🏷️", body: [ui.field("ea.rateField", rate, { required: true, hint: t("ea.rateHint") }), ui.field("ea.rateFrom", from, { hint: t("ea.rateFromHint") }),
+      list.length ? h("div.ea-hist", null, [h("p.label-caps", null, t("ea.rateHist")), h("ul.ea-facts", null, list.map(function (x) { return h("li", null, t("ea.rateFromLine", { d: dshort(x.from), m: perHour(x.rate) })); }))]) : null],
+      actions: [{ label: t("cancel") }, { label: t("save"), kind: "primary", id: "rtSave", onClick: function (close, btn) {
+        ui.fieldError(rate, "");
+        var c = U.parseMoney(rate.value);
+        if (c === null || c > 100000) { ui.fieldError(rate, t("ea.err.rate")); return false; }
+        btn.disabled = true;
+        B.setRate(uid, c, from.value || today()).then(function () { close(); ui.toast(t("ea.rateSaved", { name: u.name }), "good"); redraw(); }, function (e) { btn.disabled = false; failed(e); });
+        return false;
+      } }], focus: "#rtRate" });
+  };
+  /* a period's pay, handed over */
+  EA.markForm = function (uid, p) {
+    var u = B.state().users[uid]; if (!u || !B.can("pay")) return;
+    if (uid === B.user.id && !B.isOwner()) { ui.toast(t("ea.err.self"), "bad"); return; }
+    var e = B.payFor(uid, p.from, p.to), over = p.to < today();
+    var amount = ui.input({ id: "mpAmount", inputmode: "decimal", class: "money-in", value: U.moneyPlain(e.gross) });
+    var method = ui.select(B.WAGE_METHODS.map(function (k) { return [k, t("ea.wm." + k)]; }), "cash", { id: "mpMethod" });
+    var ref = ui.input({ id: "mpRef", maxlength: "40", placeholder: t("ea.mpRefPh") });
+    var note = ui.input({ id: "mpNote", maxlength: "200" });
+    ui.dialog({ title: t("ea.markH", { name: u.name }), emoji: "🧾", body: [
+      h("p", null, t("ea.markIntro", { name: u.name, d: dur(e.regMin + e.otMin), p: span(p), m: money(e.gross) })),
+      over ? null : h("p.note", null, [ui.emo("⚠️"), t("ea.notOver")]), e.open ? h("p.note", null, [ui.emo("🕘"), t("ea.openNote")]) : null,
+      ui.field("ea.amountPaid", amount, { required: true, hint: t("ea.amountHint") }), ui.field("ea.method", method), ui.field("ea.ref", ref), ui.field("ea.note", note)],
+      actions: [{ label: t("cancel") }, { label: t("ea.markPaid"), kind: "primary", id: "mpSave", onClick: function (close, btn) {
+        ui.fieldError(amount, "");
+        var c = U.parseMoney(amount.value);
+        if (c === null) { ui.fieldError(amount, t("ea.err.amount")); return false; }
+        btn.disabled = true;
+        B.markPaid({ user: uid, from: p.from, to: p.to, amount: c, method: method.value, ref: ref.value, note: note.value }).then(function () { close(); ui.toast(t("ea.marked", { name: u.name }), "good"); redraw(); },
+          function (er) { btn.disabled = false; failed(er); });
+        return false;
+      } }], focus: "#mpAmount" });
+  };
+  /* what was handed over, and undoing it with a reason */
+  EA.paidView = function (x) {
+    var mayUndo = B.can("pay") && (x.user !== B.user.id || B.isOwner());
+    var rows = [[t("ea.amountPaid"), money(x.amount)], [t("ea.method"), t("ea.wm." + x.method)], [t("ea.periodWord"), span(x)], [t("ea.hours"), dur(x.minutes || 0) + (x.otMinutes ? " · " + t("ea.otShort", { d: dur(x.otMinutes) }) : "")],
+      [t("ea.estimate"), money(x.estimate || 0)], [t("ea.paidWhen"), E.fmtDate(new Date(x.at), "long") + ", " + E.fmtTime(new Date(x.at))], [t("ea.by"), nameOf(x.by)]];
+    if (x.ref) rows.splice(2, 0, [t("ea.ref"), x.ref]);
+    if (x.note) rows.push([t("ea.note"), x.note]);
+    var actions = [{ label: t("close") }];
+    if (mayUndo) actions.unshift({ label: t("ea.undoPaid"), kind: "danger", id: "pvUndo", onClick: function (close) {
+      close();
+      var why = ui.input({ id: "pvWhy", maxlength: "200", placeholder: t("ea.voidPh") });
+      ui.dialog({ title: t("ea.undoPaid"), emoji: "↩️", body: [h("p", null, t("ea.undoQ", { name: nameOf(x.user), m: money(x.amount) })), ui.field("ea.voidWhy", why, { required: true })],
+        actions: [{ label: t("cancel") }, { label: t("ea.undoPaid"), kind: "danger", id: "pvSave", onClick: function (c2, btn) {
+          if (!why.value.trim()) { ui.fieldError(why, t("ea.err.note")); return false; }
+          btn.disabled = true;
+          B.voidPaid(x.id, why.value).then(function () { c2(); ui.toast(t("ea.undone")); redraw(); }, function (e) { btn.disabled = false; failed(e); });
+          return false;
+        } }], focus: "#pvWhy" });
+    } });
+    ui.dialog({ title: t("ea.paidViewH", { name: nameOf(x.user) }), emoji: "🧾", body: h("dl.ea-dl", null, [].concat.apply([], rows.map(function (r) { return [h("dt", null, r[0]), h("dd", null, r[1])]; }))), actions: actions });
+  };
+
+  /* ---------- the Home: what is waiting ---------- */
+  EA.homeRows = function (need) {
+    var out = []; if (!B.user) return out;
+    if (B.can("pay")) {
+      var left = unpaidLast();
+      if (left.length) out.push(need("🧾", t(left.length === 1 ? "ea.home1" : "ea.home", { n: left.length }), left.map(function (u) { return u.name; }).join(", "), null,
+        [t("home.open"), function () { EA.tab = "pay"; EA.payAt = 1; ui.go("earnings"); }]));
+    }
+    if (B.can("reports")) {
+      B.PROVIDERS.forEach(function (id) {
+        var a = B.providerAccount(id);
+        if (a.setup && a.setup.how === "prepaid" && a.count && -a.held <= 0) out.push(need("💱", t("ea.homeOut", { p: t("svc.p." + id) }), t("ea.homeOutSub"), "warn",
+          [t("home.open"), function () { EA.tab = "providers"; ui.go("earnings"); }]));
+      });
     }
     return out;
   };

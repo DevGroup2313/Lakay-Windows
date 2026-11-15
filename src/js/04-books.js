@@ -144,7 +144,7 @@
   function load(vault, key, userId) {
     ID = vault.storeId;
     return D.entries("rec").then(function (entries) {
-      var st = { settings: null, users: {}, cats: {}, items: {}, sales: [], moves: [], shifts: [], services: [], train: {}, plans: {}, course: null, slots: [], rota: null, swaps: [], counters: {}, pad: {}, notes: {}, head: null, unreadable: [] };
+      var st = { settings: null, users: {}, cats: {}, items: {}, sales: [], moves: [], shifts: [], services: [], train: {}, plans: {}, course: null, slots: [], rota: null, swaps: [], provs: {}, settles: [], stmts: [], payset: null, rates: {}, paids: [], counters: {}, pad: {}, notes: {}, head: null, unreadable: [] };
       /* each person's notes are their own: a sign-in opens only the notes of the one signing in (the practice store opens
          all of its sample people's, since it changes from one to another) */
       var mine = "notes:" + (userId || "owner"), practice = B.mode === "practice";
@@ -159,6 +159,7 @@
         st.services.sort(function (a, b) { return a.at < b.at ? -1 : a.at > b.at ? 1 : 0; });
         st.slots.sort(slotOrder);
         st.swaps.sort(function (a, b) { return a.at < b.at ? -1 : a.at > b.at ? 1 : 0; });
+        [st.settles, st.stmts, st.paids].forEach(function (list) { list.sort(function (a, b) { return a.at < b.at ? -1 : a.at > b.at ? 1 : 0; }); });
         if (!st.head || !st.settings) throw err("damaged");
         return D.get("journal", st.head.seq).then(function (env) {
           if (!env) { st.headProblem = true; return; }
@@ -195,6 +196,13 @@
     else if (kind === "slot") { st.slots = st.slots || []; var si = st.slots.findIndex(function (x) { return x.id === v.id; }); if (si >= 0) st.slots[si] = v; else { st.slots.push(v); st.slots.sort(slotOrder); } }
     else if (kind === "rota") st.rota = v;
     else if (kind === "swap") { st.swaps = st.swaps || []; var wi = st.swaps.findIndex(function (x) { return x.id === v.id; }); if (wi >= 0) st.swaps[wi] = v; else st.swaps.push(v); }
+    else if (kind === "prov") { st.provs = st.provs || {}; st.provs[id] = v; }
+    else if (kind === "rate") { st.rates = st.rates || {}; st.rates[id] = v; }
+    else if (kind === "payset") st.payset = v;
+    else if (kind === "settle" || kind === "stmt" || kind === "paid") {
+      var key = kind === "settle" ? "settles" : kind === "stmt" ? "stmts" : "paids"; st[key] = st[key] || [];
+      var pi = st[key].findIndex(function (x) { return x.id === v.id; }); if (pi >= 0) st[key][pi] = v; else st[key].push(v);
+    }
     else if (kind === "counter") st.counters[id] = v;
     else if (kind === "pad") st.pad[id] = v;
     else if (kind === "notes") st.notes[id] = (v && Array.isArray(v.notes)) ? v.notes : [];
@@ -291,6 +299,8 @@
     }
     /* and a practice store made before Build 20, its schedule */
     if (!state.rota && !(state.slots || []).length) c = c.then(sampleSchedule);
+    /* and before Build 21, its providers and its pay */
+    if (!Object.keys(state.provs || {}).length && !state.payset) c = c.then(sampleMoney);
     return c.then(function () { B._at = null; B.user = state.users.owner; return state; },
       function (e) { console.warn(e); B._at = null; if (state) B.user = state.users.owner; return state; });
   }
@@ -332,6 +342,54 @@
       .then(as(marie, hour(yesterday, 10), function () { return mon && sat ? B.askSwap({ slot: mon.id, to: jean, kind: "cover", note: "" }) : Promise.resolve(); }))
       .then(as(jean, hour(yesterday, 14), function () { var w = B.swaps(function (x) { return x.from === marie && x.status === "asked"; })[0]; return w ? B.answerSwap(w.id, true) : Promise.resolve(); }))
       .then(as(jean, hour(yesterday, 16), function () { return sat && tue ? B.askSwap({ slot: sat.id, to: marie, kind: "trade", theirSlot: tue.id, note: "" }) : Promise.resolve(); }));
+  }
+  /* the practice store's providers and pay (Build 21). RIA: the store deposits, and RIA pays the commission each month;
+     CAM takes it from the bank, commission taken off at once; Unitransfer: deposits, commission at once; Boss
+     Revolution: a prepaid balance. A week ago everything collected until the day before was settled, so what is held
+     now is the last week's; Boss Revolution was given $300, then $150. Pay is weekly, overtime after 40 hours at one
+     and a half times; Marie at $15.50 an hour, Jean at $19.00; last week's pay is marked paid. */
+  function sampleMoney() {
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    function at(back, hh) { var d = U.addDays(today, -back); d.setHours(hh, 0, 0, 0); return d; }
+    function as(id, when, fn) { return function () { B._at = when.toISOString(); B.user = state.users[id] || state.users.owner; return fn().then(function () { B.user = state.users.owner; }); }; }
+    var setups = [["ria", "deposit", "monthly"], ["cam", "sweep", "deducted"], ["unitransfer", "deposit", "deducted"], ["boss", "prepaid", "deducted"]];
+    var cut = U.dayKey(U.addDays(today, -8)), c = Promise.resolve();
+    setups.forEach(function (x) { c = c.then(as("owner", at(15, 9), function () { return B.setProvSetup(x[0], { how: x[1], com: x[2], note: "" }); })); });
+    setups.forEach(function (x) {
+      if (x[1] === "prepaid") return;
+      c = c.then(function () {
+        var owed = 0;
+        (state.services || []).forEach(function (v) {
+          if (v.provider !== x[0] || v.status === "void" || v.day > cut) return;
+          var m = B.svcCash(v); owed += m.cashIn - m.cashOut - (x[2] === "deducted" ? (v.commission || 0) : 0);
+        });
+        if (!owed) return null;
+        var kind = owed > 0 ? "paid" : "returned", amount = Math.abs(owed);
+        if (x[1] === "deposit" && kind === "paid") amount = Math.floor(amount / 100) * 100;
+        return amount ? as(SAMPLE_PEOPLE[1][0], at(7, 11), function () { return B.settle({ provider: x[0], kind: kind, amount: amount, ref: (x[0] === "cam" ? "SWP-" : "DEP-") + U.dayKey(at(7, 11)).slice(5).replace("-", ""), note: "", day: U.dayKey(at(7, 11)) }); })() : null;
+      });
+    });
+    c = c.then(as("owner", at(15, 10), function () { return B.settle({ provider: "boss", kind: "paid", amount: 30000, ref: "BR-PRE-1", note: "", day: U.dayKey(at(15, 10)) }); }));
+    c = c.then(as("owner", at(6, 10), function () { return B.settle({ provider: "boss", kind: "paid", amount: 15000, ref: "BR-PRE-2", note: "", day: U.dayKey(at(6, 10)) }); }));
+    /* RIA paid the commission of the month before, on the third of this month (or an hour ago, early in the month) */
+    c = c.then(function () {
+      var m0 = new Date(today.getFullYear(), today.getMonth(), 1), k0 = U.dayKey(m0), due = 0, when = new Date(today.getFullYear(), today.getMonth(), 3, 15, 0, 0);
+      if (when.getTime() > Date.now() - 3600000) when = new Date(Date.now() - 3600000);
+      (state.services || []).forEach(function (v) { if (v.provider === "ria" && v.status !== "void" && v.day < k0 && v.commission) due += v.commission; });
+      return due ? as("owner", when, function () { return B.settle({ provider: "ria", kind: "commission", amount: due, ref: "RIA-COM-" + k0.slice(0, 7), note: "", day: U.dayKey(when) }); })() : null;
+    });
+    c = c.then(as("owner", at(15, 9), function () { return B.setPaySettings({ period: "weekly", anchor: B.weekStartKey(today), otAfter: 40, otTimes: 150 }); }));
+    c = c.then(as("owner", at(15, 9), function () { return B.setRate(SAMPLE_PEOPLE[0][0], 1550, U.dayKey(at(15, 9))); }));
+    c = c.then(as("owner", at(15, 9), function () { return B.setRate(SAMPLE_PEOPLE[1][0], 1900, U.dayKey(at(15, 9))); }));
+    /* last week's pay, handed over on the first day of this week at five, or an hour ago if that is still to come */
+    c = c.then(function () {
+      var wk = U.fromDayKey(B.weekStartKey(today)), last = { from: U.dayKey(U.addDays(wk, -7)), to: U.dayKey(U.addDays(wk, -1)) }, d = new Date(wk); d.setHours(17, 0, 0, 0);
+      if (d.getTime() > Date.now() - 3600000) d = new Date(Date.now() - 3600000);
+      return [[SAMPLE_PEOPLE[0][0], "cash", ""], [SAMPLE_PEOPLE[1][0], "check", "1042"]].reduce(function (p, x) {
+        return p.then(as("owner", d, function () { var e = B.payFor(x[0], last.from, last.to); return B.markPaid({ user: x[0], from: last.from, to: last.to, amount: e.gross, method: x[1], ref: x[2], note: "" }); }));
+      }, Promise.resolve());
+    });
+    return c;
   }
   /* The practice store's sample people: [user id, staff number, name, level of access]. */
   var SAMPLE_PEOPLE = [["u_practice_marie", 1002, "Marie", "cashier"], ["u_practice_jean", 1003, "Jean", "manager"]];
@@ -418,6 +476,7 @@
     chain = chain.then(function () { return sampleTraining(); });
     chain = chain.then(function () { return sampleCourse(); });
     chain = chain.then(function () { return sampleSchedule(); });
+    chain = chain.then(function () { return sampleMoney(); });
     return chain.then(function () { B._at = null; B.user = state.users.owner; return state; }, function (e) { B._at = null; B.user = state && state.users.owner; throw e; });
   }
   /* The practice store's money transfers and top-ups: a few a day for two weeks, with made-up fees and references.
@@ -426,7 +485,8 @@
     ["unitransfer", "payout", 10000, 0, 200], ["ria", "send", 5000, 600, 150], ["boss", "topup", 1000, 0, 80], ["cam", "payout", 25000, 0, 300]];
   function sampleServices() {
     var seed = 20261115, c = Promise.resolve(), today = new Date(); today.setHours(0, 0, 0, 0);
-    function rnd(n) { seed = (seed * 1103515245 + 12345) % 2147483648; return seed % n; }
+    /* Build 21: whole 32-bit arithmetic, so the low bits are kept (before, every entry fell at ten o'clock, Marie's) */
+    function rnd(n) { seed = (Math.imul(seed, 1103515245) + 12345) & 0x7fffffff; return (seed >>> 8) % n; }
     for (var d = 14; d >= 0; d--) {
       var day = new Date(today.getTime() - d * 86400000), n = 1 + rnd(3);
       for (var k = 0; k < n; k++) (function (at, s, j) {
@@ -515,8 +575,10 @@
      "people" (adding the staff, their first passwords, taking a key back) and "backup" (saving a sealed backup). A
      team leader trains and leads; a manager may also look after the people, within limits the books keep: a person with
      "people" gives only what they have themselves, never "people", and manages no one who holds more, nor the owner. */
-  B.ACCESS = ["sell", "items", "receive", "adjust", "costs", "reports", "team", "train", "people", "backup"];
-  B.PRESETS = { cashier: ["sell"], stock: ["sell", "items", "receive", "adjust"], lead: ["sell", "items", "receive", "adjust", "team", "train"], manager: B.ACCESS.slice() };
+  B.ACCESS = ["sell", "items", "receive", "adjust", "costs", "reports", "team", "train", "people", "backup", "pay"];
+  /* Build 21: "pay" (everyone's pay rates and pay, and marking it paid) is given one by one: no level holds it */
+  B.PRESETS = { cashier: ["sell"], stock: ["sell", "items", "receive", "adjust"], lead: ["sell", "items", "receive", "adjust", "team", "train"],
+    manager: ["sell", "items", "receive", "adjust", "costs", "reports", "team", "train", "people", "backup"] };
   B.isOwner = function () { return !!(B.user && B.user.role === "owner"); };
   B.can = function (what) {
     var u = B.user; if (!u) return false;
@@ -529,7 +591,8 @@
     if (!B.user) return [];
     if (B.isOwner()) return B.ACCESS.slice();
     if (!B.can("people")) return [];
-    return B.ACCESS.filter(function (a) { return a !== "people" && (B.user.access || []).indexOf(a) >= 0; });
+    /* "people" and "pay" (Build 21) are the owner's to give */
+    return B.ACCESS.filter(function (a) { return a !== "people" && a !== "pay" && (B.user.access || []).indexOf(a) >= 0; });
   };
   /* whether the person signed in may change this person, give them a first password or take their key back */
   B.canManage = function (u) {
@@ -1435,9 +1498,224 @@
       return { type: "service.voided", data: { id: id, reason: v.voidReason }, recs: [{ kind: "svc", id: id, value: v }], result: v };
     });
   };
+  /* the commission of entries written without one (a cashier records a transfer, the commission is the store's own
+     figure): those who see the reports write it afterwards, from the provider's statement (Build 21). One ledger line
+     holds them all; an entry voided, or one that already has its commission, is left as it is. */
+  B.setSvcCommissions = function (list) {
+    return B.change(function (st) {
+      need("reports");
+      var recs = [], done = [];
+      (list || []).forEach(function (x) {
+        var cur = (st.services || []).find(function (v) { return v.id === x.id; }); if (!cur) throw err("nosvc");
+        if (!Number.isSafeInteger(x.commission) || x.commission < 0) throw err("commission");
+        if (cur.status === "void" || (cur.commission !== null && cur.commission !== undefined)) return;
+        var v = clone(cur); v.commission = x.commission; v.comBy = B.user.id; v.comAt = clock().toISOString();
+        recs.push({ kind: "svc", id: v.id, value: v }); done.push({ id: v.id, commission: v.commission });
+      });
+      if (!recs.length) return null;
+      return { type: "service.commission", data: { list: done }, recs: recs, result: done.length };
+    });
+  };
   B.services = function (filter) { return state ? (state.services || []).filter(function (x) { return !filter || filter(x); }) : []; };
   /* what one entry did to the drawer: money in (the amount sent or put on a phone, and the fee) or out (a payout) */
   B.svcCash = function (v) { return { cashIn: (v.kind === "payout" ? 0 : v.amount) + (v.fee || 0), cashOut: v.kind === "payout" ? v.amount : 0 }; };
+
+  /* ---------- settling with the providers, and the store's own earnings from them (Build 21) ----------
+     How each provider settles is the owner's to say, one provider at a time: it takes the money from the store's bank
+     ("sweep"), the store deposits it ("deposit"), or the store keeps a prepaid balance with it ("prepaid"); and the
+     store's commission is taken off at once ("deducted") or paid to the store each month ("monthly"). A settlement is
+     written as it happens: money paid to the provider, money the provider returned, or a commission it paid. What is
+     still the provider's in the store's hands is worked out from the log of transfers and top-ups and the settlements;
+     a provider's statement can be checked against it, and the check is kept. A mistake is voided with a reason. */
+  B.PROV_HOW = ["sweep", "deposit", "prepaid"];
+  B.PROV_COM = ["deducted", "monthly"];
+  B.SETTLE_KINDS = ["paid", "returned", "commission"];
+  B.provSetup = function (id) { var x = state && state.provs && state.provs[id]; return x ? clone(x) : null; };
+  B.setProvSetup = function (id, f) {
+    return B.change(function (st) {
+      need("owner");
+      if (B.PROVIDERS.indexOf(id) < 0) throw err("provider");
+      if (B.PROV_HOW.indexOf(f.how) < 0 || B.PROV_COM.indexOf(f.com) < 0) throw err("how");
+      var cur = (st.provs || {})[id] || null, v = { id: id, how: f.how, com: f.com, note: plain(f.note, 120), at: clock().toISOString(), by: B.user.id };
+      if (cur && cur.how === v.how && cur.com === v.com && (cur.note || "") === v.note) return null;
+      return { type: "provider.setup", data: { provider: id, how: v.how, com: v.com, was: cur ? [cur.how, cur.com] : null }, recs: [{ kind: "prov", id: id, value: v }], result: v };
+    });
+  };
+  B.settle = function (f) {
+    return B.change(function (st) {
+      need("reports");
+      if (B.PROVIDERS.indexOf(f.provider) < 0) throw err("provider");
+      if (B.SETTLE_KINDS.indexOf(f.kind) < 0) throw err("kind");
+      if (!Number.isSafeInteger(f.amount) || f.amount <= 0) throw err("amount");
+      var now = clock(), day = dueDay(f.day) || U.dayKey(now);
+      if (day > U.dayKey(now)) throw err("future");
+      var x = { id: U.uid("p"), provider: f.provider, kind: f.kind, amount: f.amount, ref: plain(f.ref, 40), note: plain(f.note, 200), day: day, at: now.toISOString(), by: B.user.id, status: "done" };
+      return { type: "provider.settled", data: { settle: clone(x) }, recs: [{ kind: "settle", id: x.id, value: x }], result: x };
+    });
+  };
+  B.voidSettle = function (id, reason) {
+    return B.change(function (st) {
+      need("reports");
+      var cur = (st.settles || []).filter(function (x) { return x.id === id; })[0]; if (!cur) throw err("nosettle");
+      if (cur.status === "void") return null;
+      reason = plain(reason, 200); if (!reason) throw err("note");
+      var x = clone(cur); x.status = "void"; x.voidedBy = B.user.id; x.voidedAt = clock().toISOString(); x.voidReason = reason;
+      return { type: "provider.settleVoided", data: { id: id, reason: reason }, recs: [{ kind: "settle", id: id, value: x }], result: x };
+    });
+  };
+  B.settlements = function (filter) { return state ? (state.settles || []).filter(function (x) { return !filter || filter(x); }).map(clone) : []; };
+  /* a provider's account, from the store's first day: what was collected for it (money in less payouts), the commission,
+     what was paid to it and returned by it, and what is still its money in the store's hands ("held"; with a prepaid
+     balance, a negative "held" is the balance left) */
+  B.providerAccount = function (id) {
+    var st = state, setup = (st && st.provs && st.provs[id]) || null, com = setup ? setup.com : "deducted";
+    var a = { id: id, setup: setup ? clone(setup) : null, count: 0, cashIn: 0, cashOut: 0, collected: 0, fees: 0, commission: 0, unknown: 0, paid: 0, returned: 0, comReceived: 0,
+      lastPaid: null, lastReturned: null, lastEntry: null };
+    if (!st) return a;
+    (st.services || []).forEach(function (v) {
+      if (v.provider !== id || v.status === "void") return;
+      var c = B.svcCash(v); a.count++; a.cashIn += c.cashIn; a.cashOut += c.cashOut; a.collected += c.cashIn - c.cashOut; a.fees += v.fee || 0;
+      if (v.commission === null || v.commission === undefined) a.unknown++; else a.commission += v.commission;
+      if (!a.lastEntry || v.at > a.lastEntry) a.lastEntry = v.at;
+    });
+    (st.settles || []).forEach(function (x) {
+      if (x.provider !== id || x.status === "void") return;
+      if (x.kind === "paid") { a.paid += x.amount; if (!a.lastPaid || x.day > a.lastPaid) a.lastPaid = x.day; }
+      else if (x.kind === "returned") { a.returned += x.amount; if (!a.lastReturned || x.day > a.lastReturned) a.lastReturned = x.day; }
+      else if (x.kind === "commission") a.comReceived += x.amount;
+    });
+    a.kept = com === "deducted" ? a.commission : 0;
+    a.held = a.collected - a.kept - a.paid + a.returned;
+    a.comDue = com === "monthly" ? a.commission - a.comReceived : 0;
+    a.lastCheck = (st.stmts || []).filter(function (x) { return x.provider === id; }).map(clone).pop() || null;
+    return a;
+  };
+  /* a provider's statement, checked: what it says against what Lakay works out, kept with who checked it */
+  B.checkStatement = function (id, says, note) {
+    return B.change(function (st) {
+      need("reports");
+      if (B.PROVIDERS.indexOf(id) < 0) throw err("provider");
+      if (!Number.isSafeInteger(says)) throw err("amount");
+      var a = B.providerAccount(id), prepaid = a.setup && a.setup.how === "prepaid", lakay = prepaid ? -a.held : a.held, now = clock();
+      var x = { id: U.uid("c"), provider: id, says: says, lakay: lakay, diff: says - lakay, prepaid: !!prepaid, note: plain(note, 200), day: U.dayKey(now), at: now.toISOString(), by: B.user.id };
+      return { type: "provider.checked", data: { check: clone(x) }, recs: [{ kind: "stmt", id: x.id, value: x }], result: x };
+    });
+  };
+
+  /* ---------- each person's pay (Build 21) ----------
+     Pay is worked out from the time clock: the hours each person worked (breaks left out), at the rate in force on the
+     day of each shift, with the overtime the owner sets (after so many hours in a week, at so many times the rate).
+     It is an estimate before taxes and deductions: Lakay does not do payroll taxes. Those given "pay" set the rates and
+     the period and mark a period paid; each person sees their own. Every change is a ledger line. */
+  B.PAY_PERIODS = ["weekly", "biweekly", "semimonthly", "monthly"];
+  /* how a person's pay was handed over (not B.PAY_METHODS, the ways a customer pays, Build 16) */
+  B.WAGE_METHODS = ["cash", "check", "transfer", "other"];
+  B.paySettings = function () {
+    var p = (state && state.payset) || {};
+    return { period: B.PAY_PERIODS.indexOf(p.period) >= 0 ? p.period : "weekly", anchor: dueDay(p.anchor) ? p.anchor : B.weekStartKey(),
+      otAfter: p.otAfter === null ? null : Number.isSafeInteger(p.otAfter) ? p.otAfter : 40, otTimes: Number.isSafeInteger(p.otTimes) ? p.otTimes : 150 };
+  };
+  B.setPaySettings = function (f) {
+    return B.change(function (st) {
+      need("pay");
+      if (B.PAY_PERIODS.indexOf(f.period) < 0) throw err("period");
+      var after = f.otAfter === null || f.otAfter === "" ? null : Math.round(Number(f.otAfter)), times = Math.round(Number(f.otTimes || 150));
+      if (after !== null && !(after >= 1 && after <= 80)) throw err("overtime");
+      if (!(times >= 100 && times <= 300)) throw err("overtime");
+      var v = { period: f.period, anchor: dueDay(f.anchor) ? B.weekStartKey(U.fromDayKey(f.anchor)) : B.weekStartKey(clock()), otAfter: after, otTimes: times, at: clock().toISOString(), by: B.user.id };
+      return { type: "pay.settings", data: { period: v.period, otAfter: after, otTimes: times }, recs: [{ kind: "payset", id: "main", value: v }], result: v };
+    });
+  };
+  /* the pay period that holds a day */
+  B.payPeriodOf = function (dayKey) {
+    var s = B.paySettings(), d = U.fromDayKey(dayKey);
+    if (s.period === "monthly") return { from: U.dayKey(new Date(d.getFullYear(), d.getMonth(), 1)), to: U.dayKey(new Date(d.getFullYear(), d.getMonth() + 1, 0)) };
+    if (s.period === "semimonthly") return d.getDate() <= 15 ? { from: U.dayKey(new Date(d.getFullYear(), d.getMonth(), 1)), to: U.dayKey(new Date(d.getFullYear(), d.getMonth(), 15)) }
+      : { from: U.dayKey(new Date(d.getFullYear(), d.getMonth(), 16)), to: U.dayKey(new Date(d.getFullYear(), d.getMonth() + 1, 0)) };
+    var wk = U.fromDayKey(B.weekStartKey(d));
+    if (s.period === "biweekly") { var n = Math.round((wk.getTime() - U.fromDayKey(s.anchor).getTime()) / 86400000 / 7); if (((n % 2) + 2) % 2 === 1) wk = U.addDays(wk, -7);
+      return { from: U.dayKey(wk), to: U.dayKey(U.addDays(wk, 13)) }; }
+    return { from: U.dayKey(wk), to: U.dayKey(U.addDays(wk, 6)) };
+  };
+  /* this period and the ones before it, newest first */
+  B.payPeriods = function (n) {
+    var out = [], p = B.payPeriodOf(U.dayKey(clock()));
+    for (var i = 0; i < (n || 6); i++) { out.push(p); p = B.payPeriodOf(U.dayKey(U.addDays(U.fromDayKey(p.from), -1))); }
+    return out;
+  };
+  B.rateOf = function (userId, dayKey) {
+    var r = state && state.rates && state.rates[userId], list = (r && r.list) || [], best = null;
+    list.forEach(function (x) { if (x.from <= dayKey && (!best || x.from >= best.from)) best = x; });
+    return best ? best.rate : null;
+  };
+  B.rates = function (userId) { var r = state && state.rates && state.rates[userId]; return r ? clone(r.list) : []; };
+  B.setRate = function (userId, rate, from) {
+    return B.change(function (st) {
+      need("pay");
+      var u = st.users[userId]; if (!u || u.role === "owner") throw err("noperson");
+      /* no one sets their own pay */
+      if (u.id === B.user.id) throw err("self");
+      if (!Number.isSafeInteger(rate) || rate < 0 || rate > 100000) throw err("rate");
+      from = dueDay(from) || U.dayKey(clock());
+      var rec = clone((st.rates && st.rates[userId]) || { user: userId, list: [] });
+      rec.list = rec.list.filter(function (x) { return x.from !== from; });
+      rec.list.push({ from: from, rate: rate, by: B.user.id, at: clock().toISOString() });
+      rec.list.sort(function (a, b) { return a.from < b.from ? -1 : 1; });
+      return { type: "pay.rate", data: { user: userId, from: from, rate: rate }, recs: [{ kind: "rate", id: userId, value: rec }], result: rec };
+    });
+  };
+  /* a person's pay for a period: hours from the clock's closed shifts, overtime by the store's week (the week's earlier
+     shifts count toward the limit even when they fall before the period), each shift at the rate of its day */
+  B.payFor = function (userId, fromKey, toKey) {
+    var s = B.paySettings(), out = { user: userId, from: fromKey, to: toKey, regMin: 0, otMin: 0, gross: 0, shifts: 0, open: 0, noRate: 0, paid: null };
+    if (!state) return out;
+    var lim = s.otAfter === null ? Infinity : s.otAfter * 60, byWeek = {}, sum = 0;
+    state.shifts.filter(function (x) { return x.user === userId; }).sort(function (a, b) { return a.in < b.in ? -1 : 1; }).forEach(function (x) {
+      if (!x.out) { if (x.day >= fromKey && x.day <= toKey) out.open++; return; }
+      var wk = B.weekStartKey(U.fromDayKey(x.day)); (byWeek[wk] = byWeek[wk] || []).push(x);
+    });
+    Object.keys(byWeek).forEach(function (wk) {
+      var acc = 0;
+      byWeek[wk].forEach(function (x) {
+        var m = Math.round(B.shiftMs(x) / 60000), reg = Math.max(0, Math.min(m, lim - acc)), ot = m - reg; acc += m;
+        if (x.day < fromKey || x.day > toKey) return;
+        out.shifts++; out.regMin += reg; out.otMin += ot;
+        var r = B.rateOf(userId, x.day);
+        if (r === null) { out.noRate++; return; }
+        sum += reg * r * 100 + ot * r * s.otTimes;
+      });
+    });
+    out.gross = Math.round(sum / 6000);
+    out.paid = (state.paids || []).filter(function (x) { return x.user === userId && x.from === fromKey && x.to === toKey && x.status !== "void"; }).map(clone)[0] || null;
+    return out;
+  };
+  B.markPaid = function (f) {
+    return B.change(function (st) {
+      need("pay");
+      var u = st.users[f.user]; if (!u || u.role === "owner") throw err("noperson");
+      if (u.id === B.user.id) throw err("self");
+      if (!dueDay(f.from) || !dueDay(f.to) || f.to < f.from) throw err("period");
+      if (!Number.isSafeInteger(f.amount) || f.amount < 0) throw err("amount");
+      if (B.WAGE_METHODS.indexOf(f.method) < 0) throw err("method");
+      if ((st.paids || []).some(function (x) { return x.user === f.user && x.from === f.from && x.to === f.to && x.status !== "void"; })) throw err("already");
+      var est = B.payFor(f.user, f.from, f.to), now = clock();
+      var x = { id: U.uid("y"), user: f.user, from: f.from, to: f.to, amount: f.amount, method: f.method, ref: plain(f.ref, 40), note: plain(f.note, 200),
+        minutes: est.regMin + est.otMin, otMinutes: est.otMin, estimate: est.gross, day: U.dayKey(now), at: now.toISOString(), by: B.user.id, status: "done" };
+      return { type: "pay.paid", data: { paid: clone(x) }, recs: [{ kind: "paid", id: x.id, value: x }], result: x };
+    });
+  };
+  B.voidPaid = function (id, reason) {
+    return B.change(function (st) {
+      need("pay");
+      var cur = (st.paids || []).filter(function (x) { return x.id === id; })[0]; if (!cur) throw err("nopaid");
+      if (cur.user === B.user.id) throw err("self");
+      if (cur.status === "void") return null;
+      reason = plain(reason, 200); if (!reason) throw err("note");
+      var x = clone(cur); x.status = "void"; x.voidedBy = B.user.id; x.voidedAt = clock().toISOString(); x.voidReason = reason;
+      return { type: "pay.voided", data: { id: id, reason: reason }, recs: [{ kind: "paid", id: id, value: x }], result: x };
+    });
+  };
+  B.paids = function (filter) { return state ? (state.paids || []).filter(function (x) { return !filter || filter(x); }).map(clone) : []; };
 
   /* ---------- payments (Build 16) ----------
      Lakay never touches a card. The store's own card machine (Square, Clover, SumUp, a bank's terminal: any of them)
@@ -1622,14 +1900,14 @@
     var key = KEY, id = ID, st = state;
     if (!key) return Promise.reject(err("locked"));
     return D.entries("journal").then(function (entries) {
-      var res = { ok: true, lines: entries.length, problems: [] }, prev = ZERO, expect = 1, items = {}, svcs = {}, train = {}, i = 0;
+      var res = { ok: true, lines: entries.length, problems: [] }, prev = ZERO, expect = 1, items = {}, svcs = {}, train = {}, money = { settle: {}, paid: {} }, i = 0;
       function next() {
         if (i >= entries.length) return Promise.resolve();
         var e = entries[i++];
         return C.open(key, e[1], aadLine(id, e[0])).then(function (line) {
           if (line.seq !== e[0] || e[0] !== expect) res.problems.push({ seq: e[0], what: "order" });
           if (line.prev !== prev) res.problems.push({ seq: e[0], what: "chain" });
-          replay(items, line, res, svcs, train);
+          replay(items, line, res, svcs, train, money);
           expect = e[0] + 1;
           return U.sha256hex(U.canon(line)).then(function (hsh) { prev = hsh; });
         }, function () { res.problems.push({ seq: e[0], what: "unreadable" }); prev = null; expect = e[0] + 1; }).then(function () {
@@ -1656,6 +1934,17 @@
           delete svcs[v.id];
         });
         Object.keys(svcs).forEach(function (k) { res.problems.push({ svc: k, what: "extra" }); });
+        /* the settlements with the providers and the pay marked paid (Build 21), each as the ledger wrote it last */
+        [["settle", st.settles, ["provider", "kind", "amount", "day", "status"]], ["paid", st.paids, ["user", "from", "to", "amount", "method", "status"]]].forEach(function (g) {
+          var want = money[g[0]];
+          (g[1] || []).forEach(function (v) {
+            var b = want[v.id];
+            if (!b) { res.problems.push({ money: g[0], id: v.id, what: "missing" }); return; }
+            g[2].forEach(function (f) { if (JSON.stringify(v[f]) !== JSON.stringify(b[f])) res.problems.push({ money: g[0], id: v.id, what: "differs", field: f }); });
+            delete want[v.id];
+          });
+          Object.keys(want).forEach(function (k) { res.problems.push({ money: g[0], id: k, what: "extra" }); });
+        });
         /* each person's marks (Build 17 lessons; Build 19 exercises and the store's tasks): the ones the ledger wrote last */
         Object.keys(st.train || {}).forEach(function (u) {
           var r = st.train[u] || {}, have = {}, want = train[u] || {};
@@ -1678,14 +1967,19 @@
       });
     });
   };
-  function replay(items, line, res, svcs, train) {
+  function replay(items, line, res, svcs, train, money) {
     var d = line.data || {};
     switch (line.type) {
+      case "provider.settled": if (money && d.settle) money.settle[d.settle.id] = clone(d.settle); break;
+      case "provider.settleVoided": if (money) { if (money.settle[d.id]) money.settle[d.id].status = "void"; else res.problems.push({ seq: line.seq, what: "void" }); } break;
+      case "pay.paid": if (money && d.paid) money.paid[d.paid.id] = clone(d.paid); break;
+      case "pay.voided": if (money) { if (money.paid[d.id]) money.paid[d.id].status = "void"; else res.problems.push({ seq: line.seq, what: "void" }); } break;
       case "training.completed": if (train && d.user && d.lesson) { train[d.user] = train[d.user] || {}; train[d.user]["l:" + d.lesson] = { score: d.score, of: d.of }; } break;
       case "training.exercise": if (train && d.user && d.exercise) { train[d.user] = train[d.user] || {}; train[d.user]["x:" + d.exercise] = {}; } break;
       case "training.task": if (train && d.user && d.task) { train[d.user] = train[d.user] || {}; train[d.user]["t:" + d.task] = { by: d.by }; } break;
       case "service.recorded": if (d.svc) svcs[d.svc.id] = clone(d.svc); break;
       case "service.voided": if (svcs[d.id]) svcs[d.id].status = "void"; else res.problems.push({ seq: line.seq, what: "void" }); break;
+      case "service.commission": (d.list || []).forEach(function (x) { if (svcs[x.id]) svcs[x.id].commission = x.commission; else res.problems.push({ seq: line.seq, what: "commission" }); }); break;
       case "item.created": items[d.item.id] = clone(d.item); break;
       case "item.updated": if (items[d.id]) Object.keys(d.changes).forEach(function (k) { items[d.id][k] = clone(d.changes[k][1]); }); break;
       case "item.archived": if (items[d.id]) items[d.id].archived = d.archived; break;
