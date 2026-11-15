@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-oKMYBT81wX6JLLNptm028n2MZFzmOwjj9mhjO6lyWv8='; style-src 'unsafe-inline'; img-src data: blob: 'self'; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-oFT2BlGIiIzFSWe27uNA7cswlOAfeBDQj1Mw26FuOYw='; style-src 'unsafe-inline'; img-src data: blob: 'self'; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#f5f4f8">
@@ -13824,7 +13824,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     /* apart from the sales: the commission on transfers and top-ups, and the fees on travel bookings */
     var provs = Object.keys(sv.byProvider).sort(function (a, b) { return sv.byProvider[b].commission - sv.byProvider[a].commission; });
     pane.appendChild(h("section.card.ea-hero#eaApartCard", { "aria-labelledby": "eaApartH" }, [
-      h("div.ea-hero-t", null, [h("p.label-caps#eaApartH", null, [ui.emo("💱"), t("ea.apart")]), h("p.ea-big#eaApart", null, money(apart)),
+      h("div.ea-hero-t", null, [h("p.label-caps#eaApartH", null, [ui.emo("💰"), t("ea.apart")]), h("p.ea-big#eaApart", null, money(apart)),
         sv.count || !nbk ? h("p.ea-sub#eaApartCom", null, sv.count ? t(sv.count === 1 ? "ea.apartCom1" : "ea.apartCom", { n: sv.count, m: money(sv.commission) }) : t("ea.apartNone")) : null,
         nbk ? h("p.ea-sub#eaApartBk", null, t(nbk === 1 ? "ea.apartBk1" : "ea.apartBk", { n: nbk, m: money(bk.fees) })) : null]),
       provs.length ? h("div.table-wrap", null, h("table.grid.compact#eaByProv", null, [
@@ -13890,7 +13890,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   function shown() { return B.PROVIDERS.filter(function (id) { var a = B.providerAccount(id); return a.count || a.setup || a.paid || a.returned || a.comReceived; }); }
   PANES.providers = function (pane) {
     var ids = shown();
-    if (!ids.length) { pane.appendChild(h("section.card.ea-empty", null, [h("p", null, [ui.emo("💱"), t("ea.provNone")])])); return; }
+    if (!ids.length) { pane.appendChild(h("section.card.ea-empty", null, [h("p", null, [ui.emo("🏦"), t("ea.provNone")])])); return; }
     pane.appendChild(h("p.ea-intro", null, t("ea.provIntro")));
     pane.appendChild(h("div.ea-provs#eaProvs", null, ids.map(provCard)));
     pane.appendChild(settleLog());
@@ -14156,7 +14156,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     if (B.can("reports")) {
       B.PROVIDERS.forEach(function (id) {
         var a = B.providerAccount(id);
-        if (a.setup && a.setup.how === "prepaid" && a.count && -a.held <= 0) out.push(need("💱", t("ea.homeOut", { p: t("svc.p." + id) }), t("ea.homeOutSub"), "warn",
+        if (a.setup && a.setup.how === "prepaid" && a.count && -a.held <= 0) out.push(need("🏦", t("ea.homeOut", { p: t("svc.p." + id) }), t("ea.homeOutSub"), "warn",
           [t("home.open"), function () { EA.tab = "providers"; ui.go("earnings"); }]));
       });
     }
@@ -14217,7 +14217,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     var due = listFor("due"), dueSum = due.reduce(function (s, b) { return s + B.bookingMoney(b).balance; }, 0), month = B.bookingEarned(U.dayKey(new Date(new Date().getFullYear(), new Date().getMonth(), 1)), today());
     var stats = [ui.stat(t("tv.statDue"), money(dueSum), dueSum ? "warn" : null, "tvDueSum", "🧾"), ui.stat(t("tv.statDueN"), String(due.length), null, "tvDueN", "✈️"),
       ui.stat(t("tv.statMonth"), String(month.count + month.cancelled), null, "tvMonthN", "🗓️")];
-    if (B.can("costs")) stats.push(ui.stat(t("tv.statFees"), money(month.fees), "good", "tvMonthFees", "💱"));
+    if (B.can("costs")) stats.push(ui.stat(t("tv.statFees"), money(month.fees), "good", "tvMonthFees", "💰"));
     main.appendChild(h("section.card.tv-sum", null, h("div.ledger", null, stats)));
     var chips = h("div.chips.tv-filters", { role: "group", "aria-label": t("tv.filterH") }, FILTERS.map(function (f) {
       var n = listFor(f).length;

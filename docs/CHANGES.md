@@ -22,7 +22,7 @@ The owner's answer of 15 November 2026: the owner books flights for clients on w
 - **The practice store** has four bookings: two travelling from Miami to Port-au-Prince in five days, paid in full (a deposit in cash, the rest by card, taken by Marie); one from Fort Lauderdale to Cap-Haïtien in twelve days with a balance to pay; one from New York that came back two days ago; and one to Santo Domingo cancelled, the store keeping its fee. The codes are made up. A practice store made by an earlier build is given these once, as it opens.
 - **Every step is a ledger line:** `booking.made`, `booking.changed`, `booking.paid`, `booking.payVoided`, `booking.cancelled`, `settings.bookings`.
 - A chapter in the Guidebook, Travel bookings; three tips. Every word is in English, French and Kreyòl (155 new phrases; the Kreyòl is marked for review by a native speaker).
-- tests/t_build22.js: 73 checks. Every suite passes: TOTAL22 checks in all.
+- tests/t_build22.js: 73 checks. Every suite passes: 854 checks in all.
 
 ## Build 21 (15 November 2026): Earnings, settling with each provider, and each person's pay
 
