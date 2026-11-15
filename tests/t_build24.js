@@ -235,6 +235,8 @@ const OWNER_PW = "a long owner sentence for two devices", JEAN_PW = "Jean counts
   const railKeys = await pp.$$eval("#rail .rail-btn", bs => bs.map(b => b.id));
   ok(railKeys.join() === "rail-notes,rail-calc,rail-sale,rail-find,rail-theme", "the rail, from its foot: the notes, the calculator directly under the cart, the cart, price check, and the Sun and Moon (" + railKeys.join(", ") + ")");
   ok(await pp.locator("#topCluster #calcBtn").count() === 0, "the calculator is no longer in the top bar");
+  const calcKey = await pp.evaluate(() => { const k = document.getElementById("rail-calc"); return { svg: k.querySelectorAll("svg.calc-glyph").length, abacus: /🧮/.test(k.textContent), w: k.querySelector("svg").getBoundingClientRect().width }; });
+  ok(calcKey.svg === 1 && !calcKey.abacus && calcKey.w >= 30, "its key is Lakay's own calculator in pearl and periwinkle, at the emoji's size, not the abacus (" + JSON.stringify(calcKey) + ")");
   ok((await pp.textContent("#rail-theme")).trim() === "🌙", "by day the lamp key shows the Moon");
   await pp.click("#rail-theme"); await wait(pp, 300);
   ok(await pp.evaluate(() => document.documentElement.getAttribute("data-theme")) === "night" && (await pp.textContent("#rail-theme")).trim() === "☀️", "a press brings the night, and the key then shows the Sun");

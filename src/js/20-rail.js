@@ -18,8 +18,38 @@
   function when(iso) { try { var d = new Date(iso); return d.toLocaleString(E.lang === "ht" ? "fr" : E.lang, { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }); } catch (e) { return iso; } }
 
   /* ---------- the rail ---------- */
-  var KEYS = [["notes", "🗒️", "rail.notes"], ["calc", "🧮", "rail.calc"], ["sale", "🛒", "rail.sale"], ["find", "🔎", "rail.find"], ["theme", "", "top.dayNight"]];
+  var KEYS = [["notes", "🗒️", "rail.notes"], ["calc", "", "rail.calc"], ["sale", "🛒", "rail.sale"], ["find", "🔎", "rail.find"], ["theme", "", "top.dayNight"]];
   function isNight() { return document.documentElement.getAttribute("data-theme") === "night"; }
+  /* The calculator's own small picture (Build 24, at the owner's request: the abacus emoji was too colourful and could
+     be read as something else, and Unicode has no calculator emoji). Drawn in Lakay's colours, at the size and with the
+     soft shading of the emoji beside it: a pearl body on a periwinkle ledge, an indigo window with its figures, pale
+     periwinkle keys and one periwinkle key for the sum. It looks the same on every device. */
+  var calcN = 0;
+  function calcGlyph(size) {
+    var ns = "http://www.w3.org/2000/svg", id = "lkc" + (++calcN);
+    function el(tag, a, kids) { var n = document.createElementNS(ns, tag); Object.keys(a).forEach(function (k) { n.setAttribute(k, a[k]); }); (kids || []).forEach(function (c) { n.appendChild(c); }); return n; }
+    function grad(gid, x2, y2, stops) { return el("linearGradient", { id: gid, x1: "0", y1: "0", x2: x2, y2: y2 }, stops.map(function (st) { return el("stop", { offset: st[0], "stop-color": st[1] }); })); }
+    var svg = el("svg", { viewBox: "0 0 36 36", width: String(size || 36), height: String(size || 36), "aria-hidden": "true", focusable: "false", class: "calc-glyph" }, [
+      el("defs", {}, [
+        grad(id + "b", "0", "1", [["0", "#ffffff"], ["1", "#e3e4f6"]]),
+        grad(id + "s", "0", "1", [["0", "#2b2f7a"], ["1", "#1d2058"]]),
+        grad(id + "k", "0", "1", [["0", "#eef0ff"], ["1", "#c9ccf2"]]),
+        grad(id + "e", "0", "1", [["0", "#8d93e2"], ["1", "#5f67cc"]])])]);
+    svg.appendChild(el("rect", { x: "5.6", y: "3.2", width: "24.8", height: "32", rx: "5.4", fill: "#7c82cf" }));
+    svg.appendChild(el("rect", { x: "5.6", y: "1.6", width: "24.8", height: "32", rx: "5.4", fill: "url(#" + id + "b)", stroke: "#9da1d8", "stroke-width": ".8" }));
+    svg.appendChild(el("rect", { x: "8.8", y: "5", width: "18.4", height: "8.2", rx: "2", fill: "url(#" + id + "s)" }));
+    svg.appendChild(el("rect", { x: "15.2", y: "9.6", width: "9.8", height: "1.9", rx: ".95", fill: "#b9beff" }));
+    var cols = [8.8, 15.7, 22.6], rows = [15.8, 20.1, 24.4, 28.7];
+    rows.forEach(function (y, r) {
+      cols.forEach(function (x, c) {
+        var sum = r === 3 && c === 2;
+        svg.appendChild(el("rect", { x: String(x), y: String(y + .55), width: "4.6", height: "3.2", rx: "1", fill: sum ? "#4a51b0" : "#a9ade0" }));
+        svg.appendChild(el("rect", { x: String(x), y: String(y), width: "4.6", height: "3.2", rx: "1", fill: "url(#" + id + (sum ? "e" : "k") + ")" }));
+      });
+    });
+    return svg;
+  }
+  R.calcGlyph = calcGlyph;
   /* On a phone the three keys would stand over the page, so a phone starts with them laid down: one press of the small
      key stands them up, and the device remembers the choice (the owner, 15 November 2026). A computer and a tablet start
      with them standing, as before. */
@@ -32,7 +62,7 @@
     var keys = KEYS.filter(function (k) { return k[0] !== "sale" || !B.isOpen || B.can("sell"); });
     keys.forEach(function (k, i) {
       /* the lamp shows the Sun by night (to bring the day) and the Moon by day */
-      var emo = k[0] === "theme" ? (isNight() ? "☀️" : "🌙") : k[1];
+      var emo = k[0] === "theme" ? (isNight() ? "☀️" : "🌙") : k[0] === "calc" ? calcGlyph(36) : k[1];
       var b = h("button.rail-btn#rail-" + k[0], { type: "button", title: t(k[2]), "aria-label": t(k[2]), onclick: function () { R.press(k[0], b); } },
         h("span", { "aria-hidden": "true" }, emo));
       b.style.bottom = "calc(" + (52 + i * 56) + "px + env(safe-area-inset-bottom, 0px))";
@@ -173,7 +203,7 @@
   /* the badges follow the books: a sale or a delivery changes the stock */
   B.on("change", function () { setTimeout(R.badges, 0); });
 
-  /* 🧮 the calculator: it floats above the page and can be carried anywhere by its top */
+  /* the calculator: it floats above the page and can be carried anywhere by its top */
   var calc = (function () {
     var win = null, cur = "0", toks = [], fresh = false, tape = [];
     function fmt(n) { if (!isFinite(n)) return t("calc.err"); var r = Math.round(n * 1e10) / 1e10; return String(r); }
@@ -211,7 +241,7 @@
     }
     var LAYOUT = [["C", "±", "%", "÷"], ["7", "8", "9", "×"], ["4", "5", "6", "−"], ["1", "2", "3", "+"], ["⌫", "0", ".", "="]];
     function build() {
-      var grip = h("div.calc-grip", { title: t("calc.move") }, [h("span", null, "🧮 " + t("rail.calc")), h("button.calc-x", { type: "button", "aria-label": t("close"), title: t("close"), onclick: close }, "×")]);
+      var grip = h("div.calc-grip", { title: t("calc.move") }, [h("span.calc-title", null, [calcGlyph(18), t("rail.calc")]), h("button.calc-x", { type: "button", "aria-label": t("close"), title: t("close"), onclick: close }, "×")]);
       var keys = h("div.calc-keys");
       LAYOUT.forEach(function (row) { row.forEach(function (k) {
         var cls = "button.calc-k" + ("+−×÷".indexOf(k) >= 0 ? ".op" : k === "=" ? ".eq" : k === "C" ? ".clr" : /[0-9.]/.test(k) ? "" : ".fn");

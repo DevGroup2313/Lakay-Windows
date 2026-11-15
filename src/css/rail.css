@@ -104,3 +104,7 @@
 .alerts-sec.rail-pop-in .rp-head { margin-bottom: 2px; }
 .alerts-sec.rail-pop-in .rp-head h3 { font: 600 .98rem/1.2 var(--serif); letter-spacing: .05em; }
 .alerts-sec.rail-pop-in .rp-emo { font-size: .95rem; }
+/* the calculator's own picture (Build 24): it sits where the emoji would, at the same size; the window's title shows it small */
+.rail-btn > span > .calc-glyph { display: block; width: 1em; height: 1em; filter: drop-shadow(0 1px 1px rgba(34, 28, 60, .18)); }
+.calc-title { display: inline-flex; align-items: center; gap: 6px; }
+.calc-title .calc-glyph { flex: none; }
