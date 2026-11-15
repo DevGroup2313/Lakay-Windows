@@ -225,6 +225,8 @@
     if (E.schedule && B.user) E.schedule.homeRows(need).forEach(function (x) { list.push(x); });
     /* last period's pay not yet marked paid, and a prepaid balance used up (Build 21) */
     if (E.earnings && B.user) E.earnings.homeRows(need).forEach(function (x) { list.push(x); });
+    /* a travel booking with a balance to pay before the trip (Build 22) */
+    if (E.travel && B.user) E.travel.homeRows(need).forEach(function (x) { list.push(x); });
     /* a person's lessons still to take (Build 17), when nothing has been assigned to them */
     if (staff && E.learn && !trained) {
       var left = E.learn.leftFor(B.user).length;

@@ -4,7 +4,7 @@
 (function () {
   var U = E.util, h = U.h, t = E.t, B = E.books, C = E.crypto, ui = E.ui, money = U.money;
 
-  var SET_EMO = { store: "🏪", tax: "🧾", pay: "💳", cats: "🗂️", display: "🎨", security: "🔐", backup: "💾", verify: "🛡️", storage: "🗄️", about: "ℹ️", erase: "🧹" };
+  var SET_EMO = { store: "🏪", tax: "🧾", pay: "💳", travel: "✈️", cats: "🗂️", display: "🎨", security: "🔐", backup: "💾", verify: "🛡️", storage: "🗄️", about: "ℹ️", erase: "🧹" };
   function sec(id, titleKey, tipKey, children) {
     return h("section.card.set-sec", { id: id, "aria-labelledby": id + "-h" }, [h("div.card-head", null, [h("h2", { id: id + "-h" }, [ui.emo(SET_EMO[id.replace("set-", "")] || "⚙️"), t(titleKey)]), tipKey ? ui.tip(tipKey) : null]), children]);
   }
@@ -82,6 +82,22 @@
       h("div.field", null, [h("p.label", null, t("set.payAskLast4")), Object.assign(ui.seg([["yes", t("set.payYes")], ["no", t("set.payNo")]], askLast4, function (v) { askLast4 = v; }, t("set.payAskLast4")), { id: "setPayLast4" })]),
       h("p.hint.span2.pay-never", null, [ui.emo("🔒"), " ", t("set.payNever")]),
       h("div.form-actions.span2", null, h("button.key.primary#setPaySave", { type: "submit" }, [ui.emo("💾"), t("save")]))])));
+
+    /* travel bookings (Build 22): the store's usual fee, and whether a client's name and phone are kept (off at first) */
+    var bp = B.bookingPrefs(), bkFee = ui.input({ id: "setBkFee", inputmode: "decimal", class: "money-in", value: bp.fee ? U.moneyPlain(bp.fee) : "" });
+    var bkKeep = h("input#setBkKeep", { type: "checkbox" }); bkKeep.checked = bp.keepClient;
+    main.appendChild(sec("set-travel", "set.travel", "tip.travelSet", h("form.form-grid", { onsubmit: function (e) {
+      e.preventDefault(); ui.fieldError(bkFee, "");
+      var fee = bkFee.value.trim() ? U.parseMoney(bkFee.value) : 0;
+      if (fee === null) { ui.fieldError(bkFee, t("tv.err.amount")); return; }
+      function save() { B.setBookingPrefs({ keepClient: bkKeep.checked, fee: fee }).then(function (n) { ui.toast(n ? t(n === 1 ? "set.travelErased1" : "set.travelErased", { n: n }) : t("set.saved"), "good"); ui.refresh(); }, ui.failed); }
+      if (bp.keepClient && !bkKeep.checked && B.bookings(function (b) { return !!b.client; }).length)
+        ui.confirm(t("set.travelEraseQ"), t("set.travelEraseD"), t("set.travelErase"), "danger").then(function (yes) { if (yes) save(); });
+      else save();
+    } }, [ui.field("set.travelFee", bkFee, { hint: t("set.travelFeeHint") }),
+      h("label.access-row.span2#setBkKeepRow", { for: "setBkKeep" }, [bkKeep, h("span", null, [h("b", null, t("set.travelKeep")), h("small", null, t("set.travelKeepD"))])]),
+      h("p.hint.span2.pay-never", null, [ui.emo("🔒"), " ", t("set.travelNever")]),
+      h("div.form-actions.span2", null, h("button.key.primary#setBkSave", { type: "submit" }, [ui.emo("💾"), t("save")]))])));
 
     /* shelves */
     var catName = ui.input({ id: "catNew", maxlength: "40", placeholder: t("set.catPh") });
@@ -211,8 +227,8 @@
   }
 
   /* ---------- the Guidebook ---------- */
-  var ARTICLES = ["start", "learn", "train", "door", "team", "clock", "schedule", "earnings", "master", "sale", "pay", "items", "receive", "correct", "depts", "svc", "reports", "notes", "backup", "sealed", "verify", "display", "studio", "build", "limits"];
-  var ART_EMO = { start: "🌟", learn: "🎓", train: "📋", door: "🚪", team: "👥", clock: "🕘", schedule: "🗓️", earnings: "💰", master: "🗝️", sale: "🛒", pay: "💳", items: "🏷️", receive: "🚚", correct: "✏️", depts: "🗂️", svc: "💱", reports: "📊", notes: "🗒️", backup: "💾", sealed: "🔐", verify: "🛡️", display: "🎨", studio: "⚒️", build: "🔢", limits: "🧭" };
+  var ARTICLES = ["start", "learn", "train", "door", "team", "clock", "schedule", "earnings", "travel", "master", "sale", "pay", "items", "receive", "correct", "depts", "svc", "reports", "notes", "backup", "sealed", "verify", "display", "studio", "build", "limits"];
+  var ART_EMO = { start: "🌟", learn: "🎓", train: "📋", door: "🚪", team: "👥", clock: "🕘", schedule: "🗓️", earnings: "💰", travel: "✈️", master: "🗝️", sale: "🛒", pay: "💳", items: "🏷️", receive: "🚚", correct: "✏️", depts: "🗂️", svc: "💱", reports: "📊", notes: "🗒️", backup: "💾", sealed: "🔐", verify: "🛡️", display: "🎨", studio: "⚒️", build: "🔢", limits: "🧭" };
   E.guideCount = function () { return ARTICLES.length; };
   ui.rooms.guide = function (main) {
     var q = ui.input({ id: "guideSearch", type: "search", placeholder: t("guide.searchPh"), "aria-label": t("guide.search") });

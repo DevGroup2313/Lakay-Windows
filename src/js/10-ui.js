@@ -39,7 +39,7 @@
 
   /* ---------- emojis (drawn by the device's own emoji font; hidden from screen readers, the words carry the meaning) ---------- */
   ui.emo = function (ch, cls) { return h("span.emo" + (cls ? "." + cls : ""), { "aria-hidden": "true" }, ch); };
-  ui.ROOM_EMO = { home: "🏠", register: "🛒", inventory: "📦", reports: "📊", team: "👥", schedule: "🗓️", earnings: "💰", learn: "🎓", guide: "📖", settings: "⚙️", studio: "⚒️" };
+  ui.ROOM_EMO = { home: "🏠", register: "🛒", inventory: "📦", travel: "✈️", reports: "📊", team: "👥", schedule: "🗓️", earnings: "💰", learn: "🎓", guide: "📖", settings: "⚙️", studio: "⚒️" };
   /* the departments' signs: no fruit or food as decoration (the owner, 13 November 2026), only what each one holds */
   ui.CAT_EMO = { music: "🎵", movies: "🎬", perfume: "🌸", grocery: "🧺", drinks: "🥤", food: "🍽️", services: "💱", other: "🛍️" };
   ui.catEmo = function (c) { return ui.CAT_EMO[c] || "🏷️"; };
@@ -228,7 +228,7 @@
   };
 
   /* ---------- the shell, after Ingenium's (the side menu of plain words) with Carpe Diem's capsule of top keys ---------- */
-  var GROUPS = [["nav.g.store", [["home", "home"], ["register", "register"], ["inventory", "box"], ["reports", "chart"], ["team", "people"], ["schedule", "calendar"], ["earnings", "coins"]]],
+  var GROUPS = [["nav.g.store", [["home", "home"], ["register", "register"], ["inventory", "box"], ["travel", "plane"], ["reports", "chart"], ["team", "people"], ["schedule", "calendar"], ["earnings", "coins"]]],
                 ["nav.g.learn", [["learn", "cap"], ["guide", "book"], ["settings", "gear"]]],
                 ["nav.g.owner", [["studio", "edit"]]]];
   ui.rooms = {};
@@ -262,7 +262,7 @@
   };
   /* the rooms each person may open: the owner, every one; the people, those their access opens */
   ui.allowed = function (room) {
-    if (room === "register") return B.can("sell");
+    if (room === "register" || room === "travel") return B.can("sell");
     if (room === "reports") return B.can("reports");
     if (room === "settings" || room === "studio") return B.can("owner");
     return true;

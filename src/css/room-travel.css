@@ -1,0 +1,69 @@
+/* LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt.
+   Travel bookings (Build 22): the figures, the filters, each booking as a white slab with its route in the serif, the
+   days, the code, and the money (a balance to pay in amber, paid in full with the periwinkle check, a cancelled one
+   in brick and faded). White slabs and pearl, the periwinkle woven in; never green. */
+
+.tv-sum { margin-bottom: 14px; }
+.tv-sum .ledger { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.tv-filters { margin: 0 0 14px; }
+.tv-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; }
+.tv-empty { margin-bottom: 14px; }
+.tv-empty p { display: flex; align-items: center; gap: 10px; margin: 0; color: var(--ink-2); line-height: 1.45; }
+.tv-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* a booking */
+.tv-card { position: relative; display: flex; flex-direction: column; gap: 8px; min-width: 0; padding: 14px 16px; border-radius: var(--radius); background: var(--surface);
+  border: 1px solid var(--line); box-shadow: var(--sh-card); }
+.tv-card.is-due { box-shadow: inset 3px 0 0 var(--warn), var(--sh-card); }
+.tv-card.is-paid { box-shadow: inset 3px 0 0 rgba(var(--pri-rgb), .6), var(--sh-card); }
+.tv-card.is-cancelled { opacity: .78; }
+.tv-card.is-cancelled .tv-route { text-decoration: line-through; text-decoration-color: var(--line-2); }
+.tv-card-h { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.tv-route { margin: 0; font: 600 1.35rem/1.2 var(--serif); color: var(--ink); letter-spacing: .01em; overflow-wrap: anywhere; }
+.tv-tags { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+.tv-no { font: 600 .74rem/1.4 var(--sans); color: var(--muted); letter-spacing: .04em; font-variant-numeric: tabular-nums; }
+.tv-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 999px; white-space: nowrap; font: 600 .74rem/1.6 var(--sans);
+  color: var(--ink-2); background: var(--surface-2); border: 1px solid var(--line); }
+.tv-chip .ico { width: 12px; height: 12px; }
+.tv-chip.paid { color: var(--pri-text); background: rgba(var(--pri-rgb), .09); border-color: rgba(var(--pri-rgb), .25); }
+.tv-chip.warn { color: var(--warn); background: var(--warn-soft); border-color: transparent; }
+.tv-chip.bad { color: var(--danger); background: var(--danger-soft); border-color: transparent; }
+.tv-when { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 0; color: var(--ink-2); font-weight: 600; }
+.tv-when .ico { width: 15px; height: 15px; color: var(--pri-text); }
+.tv-dot { color: var(--muted); font-weight: 400; }
+.tv-facts { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0; color: var(--muted); font-size: .84rem; }
+.tv-facts .ico { width: 13px; height: 13px; vertical-align: -2px; }
+.tv-code { color: var(--ink); letter-spacing: .08em; font-variant-numeric: tabular-nums; }
+.tv-money { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; padding: 8px 0 2px; border-top: 1px solid var(--line-soft); }
+.tv-money > span { display: flex; flex-direction: column; gap: 1px; padding: 0 12px; border-left: 1px solid var(--line-soft); min-width: 0; }
+.tv-money > span:first-child { border-left: 0; padding-left: 0; }
+.tv-money small { color: var(--muted); font: 600 .74rem/1.3 var(--sans); }
+.tv-money b { font: 700 1.15rem/1.2 var(--serif); color: var(--ink); font-variant-numeric: tabular-nums; }
+.tv-money > span.due b { color: var(--warn); }
+.tv-money-view { grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 12px 0 4px; }
+.tv-keys { display: flex; flex-wrap: wrap; gap: 6px; }
+.tv-keys .key.sm { gap: 5px; padding-left: 9px; padding-right: 10px; }
+.tv-keys .ico { width: 14px; height: 14px; }
+.tv-never { display: flex; align-items: center; gap: 6px; margin: 2px 0 16px; }
+.tv-never .ico { width: 14px; height: 14px; flex: none; color: var(--pri-text); }
+
+/* the booking's window */
+.tv-two { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.tv-two .field[hidden] { display: none; }
+.tv-oneway { margin: 0 0 .5rem; }
+.tv-total { margin: .2rem 0 .6rem; font-weight: 600; color: var(--pri-text); }
+.tv-first { margin-top: .4rem; padding: 10px 12px 12px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line-soft); }
+.tv-first .field { margin-top: 0; }
+.tv-pays-h { margin-top: .9rem; }
+#tvPays tr.voided td { color: var(--muted); }
+#tvPays tr.voided td:not(:nth-child(2)) { text-decoration: line-through; text-decoration-color: var(--line-2); }
+.tv-void-why { display: block; color: var(--muted); font-style: italic; }
+#tvPays .row-key .ico { width: 14px; height: 14px; color: var(--muted); }
+#tvPays .row-key:hover .ico, #tvPays .row-key:focus-visible .ico { color: var(--danger); }
+.dialog .table-wrap { position: relative; }
+
+@media (max-width: 900px) { .tv-list { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 760px) { .tv-sum .ledger { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .tv-two { grid-template-columns: 1fr; } .tv-route { font-size: 1.2rem; } .tv-money b { font-size: 1.02rem; } .tv-money > span { padding: 0 8px; } }
+:root[data-theme="night"] .tv-card.is-cancelled { opacity: .7; }
+@media print { .tv-keys, #tvNew { display: none; } .tv-card { box-shadow: none; } }

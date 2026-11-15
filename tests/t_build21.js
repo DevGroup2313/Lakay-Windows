@@ -57,12 +57,14 @@ const wait = (p, ms) => p.waitForTimeout(ms);
 
   console.log("The store: earned apart from sales");
   await tab("store");
-  const st = await p.evaluate(() => { const rg = E.reports.range("month"), r = E.books.report(rg.from, rg.to); return { com: r.services.commission, n: r.services.count, profit: r.profit }; });
-  ok((await p.textContent("#eaApart")).replace(/[^0-9.]/g, "") === (st.com / 100).toFixed(2), "this month's commission on " + st.n + " transfers and top-ups is the hero figure");
+  /* since Build 22, the travel bookings' fees join the commission apart from the sales */
+  const st = await p.evaluate(() => { const rg = E.reports.range("month"), r = E.books.report(rg.from, rg.to), bk = E.books.bookingEarned ? E.books.bookingEarned(rg.from, rg.to).fees : 0;
+    return { com: r.services.commission, n: r.services.count, profit: r.profit, apart: r.services.commission + bk }; });
+  ok((await p.textContent("#eaApart")).replace(/[^0-9.]/g, "") === (st.apart / 100).toFixed(2), "this month's commission on " + st.n + " transfers and top-ups is the hero figure");
   ok(await p.locator("#eaByProv tbody tr").count() >= 3, "provider by provider");
   ok(/counted as the providers' money/.test(await p.textContent("#eaApartCard")), "it says the fees are the providers' money, as the reports do");
   const allTxt = await p.textContent("#eaAllEarned");
-  ok(allTxt.replace(/[^0-9.\-−]/g, "").replace("−", "-") === ((st.profit + st.com) / 100).toFixed(2), "with the sales: the profit on sales and the commission make the total (" + allTxt + ")");
+  ok(allTxt.replace(/[^0-9.\-−]/g, "").replace("−", "-") === ((st.profit + st.apart) / 100).toFixed(2), "with the sales: the profit on sales and the commission make the total (" + allTxt + ")");
   ok(await p.locator("#eaAfter").count() === 1 && /estimate from the time clock/.test(await p.textContent("#eaAfter")), "after pay, with the honest note that pay is an estimate");
   for (const sp of ["today", "lastweek", "year"]) { await p.click(`.ea-spans [data-p="${sp}"]`); await wait(p, 250); }
   ok(await p.getAttribute('.ea-spans [data-p="year"]', "aria-pressed") === "true", "the periods change at a press");

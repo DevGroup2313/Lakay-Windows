@@ -199,6 +199,7 @@
     else if (kind === "prov") { st.provs = st.provs || {}; st.provs[id] = v; }
     else if (kind === "rate") { st.rates = st.rates || {}; st.rates[id] = v; }
     else if (kind === "payset") st.payset = v;
+    else if (kind === "booking") { st.bookings = st.bookings || []; var zb = st.bookings.findIndex(function (x) { return x.id === v.id; }); if (zb >= 0) st.bookings[zb] = v; else st.bookings.push(v); }
     else if (kind === "settle" || kind === "stmt" || kind === "paid") {
       var key = kind === "settle" ? "settles" : kind === "stmt" ? "stmts" : "paids"; st[key] = st[key] || [];
       var pi = st[key].findIndex(function (x) { return x.id === v.id; }); if (pi >= 0) st[key][pi] = v; else st[key].push(v);
@@ -301,6 +302,8 @@
     if (!state.rota && !(state.slots || []).length) c = c.then(sampleSchedule);
     /* and before Build 21, its providers and its pay */
     if (!Object.keys(state.provs || {}).length && !state.payset) c = c.then(sampleMoney);
+    /* and before Build 22, its travel bookings */
+    if (!(state.bookings || []).length && !(state.counters && state.counters.booking)) c = c.then(sampleTravel);
     return c.then(function () { B._at = null; B.user = state.users.owner; return state; },
       function (e) { console.warn(e); B._at = null; if (state) B.user = state.users.owner; return state; });
   }
@@ -391,6 +394,25 @@
     });
     return c;
   }
+  /* the practice store's travel bookings (Build 22): two travel from Miami to Port-au-Prince in five days, paid in full
+     (a deposit in cash, the rest by card at the counter, taken by Marie); one goes from Fort Lauderdale to Cap-Haitien
+     in twelve days, with a deposit and the balance still to pay; one went from New York and came back two days ago;
+     and one to Santo Domingo was cancelled, the store keeping its fee and giving the rest of the deposit back. No
+     client's name or phone: the owner has not turned that on. The codes are made up. */
+  function sampleTravel() {
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    function at(back, hh, mm) { var d = U.addDays(today, -back); d.setHours(hh, mm || 0, 0, 0); if (d.getTime() > Date.now() - 600000) d = new Date(Date.now() - 600000); return d; }
+    function day(n) { return U.dayKey(U.addDays(today, n)); }
+    function as(id, when, fn) { return function () { B._at = when.toISOString(); B.user = state.users[id] || state.users.owner; return fn().then(function (x) { B.user = state.users.owner; return x; }); }; }
+    var card = B.payPrefs().methods.indexOf("card") >= 0 ? "card" : "cash", air = E.t("practice.siteAir"), web = E.t("practice.siteWeb"), made = {}, c = Promise.resolve();
+    c = c.then(as("owner", at(6, 11), function () { return B.addBooking({ from: "MIA", to: "PAP", depart: day(5), ret: day(19), pax: 2, site: air, code: "QX7P2M", ticket: 61240, fee: 3500, note: "" }, { amount: 30000, method: "cash" }).then(function (b) { made.a = b; }); }));
+    c = c.then(function () { return as(SAMPLE_PEOPLE[0][0], at(2, 10, 20), function () { return B.payBooking(made.a.id, { amount: 34740, method: card, ref: card === "card" ? "314159" : "" }); })(); });
+    c = c.then(as("owner", at(3, 15), function () { return B.addBooking({ from: "FLL", to: "CAP", depart: day(12), ret: null, pax: 1, site: web, code: "H4K9TL", ticket: 28900, fee: 2500, note: "" }, { amount: 10000, method: "cash" }); }));
+    c = c.then(as("owner", at(13, 12), function () { return B.addBooking({ from: "JFK", to: "PAP", depart: day(-9), ret: day(-2), pax: 1, site: air, code: "ZT5RW8", ticket: 45500, fee: 3000, note: "" }, { amount: 48500, method: "cash" }); }));
+    c = c.then(as("owner", at(8, 16), function () { return B.addBooking({ from: "MIA", to: "SDQ", depart: day(20), ret: day(27), pax: 1, site: web, code: "M2VN6C", ticket: 39800, fee: 3000, note: "" }, { amount: 10000, method: "cash" }).then(function (b) { made.d = b; }); }));
+    c = c.then(function () { return as("owner", at(4, 14), function () { return B.cancelBooking(made.d.id, { feeKept: 3000, refund: 7000, method: "cash", reason: E.t("practice.cancelWhy") }); })(); });
+    return c;
+  }
   /* The practice store's sample people: [user id, staff number, name, level of access]. */
   var SAMPLE_PEOPLE = [["u_practice_marie", 1002, "Marie", "cashier"], ["u_practice_jean", 1003, "Jean", "manager"]];
   /* The sample goods of a Caribbean store: [shelf, name, price, cost (cents), stock, reorder at, taxed, barcode]. */
@@ -477,6 +499,7 @@
     chain = chain.then(function () { return sampleCourse(); });
     chain = chain.then(function () { return sampleSchedule(); });
     chain = chain.then(function () { return sampleMoney(); });
+    chain = chain.then(function () { return sampleTravel(); });
     return chain.then(function () { B._at = null; B.user = state.users.owner; return state; }, function (e) { B._at = null; B.user = state && state.users.owner; throw e; });
   }
   /* The practice store's money transfers and top-ups: a few a day for two weeks, with made-up fees and references.
@@ -1717,6 +1740,142 @@
   };
   B.paids = function (filter) { return state ? (state.paids || []).filter(function (x) { return !filter || filter(x); }).map(clone) : []; };
 
+  /* ---------- travel bookings (Build 22) ----------
+     The owner books flights on websites for the store's clients. A booking keeps the trip (from, to, the days, how
+     many travel), where it was booked and its confirmation code, the ticket's price and the store's fee, and the
+     client's payments until it is paid in full. The fee is the store's own earning. Never a passport number or a card
+     number: both are refused wherever they could be typed. The client's name and phone are kept only if the owner
+     turns that on; they live in the booking's sealed record and never in the ledger, so they can be erased, and they
+     are erased from every booking when the owner turns it off. Cancelling keeps the part of the fee the store kept, and
+     writes what went back to the client. */
+  /* what may be a passport or identity number: at most two letters, then digits, eight or nine signs in all, at least
+     seven of them digits. A guess: it cannot catch every such number, and says so where it is used. */
+  function idNumberIn(text) {
+    return (String(text || "").match(/[A-Za-z0-9]+/g) || []).some(function (w) { return w.length >= 8 && w.length <= 9 && /^[A-Za-z]{0,2}\d{7,9}$/.test(w); });
+  }
+  B.idNumberIn = idNumberIn;
+  B.bookingPrefs = function () {
+    var p = (state && state.settings && state.settings.bookings) || {};
+    return { keepClient: p.keepClient === true, fee: Number.isSafeInteger(p.fee) ? p.fee : 0 };
+  };
+  B.setBookingPrefs = function (f) {
+    return B.change(function (st) {
+      need("owner");
+      var cur = B.bookingPrefs(), keep = f.keepClient === true, fee = f.fee === undefined || f.fee === null ? cur.fee : f.fee;
+      if (!Number.isSafeInteger(fee) || fee < 0 || fee > 1000000) throw err("amount");
+      if (keep === cur.keepClient && fee === cur.fee) return null;
+      var set = clone(st.settings); set.bookings = { keepClient: keep, fee: fee };
+      var recs = [{ kind: "settings", id: "main", value: set }], erased = 0;
+      if (!keep) (st.bookings || []).forEach(function (b) { if (b.client) { var x = clone(b); x.client = null; recs.push({ kind: "booking", id: x.id, value: x }); erased++; } });
+      return { type: "settings.bookings", data: { keepClient: keep, fee: fee, erased: erased }, recs: recs, result: erased };
+    });
+  };
+  /* a booking as the ledger keeps it: everything but the client */
+  function bookingLine(b) { var x = clone(b); delete x.client; return x; }
+  function cleanBooking(f, cur, keepClient) {
+    var b = cur ? clone(cur) : {};
+    var from = plain(f.from, 40), to = plain(f.to, 40); if (!from || !to) throw err("place");
+    var depart = dueDay(f.depart); if (!depart) throw err("days");
+    var ret = f.ret ? dueDay(f.ret) : null; if ((f.ret && !ret) || (ret && ret < depart)) throw err("days");
+    if (!Number.isSafeInteger(f.pax) || f.pax < 1 || f.pax > 9) throw err("pax");
+    var site = plain(f.site, 40), code = plain(f.code, 12).toUpperCase(), note = plain(f.note, 200);
+    [["code", code], ["site", site], ["note", note], ["place", from + " " + to]].forEach(function (x) { if (cardNumberIn(x[1])) throw err("card", x[0]); if (idNumberIn(x[1])) throw err("idnum", x[0]); });
+    b.from = from; b.to = to; b.depart = depart; b.ret = ret; b.pax = f.pax; b.site = site; b.code = code; b.note = note;
+    if (f.ticket !== undefined) { if (!Number.isSafeInteger(f.ticket) || f.ticket <= 0 || f.ticket > 10000000) throw err("amount"); b.ticket = f.ticket; }
+    if (f.fee !== undefined) { if (!Number.isSafeInteger(f.fee) || f.fee < 0 || f.fee > 1000000) throw err("amount"); b.fee = f.fee; }
+    if (!Number.isSafeInteger(b.ticket)) throw err("amount");
+    if (!Number.isSafeInteger(b.fee)) b.fee = 0;
+    if (keepClient && f.client) {
+      var nm = plain(f.client.name, 60), ph = String(f.client.phone || "").replace(/[^\d+()\- .]/g, "").replace(/\s+/g, " ").trim().slice(0, 20);
+      if (cardNumberIn(nm) || idNumberIn(nm)) throw err("idnum", "client");
+      if (cardNumberIn(ph)) throw err("card", "phone");
+      b.client = nm || ph ? { name: nm, phone: ph } : null;
+    } else if (!keepClient) b.client = null;
+    return b;
+  }
+  /* the ways the store takes money for a booking, as for a sale: cash, a card on its own machine, or another way */
+  function cleanBookingPay(f, kind) {
+    var prefs = B.payPrefs(), m = String(f.method || "");
+    if (!(m === "cash" || (m === "card" && prefs.methods.indexOf("card") >= 0) || (m === "other" && (prefs.others || []).length))) throw err("method");
+    if (!Number.isSafeInteger(f.amount) || f.amount <= 0) throw err("amount");
+    var ref = plain(f.ref, 20); if (cardNumberIn(ref)) throw err("card");
+    return { id: U.uid("q"), kind: kind || "pay", amount: f.amount, method: m, ref: ref, at: clock().toISOString(), by: B.user.id, status: "done" };
+  }
+  B.bookingMoney = function (b) {
+    var paid = 0, refunded = 0;
+    (b.pays || []).forEach(function (p) { if (p.status === "void") return; if (p.kind === "refund") refunded += p.amount; else paid += p.amount; });
+    var total = (b.ticket || 0) + (b.fee || 0);
+    return { total: total, paid: paid, refunded: refunded, balance: b.status === "cancelled" ? 0 : Math.max(0, total - paid) };
+  };
+  function bookingOf(st, id) { var b = (st.bookings || []).find(function (x) { return x.id === id; }); if (!b) throw err("nobooking"); return b; }
+  B.addBooking = function (f, first) {
+    return B.change(function (st) {
+      need("sell");
+      var b = cleanBooking(f, null, B.bookingPrefs().keepClient), now = clock(), counter = clone((st.counters && st.counters.booking) || { next: 1 });
+      b.id = U.uid("b"); b.no = B.device.code + "-T" + String(counter.next).padStart(4, "0"); counter.next += 1;
+      b.at = now.toISOString(); b.day = U.dayKey(now); b.by = B.user.id; b.dev = B.device.id; b.status = "on"; b.feeKept = null; b.pays = [];
+      if (first) { var p = cleanBookingPay(first, "pay"); if (p.amount > b.ticket + b.fee) throw err("over"); b.pays.push(p); }
+      return { type: "booking.made", data: { booking: bookingLine(b) }, recs: [{ kind: "booking", id: b.id, value: b }, { kind: "counter", id: "booking", value: counter }], result: b };
+    });
+  };
+  B.changeBooking = function (id, f) {
+    return B.change(function (st) {
+      need("sell");
+      var cur = bookingOf(st, id); if (cur.status === "cancelled") throw err("closed");
+      var g = Object.assign({}, f); if (!B.can("costs")) { delete g.ticket; delete g.fee; }
+      var b = cleanBooking(g, cur, B.bookingPrefs().keepClient);
+      if (B.bookingMoney(b).total < B.bookingMoney(cur).paid) throw err("below");
+      if (JSON.stringify(b) === JSON.stringify(cur)) return null;
+      b.changedAt = clock().toISOString(); b.changedBy = B.user.id;
+      return { type: "booking.changed", data: { id: id, booking: bookingLine(b) }, recs: [{ kind: "booking", id: id, value: b }], result: b };
+    });
+  };
+  B.payBooking = function (id, f) {
+    return B.change(function (st) {
+      need("sell");
+      var cur = bookingOf(st, id); if (cur.status === "cancelled") throw err("closed");
+      var p = cleanBookingPay(f, "pay"); if (p.amount > B.bookingMoney(cur).balance) throw err("over");
+      var b = clone(cur); b.pays.push(p);
+      return { type: "booking.paid", data: { id: id, pay: clone(p), booking: bookingLine(b) }, recs: [{ kind: "booking", id: id, value: b }], result: b };
+    });
+  };
+  B.voidBookingPay = function (id, payId, reason) {
+    return B.change(function (st) {
+      need("reports");
+      var cur = bookingOf(st, id); if (cur.status === "cancelled") throw err("closed");
+      var p = (cur.pays || []).filter(function (x) { return x.id === payId; })[0]; if (!p) throw err("nopay");
+      if (p.status === "void") return null;
+      reason = plain(reason, 200); if (!reason) throw err("note");
+      var b = clone(cur), now = clock().toISOString();
+      b.pays = b.pays.map(function (x) { if (x.id !== payId) return x; var y = clone(x); y.status = "void"; y.voidReason = reason; y.voidedBy = B.user.id; y.voidedAt = now; return y; });
+      return { type: "booking.payVoided", data: { id: id, pay: payId, reason: reason, booking: bookingLine(b) }, recs: [{ kind: "booking", id: id, value: b }], result: b };
+    });
+  };
+  B.cancelBooking = function (id, f) {
+    return B.change(function (st) {
+      need("reports");
+      var cur = bookingOf(st, id); if (cur.status === "cancelled") return null;
+      var m = B.bookingMoney(cur);
+      if (!Number.isSafeInteger(f.feeKept) || f.feeKept < 0 || f.feeKept > cur.fee) throw err("kept");
+      if (!Number.isSafeInteger(f.refund) || f.refund < 0 || f.refund > m.paid) throw err("refund");
+      var reason = plain(f.reason, 200); if (!reason) throw err("note");
+      var b = clone(cur); b.status = "cancelled"; b.feeKept = f.feeKept; b.cancelReason = reason; b.cancelledBy = B.user.id; b.cancelledAt = clock().toISOString();
+      if (f.refund) b.pays.push(cleanBookingPay({ amount: f.refund, method: f.method || "cash", ref: "" }, "refund"));
+      return { type: "booking.cancelled", data: { id: id, feeKept: f.feeKept, refund: f.refund, reason: reason, booking: bookingLine(b) }, recs: [{ kind: "booking", id: id, value: b }], result: b };
+    });
+  };
+  B.bookings = function (filter) { return state ? (state.bookings || []).filter(function (x) { return !filter || filter(x); }).map(clone) : []; };
+  B.booking = function (id) { var b = state && (state.bookings || []).find(function (x) { return x.id === id; }); return b ? clone(b) : null; };
+  /* the store's fees from the bookings made in a period: the whole fee, or the part kept when one was cancelled */
+  B.bookingEarned = function (fromKey, toKey) {
+    var out = { count: 0, fees: 0, cancelled: 0 };
+    (state ? state.bookings || [] : []).forEach(function (b) {
+      if (b.day < fromKey || b.day > toKey) return;
+      if (b.status === "cancelled") { out.cancelled++; out.fees += b.feeKept || 0; } else { out.count++; out.fees += b.fee || 0; }
+    });
+    return out;
+  };
+
   /* ---------- payments (Build 16) ----------
      Lakay never touches a card. The store's own card machine (Square, Clover, SumUp, a bank's terminal: any of them)
      charges the card, Apple Pay or Google Pay; Lakay records what was taken: the way, the amount, the machine's approval
@@ -1900,7 +2059,7 @@
     var key = KEY, id = ID, st = state;
     if (!key) return Promise.reject(err("locked"));
     return D.entries("journal").then(function (entries) {
-      var res = { ok: true, lines: entries.length, problems: [] }, prev = ZERO, expect = 1, items = {}, svcs = {}, train = {}, money = { settle: {}, paid: {} }, i = 0;
+      var res = { ok: true, lines: entries.length, problems: [] }, prev = ZERO, expect = 1, items = {}, svcs = {}, train = {}, money = { settle: {}, paid: {}, booking: {} }, i = 0;
       function next() {
         if (i >= entries.length) return Promise.resolve();
         var e = entries[i++];
@@ -1945,6 +2104,16 @@
           });
           Object.keys(want).forEach(function (k) { res.problems.push({ money: g[0], id: k, what: "extra" }); });
         });
+        /* the travel bookings (Build 22): each as its last ledger line left it, with the money paid and given back */
+        (st.bookings || []).forEach(function (b) {
+          var w = money.booking[b.id];
+          if (!w) { res.problems.push({ booking: b.id, what: "missing" }); return; }
+          var mb = B.bookingMoney(b), mw = B.bookingMoney(w);
+          ["status", "ticket", "fee", "feeKept", "depart", "ret", "pax"].forEach(function (f) { if (JSON.stringify(b[f]) !== JSON.stringify(w[f])) res.problems.push({ booking: b.id, what: "differs", field: f }); });
+          if (mb.paid !== mw.paid || mb.refunded !== mw.refunded) res.problems.push({ booking: b.id, what: "differs", field: "pays" });
+          delete money.booking[b.id];
+        });
+        Object.keys(money.booking).forEach(function (k) { res.problems.push({ booking: k, what: "extra" }); });
         /* each person's marks (Build 17 lessons; Build 19 exercises and the store's tasks): the ones the ledger wrote last */
         Object.keys(st.train || {}).forEach(function (u) {
           var r = st.train[u] || {}, have = {}, want = train[u] || {};
@@ -1974,6 +2143,7 @@
       case "provider.settleVoided": if (money) { if (money.settle[d.id]) money.settle[d.id].status = "void"; else res.problems.push({ seq: line.seq, what: "void" }); } break;
       case "pay.paid": if (money && d.paid) money.paid[d.paid.id] = clone(d.paid); break;
       case "pay.voided": if (money) { if (money.paid[d.id]) money.paid[d.id].status = "void"; else res.problems.push({ seq: line.seq, what: "void" }); } break;
+      case "booking.made": case "booking.changed": case "booking.paid": case "booking.payVoided": case "booking.cancelled": if (money && d.booking) money.booking[d.booking.id] = clone(d.booking); break;
       case "training.completed": if (train && d.user && d.lesson) { train[d.user] = train[d.user] || {}; train[d.user]["l:" + d.lesson] = { score: d.score, of: d.of }; } break;
       case "training.exercise": if (train && d.user && d.exercise) { train[d.user] = train[d.user] || {}; train[d.user]["x:" + d.exercise] = {}; } break;
       case "training.task": if (train && d.user && d.task) { train[d.user] = train[d.user] || {}; train[d.user]["t:" + d.task] = { by: d.by }; } break;

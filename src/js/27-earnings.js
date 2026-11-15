@@ -105,16 +105,19 @@
   var SPANS = ["today", "week", "lastweek", "month", "lastmonth", "year"];
   PANES.store = function (pane) {
     var rg = E.reports.range(EA.period), r = B.report(rg.from, rg.to, null, null), sv = r.services;
+    /* the travel bookings' fees (Build 22): the whole fee, or what was kept of a cancelled booking's */
+    var bk = B.bookingEarned ? B.bookingEarned(rg.from, rg.to) : { count: 0, fees: 0, cancelled: 0 }, apart = sv.commission + bk.fees, nbk = bk.count + bk.cancelled;
     var unknownList = noCommission(function (v) { return v.day >= rg.from && v.day <= rg.to; }), unknown = unknownList.length;
     var chips = h("div.chips.ea-spans", { role: "group", "aria-label": t("ea.spanH") }, SPANS.map(function (p) {
       return h("button.chip", { type: "button", "data-p": p, "aria-pressed": String(EA.period === p), onclick: function () { EA.period = p; redraw(); } }, t("rep.p." + p));
     }));
     pane.appendChild(h("div.ea-spanbar", null, [chips, h("p.ea-range#eaRange", null, [ui.emo("📅"), rg.label])]));
-    /* apart from the sales: the commission on transfers and top-ups (Build 22 adds the travel bookings) */
+    /* apart from the sales: the commission on transfers and top-ups, and the fees on travel bookings */
     var provs = Object.keys(sv.byProvider).sort(function (a, b) { return sv.byProvider[b].commission - sv.byProvider[a].commission; });
     pane.appendChild(h("section.card.ea-hero#eaApartCard", { "aria-labelledby": "eaApartH" }, [
-      h("div.ea-hero-t", null, [h("p.label-caps#eaApartH", null, [ui.emo("💱"), t("ea.apart")]), h("p.ea-big#eaApart", null, money(sv.commission)),
-        h("p.ea-sub", null, sv.count ? t(sv.count === 1 ? "ea.apartSub1" : "ea.apartSub", { n: sv.count }) : t("ea.apartNone"))]),
+      h("div.ea-hero-t", null, [h("p.label-caps#eaApartH", null, [ui.emo("💰"), t("ea.apart")]), h("p.ea-big#eaApart", null, money(apart)),
+        sv.count || !nbk ? h("p.ea-sub#eaApartCom", null, sv.count ? t(sv.count === 1 ? "ea.apartCom1" : "ea.apartCom", { n: sv.count, m: money(sv.commission) }) : t("ea.apartNone")) : null,
+        nbk ? h("p.ea-sub#eaApartBk", null, t(nbk === 1 ? "ea.apartBk1" : "ea.apartBk", { n: nbk, m: money(bk.fees) })) : null]),
       provs.length ? h("div.table-wrap", null, h("table.grid.compact#eaByProv", null, [
         h("thead", null, h("tr", null, [h("th", null, t("svc.provider")), h("th.num", null, t("svc.entries")), h("th.num", null, t("svc.commission")), h("th.num", null, t("svc.fees"))])),
         h("tbody", null, provs.map(function (p) { var x = sv.byProvider[p]; return h("tr", null, [h("td", null, t("svc.p." + p)), h("td.num", null, String(x.count)), h("td.num", null, money(x.commission)), h("td.num", null, money(x.fees))]); }))])) : null,
@@ -123,10 +126,10 @@
       h("p.hint", null, t("ea.feesNote"))]));
     /* with the sales, for those who see the costs; and after pay, for those who also see it */
     if (B.can("costs")) {
-      var all = r.profit + sv.commission;
+      var all = r.profit + apart;
       pane.appendChild(card("eaAll", "📈", t("ea.allH"), [h("div.ea-sum", null, [
         fig(t("ea.salesProfit"), money(r.profit), r.profit < 0 ? "bad" : null, "eaProfit", t(r.count === 1 ? "ea.salesN1" : "ea.salesN", { n: r.count })),
-        h("span.ea-op", { "aria-hidden": "true" }, "+"), fig(t("ea.apartShort"), money(sv.commission), null, "eaApart2"),
+        h("span.ea-op", { "aria-hidden": "true" }, "+"), fig(t("ea.apartShort"), money(apart), null, "eaApart2"),
         h("span.ea-op", { "aria-hidden": "true" }, "="), fig(t("ea.allEarned"), money(all), all < 0 ? "bad" : "good", "eaAllEarned")]),
         r.noCost ? h("p.note", null, [ui.emo("ℹ️"), t("rep.noCostNote", { m: money(r.noCost) })]) : null]));
       if (B.can("pay")) {
@@ -178,7 +181,7 @@
   function shown() { return B.PROVIDERS.filter(function (id) { var a = B.providerAccount(id); return a.count || a.setup || a.paid || a.returned || a.comReceived; }); }
   PANES.providers = function (pane) {
     var ids = shown();
-    if (!ids.length) { pane.appendChild(h("section.card.ea-empty", null, [h("p", null, [ui.emo("💱"), t("ea.provNone")])])); return; }
+    if (!ids.length) { pane.appendChild(h("section.card.ea-empty", null, [h("p", null, [ui.emo("🏦"), t("ea.provNone")])])); return; }
     pane.appendChild(h("p.ea-intro", null, t("ea.provIntro")));
     pane.appendChild(h("div.ea-provs#eaProvs", null, ids.map(provCard)));
     pane.appendChild(settleLog());
@@ -444,7 +447,7 @@
     if (B.can("reports")) {
       B.PROVIDERS.forEach(function (id) {
         var a = B.providerAccount(id);
-        if (a.setup && a.setup.how === "prepaid" && a.count && -a.held <= 0) out.push(need("💱", t("ea.homeOut", { p: t("svc.p." + id) }), t("ea.homeOutSub"), "warn",
+        if (a.setup && a.setup.how === "prepaid" && a.count && -a.held <= 0) out.push(need("🏦", t("ea.homeOut", { p: t("svc.p." + id) }), t("ea.homeOutSub"), "warn",
           [t("home.open"), function () { EA.tab = "providers"; ui.go("earnings"); }]));
       });
     }

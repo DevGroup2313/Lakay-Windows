@@ -4,6 +4,26 @@ Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED.
 
 The newest build is first. The build number also shows in Lakay's About.
 
+## Build 22 (15 November 2026): Travel, a short record of each flight booked for a client
+
+The owner's answer of 15 November 2026: the owner books flights for clients on websites, and did not know what Lakay should keep. This build proposes a short record, kept to what the counter needs.
+
+- **Travel, a new room in the menu**, after Inventory, for everyone who sells. Each booking keeps: where the trip leaves from and where it goes (an airport's letters or a city's name), the day it leaves and the day it comes back (or one way), how many travel (one to nine), where it was booked, the confirmation code from its email, the ticket's price as the website charged it, the store's fee, and a note.
+- **The client's payments until it is paid in full.** A deposit can be taken as the booking is written, and the rest later with Take a payment, in cash, by card on the store's own machine (with the machine's approval code, never the card's number) or another way the store takes. Each booking shows its total, what was paid and what is left to pay.
+- **To pay, Coming up, All, Cancelled.** The room opens on the bookings with money still owed, the soonest trip first. The figures at the top: what is still to pay, the bookings to pay, the bookings made this month and, for those who see the costs, the month's fees.
+- **The store's fee is its own earning.** Earnings counts it with the commission on transfers and top-ups, apart from the sales.
+- **Reports** show, for the period, the clients' payments for bookings (in cash, and by card or another way) and what went back to them, kept out of the sales, so the drawer can be counted.
+- **Mistakes and cancellations.** Those who see the reports void a payment typed by mistake, with a reason, and cancel a booking: the part of its fee the store keeps, and what goes back to the client, in cash or another way. Nothing is erased; it stays in the books, struck through. A cancelled booking takes no more payments, and its kept fee still counts.
+- **Who sees what.** Everyone who sells writes bookings and takes payments. The ticket's price and the fee, once written, are shown only to those who see the costs, and only they change them. The total never falls below what the client has paid.
+- **Never a passport number or a card number.** Lakay refuses a card's number wherever it could be typed (it checks the number as card machines do), and refuses what looks like a passport or identity number (at most two letters, then seven to nine digits). That second check is a guess: it cannot catch every such number, and the room says so.
+- **The client's name and phone: only if the owner turns it on**, in Settings, Travel bookings. It is off at first, and this build keeps none. When it is on, a booking holds a name and a phone, sealed with the books and never written in the ledger. Turning it off asks first, then erases them from every booking. The owner also sets the store's usual fee there, offered for each new booking.
+- **The Home** reminds those who sell of a trip in the next seven days with a balance to pay.
+- **Nothing of this is written during an exercise.** Verify replays every booking, its payments and its cancelling, and finds one changed outside the books.
+- **The practice store** has four bookings: two travelling from Miami to Port-au-Prince in five days, paid in full (a deposit in cash, the rest by card, taken by Marie); one from Fort Lauderdale to Cap-Haïtien in twelve days with a balance to pay; one from New York that came back two days ago; and one to Santo Domingo cancelled, the store keeping its fee. The codes are made up. A practice store made by an earlier build is given these once, as it opens.
+- **Every step is a ledger line:** `booking.made`, `booking.changed`, `booking.paid`, `booking.payVoided`, `booking.cancelled`, `settings.bookings`.
+- A chapter in the Guidebook, Travel bookings; three tips. Every word is in English, French and Kreyòl (155 new phrases; the Kreyòl is marked for review by a native speaker).
+- tests/t_build22.js: 73 checks. Every suite passes: TOTAL22 checks in all.
+
 ## Build 21 (15 November 2026): Earnings, settling with each provider, and each person's pay
 
 The owner's answers of 15 November 2026: earnings means both the store's own earnings from transfers, top-ups and bookings (apart from its sales) and each employee's pay; for settling with the providers, "I want the option to do any of them".

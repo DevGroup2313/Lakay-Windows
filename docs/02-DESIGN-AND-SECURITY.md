@@ -209,6 +209,16 @@ Only the owner says how a provider settles. "Pay" is a kind of access no level h
 sets their own rate, marks their own pay paid, or undoes it, the owner aside (the owner has no pay in Lakay). Verify
 replays every settlement and every period marked paid against the ledger. During an exercise none of this is written.
 
+## 6e. Travel bookings (Build 22)
+
+Each booking (`booking`) is a sealed record, and every step is a ledger line carrying the booking as it then stood,
+with one exception: the client's name and phone, which the ledger never holds. They are kept only if the owner turns
+that on (it is off at first), only in the booking's own record, and they are erased from every booking when the owner
+turns it off. Lakay refuses a card's number wherever a booking could hold one (the check digit is tested as card
+machines do), and refuses what looks like a passport or identity number. That second check is a guess and is said to
+be one. Money paid and given back is never erased: a payment is voided with a reason, a booking is cancelled with a
+reason and the part of the fee kept. Verify replays each booking's status, prices, days and payments.
+
 ## 7. Protection against attacks and malware
 
 - **No code from outside.** The app's page carries all its own code. A Content Security Policy forbids scripts and
@@ -279,6 +289,9 @@ Encryption protects data at rest and in transit. It cannot protect against every
   do payroll taxes, withholding or filings, and it does not know the overtime rules where the store is. It starts with
   overtime after 40 hours in a week at one and a half times; the owner should confirm what applies with an accountant
   or the labour office. The rates are kept apart by Lakay like the costs: anyone who holds a key holds the Store Key.
+- **A passport or identity number is refused only when it looks like one.** Lakay cannot know every country's
+  pattern; a number written another way (with spaces, or in words) would not be caught. The room and the Guidebook
+  say so, and ask that such numbers never be written.
 - **The store's earnings from transfers count only the commissions written.** A cashier cannot write a commission;
   until someone with the reports writes it from the provider's statement, that entry counts as nothing, and the room
   says how many there are.

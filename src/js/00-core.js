@@ -96,6 +96,8 @@ var ICONS = {
   play: "M8 5.5v13l10.5-6.5z",
   /* the schedule (Build 20): a calendar page */
   calendar: "M4.5 6h15v14h-15zM4.5 10.5h15M8.5 3.5v5M15.5 3.5v5M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01",
+  /* travel bookings (Build 22): an aeroplane seen from above */
+  plane: "M12 2.8c.8 0 1.3.7 1.3 1.6v5l7.7 4.6v1.9l-7.7-2.3v4.9l2 1.5v1.6L12 20.7l-3.3.9v-1.6l2-1.5v-4.9L3 15.9V14l7.7-4.6v-5c0-.9.5-1.6 1.3-1.6z",
   /* earnings (Build 21): two stacks of coins */
   coins: "M9 4c3.6 0 6.5 1.1 6.5 2.5S12.6 9 9 9 2.5 7.9 2.5 6.5 5.4 4 9 4zM2.5 6.5V11c0 1.4 2.9 2.5 6.5 2.5M15.5 6.5V9M2.5 11v4.5C2.5 16.9 5.4 18 9 18M15 11c3.6 0 6.5 1.1 6.5 2.5S18.6 16 15 16s-6.5-1.1-6.5-2.5S11.4 11 15 11zM8.5 13.5V18c0 1.4 2.9 2.5 6.5 2.5s6.5-1.1 6.5-2.5v-4.5",
   /* the Author Studio's colours (Build 18): a painter's palette */

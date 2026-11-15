@@ -188,6 +188,20 @@
           .concat([[t("rep.total"), sv.count, money((sv.byKind.send || { amount: 0 }).amount), money((sv.byKind.payout || { amount: 0 }).amount), money((sv.byKind.topup || { amount: 0 }).amount), money(sv.fees)]
             .concat(B.can("reports") ? [money(sv.commission)] : [])]), [1, 2, 3, 4, 5, 6]),
       h("p.hint#repSvcCash", null, t("rep.svcCash", { a: money(sv.cashIn), b: money(sv.cashOut) }) + (sv.voided ? " " + t("rep.svcVoided", { n: sv.voided }) : ""))]), t("rep.svcHint")));
+    /* travel bookings, apart from the sales: the clients' payments and what went back to them (Build 22); the store's
+       fee is in Earnings */
+    if (B.bookings) {
+      var bk = { n: 0, cash: 0, other: 0, back: 0 };
+      B.bookings().forEach(function (b) {
+        (b.pays || []).forEach(function (q) {
+          if (q.status === "void" || (R.person !== "all" && q.by !== R.person)) return;
+          var at = Date.parse(q.at), d = U.dayKey(new Date(at));
+          if (d < rg.from || d > rg.to || (rg.win && (at < rg.win.from || at >= rg.win.to))) return;
+          if (q.kind === "refund") bk.back += q.amount; else { bk.n++; if (q.method === "cash") bk.cash += q.amount; else bk.other += q.amount; }
+        });
+      });
+      if (bk.n || bk.back) node.appendChild(section("✈️ " + t("rep.bk"), h("p.hint#repBkCash", null, t(bk.n === 1 ? "rep.bkCash1" : "rep.bkCash", { n: bk.n, a: money(bk.cash), b: money(bk.other), c: money(bk.back) })), t("rep.bkHint")));
+    }
     var reasons = Object.keys(r.losses.byReason);
     node.appendChild(section("💔 " + t("rep.losses"), reasons.length ? table([t("ad.reason"), t("rep.items")].concat(costs ? [t("inv.value")] : []), reasons.map(function (k) {
       var x = r.losses.byReason[k]; return [t("reason." + k), x.qty].concat(costs ? [money(x.value)] : []);
