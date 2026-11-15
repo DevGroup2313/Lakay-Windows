@@ -186,7 +186,7 @@
       B.signIn(nm.value, pw.value).then(function () {
         var first = pw.value; pw.value = ""; U.prefSet("fails", "0"); U.prefSet("waitUntil", "0"); door.outNote = "";
         if (B.user && B.user.mustChange) return ownPassword(first);
-        return door.arrive();
+        return door.arrive().catch(arriveFailed(card));
       }, function (x) {
         if (x && x.code === "wrong") return wrong();
         busy(card, false); err(card, t("door.problem")); console.error(x);
@@ -197,13 +197,19 @@
   }
   /* Once the books are open: a person on the staff is clocked in as they arrive (the owner clocks in by choice, from
      the status key), and the store opens. */
+  /* Build 24: the store opens even when something on its way fails. The clock in may wait at most fifteen seconds; if
+     drawing the store fails, it is tried once more; and a sign-in that still cannot open says so at the door, with its
+     keys working again, instead of waiting for ever. */
   door.arrive = function () {
-    var p = (!B.isOwner() && !B.openShift(B.user.id)) ? B.clockIn().catch(function (e) { console.error(e); return null; }) : Promise.resolve(null);
-    return p.then(function (sh) {
-      E.app.opened();
+    var clock = (!B.isOwner() && !B.openShift(B.user.id)) ? B.clockIn().catch(function (e) { console.error(e); return null; }) : Promise.resolve(null);
+    var limit = new Promise(function (res) { setTimeout(function () { res(null); }, 15000); });
+    return Promise.race([clock, limit]).then(function (sh) {
+      try { E.app.opened(); } catch (e) { console.error(e); E.app.opened(); }
       if (sh) ui.toast(t("clock.inAt", { name: B.user.name, t: E.fmtTime(new Date(sh.in)) }), "good");
     });
   };
+  /* a sign-in whose store could not open: the door's keys work again, and it says so */
+  function arriveFailed(card) { return function (x) { console.error(x); busy(card, false); err(card, t("door.problem")); }; }
   /* The first time a person signs in with the password the owner gave them, they choose their own. */
   var ownPassword = screen(function (given) {
     var card = lockDoor(document.getElementById("introDoor") ? "intro" : "door");
@@ -216,7 +222,7 @@
       if (a.value !== b.value) return err(card, t("setup.noMatch"));
       if (a.value === given) return err(card, t("own.notGiven"));
       busy(card, true);
-      B.changeMyPassword(given, a.value).then(function () { a.value = ""; b.value = ""; return door.arrive(); }, function (x) {
+      B.changeMyPassword(given, a.value).then(function () { a.value = ""; b.value = ""; return door.arrive().catch(arriveFailed(card)); }, function (x) {
         busy(card, false); err(card, t(x && x.code === "password" ? x.extra : "door.problem")); console.error(x);
       });
     } }, [label(t("own.new"), a), meter, label(t("own.again"), b),

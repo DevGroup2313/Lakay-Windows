@@ -78,3 +78,22 @@ number. The practice store stays on each device alone.
 3. Away from the store, should the owner's phone only see the books, or also change them (sell, receive, change
    prices)?
 4. Is the Mac mini on and connected day and night?
+
+## Appendix: how stage 1 is built (for whoever continues the work)
+
+- **Each device has its own letter** (A, B, C), kept in a `device` record in the books, so receipts and bookings
+  never share a number. The first device of a store is A.
+- **Every ledger line carries what it wrote** (from Build 24): the records it changed (`w`) and the door's or the
+  vault's new state (`m`). Lines written before that need nothing: a device joins from a copy made after them.
+- **A device joins from a copy** of the books made by a device already in the store (a backup, in stage 1). It keeps
+  the copy's records, keeps the other device's ledger lines as that device's chain, and starts a chain of its own
+  with a line that says where it came from. It never continues another device's chain.
+- **Changes travel as a sealed bundle**: one device's lines since a given point, sealed with the Store Key. Taking a
+  bundle in checks that the lines follow on from what was last taken from that device, fingerprint by fingerprint;
+  writes each record unless the device already holds a later change to it (the later time wins, the device's letter
+  breaks a tie); never takes another device's counters; and counts stock by the sales, deliveries and corrections in
+  the lines, not by the other device's figure. It then writes one line of its own saying what it took.
+- **Verify** checks the device's own chain and each other device's chain, then replays all of them together, in the
+  order of their time, against the books.
+- **Not carried in stage 1**: each person's sticky notes (they stay on the device where they were written), and the
+  practice store (it stays on each device alone).
