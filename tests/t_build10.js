@@ -38,6 +38,11 @@ const OWNER_PW = "kreyol and coffee 2026";
   await p.keyboard.press("Escape"); await wait(p, 200);
 
   console.log("The day's figures and the takings of each hour");
+  /* the practice store's sample sales begin at nine: before then, today has none, so the test rings up its own */
+  if (await p.evaluate(() => { const k = E.util.dayKey(); return E.books.report(k, k).count; }) === 0) {
+    await p.evaluate(() => { const ids = Object.keys(E.books.state().items).filter(k => E.books.state().items[k].stock > 3); return E.books.completeSale([{ itemId: ids[0], qty: 1 }], 10000).then(() => E.books.completeSale([{ itemId: ids[1], qty: 2 }], 10000)); });
+    await home();
+  }
   const r = await p.evaluate(() => { const k = E.util.dayKey(); const rep = E.books.report(k, k); return { count: rep.count, gross: rep.gross, byHour: rep.byHour.map(x => x.gross) }; });
   const cols = await p.$$eval(".hm-col", cs => cs.length);
   const now = new Date().getHours();

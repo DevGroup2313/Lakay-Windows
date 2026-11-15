@@ -4,6 +4,24 @@ Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED.
 
 The newest build is first. The build number also shows in Lakay's About.
 
+## Build 18 (15 November 2026): the Author Studio made new
+
+The fourth item on the owner's list: the Author Studio, which the owner found poor, redesigned from the ground up.
+
+- **Tabs, as Inventory's:** At a glance, Names, Words, Look, Receipt and Safekeeping. The menu page that only repeated the menu is gone.
+- **At a glance:** the app's calling card (the mark, the name, the line under it, the store) beside how each part stands now, each a key into its tab.
+- **The desk:** on a wide screen the tools sit on white slabs at the left, and a live stage at the right stays in view. On a phone the stage follows the tools.
+- **Names:** the app's name, the store's and the owner's, and the line under the name in each language, with a count of letters. The stage shows them at the door, in the menu, and on the window and its tab, as they are typed.
+- **Words, now a phrase book:** every phrase as it reads on screen, by the place where it shows (Everywhere, Door, Menu, Home, Register, Inventory, Reports, Team, Learning, Settings, Guidebook, Tips, Studio), 25 to a page. Internal names are no longer shown. Edit opens a phrase with Lakay's words above the owner's; Keep sets it aside, marked "Not saved yet", until Save the phrases (or Undo them). Changed shows only the owner's phrases. The search finds every word typed, in the language chosen or in English.
+- **The blanks Lakay fills in are kept:** a phrase such as "{n} of {m} done" cannot be saved without {n} and {m}; the Studio names the blank that is missing.
+- **Look:** the six colour sets, each drawn as two small windows, by day and by night, named for their colours (Dawn, Amethyst, Indigo, Royal blue, Burgundy, Graphite) with no talk of brass or of old builds. The spacing, Compact or Comfortable, drawn too. The stage shows a piece of the counter in the colours worn.
+- **A fault fixed:** Amethyst had no colours of its own, so choosing it changed nothing. It now has its own, by day and by night.
+- **Receipt:** the lines under the store's name, the thank you in each language and the note at the foot, with the receipt drawn on its paper as it prints, and a test receipt to print.
+- **Safekeeping:** save a copy of the choices, bring them back from a copy (checked first: unknown phrases, colours and fields are left out), put back every original, and **the history**: what was changed in the Studio, when, and by whom, read from the ledger.
+- **Not saved yet:** the heading's chip says when a form holds changes, and leaving the tab then asks first.
+- The Guidebook's chapter on the Author Studio is rewritten for it. Every word is in English, French and Kreyòl (65 new phrases, 28 rewritten; the Kreyòl is marked for review by a native speaker).
+- tests/t_build18.js: 55 checks. Every suite passes: 538 checks in all.
+
 ## Build 17 (14 November 2026): Learning, with a lesson for each part of the work, a guided tour that does the work in front of the person, and a tip in every room
 
 The third item on the owner's list: trainings for staff and new hires, a guided interactive tour with live demonstrations, and tips throughout.
