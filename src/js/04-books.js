@@ -1552,6 +1552,9 @@
      a provider's statement can be checked against it, and the check is kept. A mistake is voided with a reason. */
   B.PROV_HOW = ["sweep", "deposit", "prepaid"];
   B.PROV_COM = ["deducted", "monthly"];
+  /* Build 23: who keeps the fee a customer pays on top: the provider (as since Build 15) or the store, whose own
+     earning it then is, with the commission */
+  B.PROV_FEE = ["provider", "store"];
   B.SETTLE_KINDS = ["paid", "returned", "commission"];
   B.provSetup = function (id) { var x = state && state.provs && state.provs[id]; return x ? clone(x) : null; };
   B.setProvSetup = function (id, f) {
@@ -1559,9 +1562,11 @@
       need("owner");
       if (B.PROVIDERS.indexOf(id) < 0) throw err("provider");
       if (B.PROV_HOW.indexOf(f.how) < 0 || B.PROV_COM.indexOf(f.com) < 0) throw err("how");
-      var cur = (st.provs || {})[id] || null, v = { id: id, how: f.how, com: f.com, note: plain(f.note, 120), at: clock().toISOString(), by: B.user.id };
-      if (cur && cur.how === v.how && cur.com === v.com && (cur.note || "") === v.note) return null;
-      return { type: "provider.setup", data: { provider: id, how: v.how, com: v.com, was: cur ? [cur.how, cur.com] : null }, recs: [{ kind: "prov", id: id, value: v }], result: v };
+      var cur = (st.provs || {})[id] || null, fee = f.fee === undefined ? (cur && cur.fee) || "provider" : f.fee;
+      if (B.PROV_FEE.indexOf(fee) < 0) throw err("how");
+      var v = { id: id, how: f.how, com: f.com, fee: fee, note: plain(f.note, 120), at: clock().toISOString(), by: B.user.id };
+      if (cur && cur.how === v.how && cur.com === v.com && (cur.fee || "provider") === v.fee && (cur.note || "") === v.note) return null;
+      return { type: "provider.setup", data: { provider: id, how: v.how, com: v.com, fee: v.fee, was: cur ? [cur.how, cur.com, cur.fee || "provider"] : null }, recs: [{ kind: "prov", id: id, value: v }], result: v };
     });
   };
   B.settle = function (f) {
@@ -1608,7 +1613,10 @@
       else if (x.kind === "commission") a.comReceived += x.amount;
     });
     a.kept = com === "deducted" ? a.commission : 0;
-    a.held = a.collected - a.kept - a.paid + a.returned;
+    /* the customer's fees, when the store keeps them, are the store's from the start (Build 23) */
+    a.feeStore = !!(setup && setup.fee === "store");
+    a.feeKept = a.feeStore ? a.fees : 0;
+    a.held = a.collected - a.kept - a.feeKept - a.paid + a.returned;
     a.comDue = com === "monthly" ? a.commission - a.comReceived : 0;
     a.lastCheck = (st.stmts || []).filter(function (x) { return x.provider === id; }).map(clone).pop() || null;
     return a;

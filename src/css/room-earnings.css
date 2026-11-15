@@ -130,3 +130,7 @@
 .ea-sec .table-wrap { position: relative; }
 #eaLogT td:first-child, #eaLogT td.num, .ea-pay td.num { white-space: nowrap; }
 .ea-pay .row-key { white-space: nowrap; }
+
+/* ---------- the customers' fees the store keeps (Build 23) ---------- */
+.ea-mine { color: var(--pri-text); font-weight: 600; }
+.ea-mine-tag { display: block; color: var(--pri-text); font-size: .7rem; font-weight: 600; letter-spacing: .02em; }

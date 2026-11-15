@@ -106,7 +106,10 @@
   PANES.store = function (pane) {
     var rg = E.reports.range(EA.period), r = B.report(rg.from, rg.to, null, null), sv = r.services;
     /* the travel bookings' fees (Build 22): the whole fee, or what was kept of a cancelled booking's */
-    var bk = B.bookingEarned ? B.bookingEarned(rg.from, rg.to) : { count: 0, fees: 0, cancelled: 0 }, apart = sv.commission + bk.fees, nbk = bk.count + bk.cancelled;
+    var bk = B.bookingEarned ? B.bookingEarned(rg.from, rg.to) : { count: 0, fees: 0, cancelled: 0 }, nbk = bk.count + bk.cancelled;
+    /* the customers' fees of the providers whose fee the store keeps (Build 23) */
+    var feeStore = Object.keys(sv.byProvider).filter(function (p) { var x = B.provSetup(p); return x && x.fee === "store"; }),
+      feeKept = feeStore.reduce(function (m, p) { return m + sv.byProvider[p].fees; }, 0), apart = sv.commission + bk.fees + feeKept;
     var unknownList = noCommission(function (v) { return v.day >= rg.from && v.day <= rg.to; }), unknown = unknownList.length;
     var chips = h("div.chips.ea-spans", { role: "group", "aria-label": t("ea.spanH") }, SPANS.map(function (p) {
       return h("button.chip", { type: "button", "data-p": p, "aria-pressed": String(EA.period === p), onclick: function () { EA.period = p; redraw(); } }, t("rep.p." + p));
@@ -117,13 +120,16 @@
     pane.appendChild(h("section.card.ea-hero#eaApartCard", { "aria-labelledby": "eaApartH" }, [
       h("div.ea-hero-t", null, [h("p.label-caps#eaApartH", null, [ui.emo("💰"), t("ea.apart")]), h("p.ea-big#eaApart", null, money(apart)),
         sv.count || !nbk ? h("p.ea-sub#eaApartCom", null, sv.count ? t(sv.count === 1 ? "ea.apartCom1" : "ea.apartCom", { n: sv.count, m: money(sv.commission) }) : t("ea.apartNone")) : null,
-        nbk ? h("p.ea-sub#eaApartBk", null, t(nbk === 1 ? "ea.apartBk1" : "ea.apartBk", { n: nbk, m: money(bk.fees) })) : null]),
+        nbk ? h("p.ea-sub#eaApartBk", null, t(nbk === 1 ? "ea.apartBk1" : "ea.apartBk", { n: nbk, m: money(bk.fees) })) : null,
+        feeStore.length ? h("p.ea-sub#eaApartFee", null, t("ea.apartFee", { m: money(feeKept), p: feeStore.map(function (p) { return t("svc.p." + p); }).join(", ") })) : null]),
       provs.length ? h("div.table-wrap", null, h("table.grid.compact#eaByProv", null, [
         h("thead", null, h("tr", null, [h("th", null, t("svc.provider")), h("th.num", null, t("svc.entries")), h("th.num", null, t("svc.commission")), h("th.num", null, t("svc.fees"))])),
-        h("tbody", null, provs.map(function (p) { var x = sv.byProvider[p]; return h("tr", null, [h("td", null, t("svc.p." + p)), h("td.num", null, String(x.count)), h("td.num", null, money(x.commission)), h("td.num", null, money(x.fees))]); }))])) : null,
+        h("tbody", null, provs.map(function (p) { var x = sv.byProvider[p], mine = feeStore.indexOf(p) >= 0;
+          return h("tr", null, [h("td", null, t("svc.p." + p)), h("td.num", null, String(x.count)), h("td.num", null, money(x.commission)),
+            h("td.num" + (mine ? ".ea-mine" : ""), mine ? { title: t("ea.feeMineT") } : null, [money(x.fees), mine ? h("small.ea-mine-tag", null, t("ea.feeMine")) : null])]); }))])) : null,
       unknown ? h("div.note.ea-unknown#eaUnknown", null, [ui.emo("ℹ️"), h("span", null, t(unknown === 1 ? "ea.unknown1" : "ea.unknown", { n: unknown })),
         h("button.key.sm#eaWriteCom", { type: "button", onclick: function () { EA.comForm(unknownList); } }, [U.icon("edit"), t("ea.cmKey")])]) : null,
-      h("p.hint", null, t("ea.feesNote"))]));
+      h("p.hint", null, feeStore.length ? t("ea.feesNoteSome", { p: feeStore.map(function (p) { return t("svc.p." + p); }).join(", ") }) : t("ea.feesNote"))]));
     /* with the sales, for those who see the costs; and after pay, for those who also see it */
     if (B.can("costs")) {
       var all = r.profit + apart;
@@ -198,13 +204,15 @@
       h("li", null, a.lastPaid ? t(prepaid ? "ea.lastAdded" : "ea.lastPaid", { d: dshort(a.lastPaid), m: money(a.paid) })
         : a.lastReturned ? t("ea.lastReturned", { d: dshort(a.lastReturned), m: money(a.returned) }) : t("ea.neverPaid")),
       chk ? h("li" + (chk.diff ? ".off" : ""), null, chk.diff ? t("ea.checkOff", { d: dshort(chk.day), m: money(Math.abs(chk.diff)) }) : t("ea.checkOk", { d: dshort(chk.day) })) : null,
+      a.feeStore ? h("li", null, t("ea.feesKept", { m: money(a.feeKept) })) : null,
       a.unknown ? h("li.off", null, [t(a.unknown === 1 ? "ea.unknown1" : "ea.unknown", { n: a.unknown }), " ",
         h("button.row-key#eaWriteCom-" + id, { type: "button", onclick: function () { EA.comForm(noCommission(function (v) { return v.provider === id; })); } }, h("span", null, t("ea.cmKey")))]) : null];
     var keys = [h("button.key.sm.primary#eaSettle-" + id, { type: "button", onclick: function () { EA.settleForm(id); } }, [U.icon("plus"), t("ea.record")]),
       h("button.key.sm#eaCheck-" + id, { type: "button", onclick: function () { EA.checkForm(id); } }, [U.icon("check"), t("ea.check")])];
     if (B.isOwner()) keys.push(h("button.key.sm#eaSetup-" + id, { type: "button", onclick: function () { EA.setupForm(id); } }, [U.icon("gear"), t("ea.setup")]));
     return h("article.ea-prov" + (prepaid ? ".prepaid" : ""), { id: "eaProv-" + id, "data-provider": id, "aria-labelledby": "eaProvH-" + id }, [
-      h("div.ea-prov-h", null, [h("h3", { id: "eaProvH-" + id }, name), h("div.ea-tags", null, s ? [h("span.ea-chip", null, t("ea.how." + s.how)), h("span.ea-chip", null, t("ea.com." + s.com))]
+      h("div.ea-prov-h", null, [h("h3", { id: "eaProvH-" + id }, name), h("div.ea-tags", null, s ? [h("span.ea-chip", null, t("ea.how." + s.how)), h("span.ea-chip", null, t("ea.com." + s.com)),
+        s.fee === "store" ? h("span.ea-chip.paid", null, t("ea.fee.store")) : null]
         : [h("span.ea-chip.warn", null, t("ea.notSet"))])]),
       h("div.ea-figs.two", null, [main, com]), h("ul.ea-facts", null, facts), h("div.ea-keys", null, keys)]);
   }
@@ -290,17 +298,18 @@
   /* how a provider settles: the owner's to say */
   EA.setupForm = function (id) {
     if (!B.isOwner()) return;
-    var cur = B.provSetup(id) || { how: "deposit", com: "deducted", note: "" }, how = cur.how, com = cur.com;
-    var d1 = h("p.hint.ea-hint#psHowD"), d2 = h("p.hint.ea-hint#psComD");
-    function desc() { d1.textContent = t("ea.howD." + how); d2.textContent = t("ea.comD." + com); }
+    var cur = B.provSetup(id) || { how: "deposit", com: "deducted", fee: "provider", note: "" }, how = cur.how, com = cur.com, fee = cur.fee || "provider";
+    var d1 = h("p.hint.ea-hint#psHowD"), d2 = h("p.hint.ea-hint#psComD"), d3 = h("p.hint.ea-hint#psFeeD");
+    function desc() { d1.textContent = t("ea.howD." + how); d2.textContent = t("ea.comD." + com); d3.textContent = t("ea.feeD." + fee); }
     var howSeg = ui.seg(B.PROV_HOW.map(function (k) { return [k, t("ea.how." + k)]; }), how, function (v) { how = v; desc(); }, t("ea.howH")); howSeg.id = "psHow";
     var comSeg = ui.seg(B.PROV_COM.map(function (k) { return [k, t("ea.com." + k)]; }), com, function (v) { com = v; desc(); }, t("ea.comH")); comSeg.id = "psCom";
+    var feeSeg = ui.seg(B.PROV_FEE.map(function (k) { return [k, t("ea.feeWho." + k)]; }), fee, function (v) { fee = v; desc(); }, t("ea.feeH")); feeSeg.id = "psFee";
     var note = ui.input({ id: "psNote", maxlength: "120", value: cur.note || "", placeholder: t("ea.setupNotePh") });
     desc();
-    ui.dialog({ title: t("ea.setupH", { p: t("svc.p." + id) }), emoji: "⚙️", body: [h("p.label-caps", null, t("ea.howH")), howSeg, d1, h("p.label-caps", null, t("ea.comH")), comSeg, d2, ui.field("ea.note", note)],
+    ui.dialog({ title: t("ea.setupH", { p: t("svc.p." + id) }), emoji: "⚙️", body: [h("p.label-caps", null, t("ea.howH")), howSeg, d1, h("p.label-caps", null, t("ea.comH")), comSeg, d2, h("p.label-caps", null, t("ea.feeH")), feeSeg, d3, ui.field("ea.note", note)],
       actions: [{ label: t("cancel") }, { label: t("save"), kind: "primary", id: "psSave", onClick: function (close, btn) {
         btn.disabled = true;
-        B.setProvSetup(id, { how: how, com: com, note: note.value }).then(function () { close(); ui.toast(t("ea.setupSaved"), "good"); redraw(); }, function (e) { btn.disabled = false; failed(e); });
+        B.setProvSetup(id, { how: how, com: com, fee: fee, note: note.value }).then(function () { close(); ui.toast(t("ea.setupSaved"), "good"); redraw(); }, function (e) { btn.disabled = false; failed(e); });
         return false;
       } }] });
   };

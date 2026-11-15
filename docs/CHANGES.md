@@ -4,6 +4,17 @@ Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED.
 
 The newest build is first. The build number also shows in Lakay's About.
 
+## Build 23 (15 November 2026): who keeps the customer's fee on a transfer
+
+The owner's answer of 15 November 2026: only the commission counts as the store's, "but I might want the option for both added".
+
+- **For each provider, the owner chooses who keeps the fee a customer pays on top:** the provider (as since Build 15, and still the first choice) or the store. It is a third choice in How it settles, explained as it is chosen.
+- **When the store keeps it**, the fee counts in Earnings with the commission ("in customers' fees the store keeps", with the provider's name), the table marks that provider's fees as the store's, and the fees are no longer part of what is held for the provider: what is owed to it goes down by as much. The provider's card says so, with the fees kept in all.
+- The choice is the owner's alone and a ledger line (`provider.setup` carries it). Verify finds nothing wrong after it.
+- Every word is in English, French and Kreyòl (11 new phrases; the Kreyòl is marked for review by a native speaker).
+- tests/t_build23.js: 17 checks.
+- Shown with this build, for the owner to decide: the green emoji beside periwinkle versions, side by side; and the keys at the right edge on a phone, as they stand now and laid down.
+
 ## Build 22 (15 November 2026): Travel, a short record of each flight booked for a client
 
 The owner's answer of 15 November 2026: the owner books flights for clients on websites, and did not know what Lakay should keep. This build proposes a short record, kept to what the counter needs.
