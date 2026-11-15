@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-yLEP2ImGPwB97KftIomlhIeKXgkaqJKwNy++wUd0ddQ='; style-src 'unsafe-inline'; img-src data: blob: 'self'; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-r6Nao22kgK1r2626JUF/xC92zBLYnHZF1p6PNAKFl60='; style-src 'unsafe-inline'; img-src data: blob: 'self'; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#f5f4f8">
 <meta name="application-name" content="Lakay">
-<meta name="lakay-build" content="23">
-<!-- LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt. Build 23 (2026-11-15). -->
+<meta name="lakay-build" content="24">
+<!-- LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt. Build 24 (2026-11-15). -->
 <title>Lakay</title>
 <!-- Lakay's logo, inside the page (the page's own policy shows only pictures it carries): the square tile, filled edge to
      edge with the coin's periwinkle, for the shortcuts a browser makes on a home screen; the round coin, on nothing, for the
@@ -2806,7 +2806,7 @@ html.drilling .shell { outline: 3px solid rgba(var(--pri-rgb), .35); outline-off
 "use strict";
 
 var E = window.Emporium = window.Emporium || {};
-E.BUILD = { number: "23", date: "2026-11-15" };
+E.BUILD = { number: "24", date: "2026-11-15" };
 
 /* ---------- drawing: every piece of text goes in as text, never as markup ---------- */
 function $(sel, root) { return (root || document).querySelector(sel); }
@@ -2978,11 +2978,22 @@ function debounce(fn, ms) { var t; return function () { var a = arguments, self 
 function norm(s) { return String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim(); }
 function prefGet(k, d) { try { var v = localStorage.getItem("emporium." + k); return v === null ? d : v; } catch (e) { return d; } }
 function prefSet(k, v) { try { localStorage.setItem("emporium." + k, String(v)); } catch (e) { } }
+/* Build 24: a card or window puts the cursor in its first field a moment after it appears, unless the person is already
+   typing in one of its fields: then the cursor stays where it is (it used to jump back, and letters typed quickly
+   landed in the wrong field). */
+function focusSoon(el, scope) {
+  try {
+    if (!el || !el.isConnected) return false;
+    var a = document.activeElement;
+    if (a && a !== el && scope && scope.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return false;
+    el.focus(); return true;
+  } catch (e) { return false; }
+}
 
 E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, money: money, moneyPlain: moneyPlain, divRound: divRound,
   parseRate: parseRate, rateText: rateText, taxOn: taxOn, dayKey: dayKey, fromDayKey: fromDayKey, addDays: addDays,
   startOfWeek: startOfWeek, b64e: b64e, b64d: b64d, hex: hex, rnd: rnd, uid: uid, canon: canon, sha256hex: sha256hex,
-  norm: norm, debounce: debounce, prefGet: prefGet, prefSet: prefSet, pad2: pad2, TE: TE, TD: TD };
+  norm: norm, debounce: debounce, prefGet: prefGet, prefSet: prefSet, focusSoon: focusSoon, pad2: pad2, TE: TE, TD: TD };
 
 /* LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt.
    Three languages: English, French and Haitian Creole (Kreyòl). The Kreyòl is marked for review by a native speaker. */
@@ -5252,6 +5263,10 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   function aadEnv(id, which) { return "emporium|v1|" + id + "|" + which; }
   function aadRec(id, k) { return "emporium|r|" + id + "|" + k; }
   function aadLine(id, seq) { return "emporium|j|" + id + "|" + seq; }
+  /* Build 24: another device's ledger lines, kept beside this device's own, and the sealed bundle that carries them */
+  function aadPeer(id, dev, seq) { return "emporium|p|" + id + "|" + dev + "|" + seq; }
+  function aadBundle(id, dev) { return "emporium|b|" + id + "|" + dev; }
+  function peerKey(dev, seq) { return "p:" + dev + ":" + String(seq).padStart(9, "0"); }
   function idBytes(id) { var u = new Uint8Array(id.length / 2); for (var i = 0; i < u.length; i++) u[i] = parseInt(id.substr(i * 2, 2), 16); return u; }
   function clone(o) { return o === undefined ? undefined : JSON.parse(JSON.stringify(o)); }
   function err(code, extra) { var e = new Error(code); e.code = code; if (extra) e.extra = extra; return e; }
@@ -5381,7 +5396,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   function load(vault, key, userId) {
     ID = vault.storeId;
     return D.entries("rec").then(function (entries) {
-      var st = { settings: null, users: {}, cats: {}, items: {}, sales: [], moves: [], shifts: [], services: [], train: {}, plans: {}, course: null, slots: [], rota: null, swaps: [], provs: {}, settles: [], stmts: [], payset: null, rates: {}, paids: [], counters: {}, pad: {}, notes: {}, head: null, unreadable: [] };
+      var st = { settings: null, users: {}, cats: {}, items: {}, sales: [], moves: [], shifts: [], services: [], train: {}, plans: {}, course: null, slots: [], rota: null, swaps: [], provs: {}, settles: [], stmts: [], payset: null, rates: {}, paids: [], counters: {}, pad: {}, notes: {}, devices: {}, sync: null, stamps: {}, head: null, unreadable: [] };
       /* each person's notes are their own: a sign-in opens only the notes of the one signing in (the practice store opens
          all of its sample people's, since it changes from one to another) */
       var mine = "notes:" + (userId || "owner"), practice = B.mode === "practice";
@@ -5389,7 +5404,13 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
         if (!practice && /^notes:/.test(e[0]) && e[0] !== mine) return null;
         return C.open(key, e[1], aadRec(ID, e[0])).then(function (val) { return [e[0], val]; }, function () { st.unreadable.push(e[0]); return null; });
       })).then(function (rows) {
-        rows.forEach(function (r) { if (r) put(st, r[0], r[1]); });
+        rows.forEach(function (r) {
+          if (!r) return;
+          /* from Build 24 a record is sealed with the stamps of the lines that last wrote each of its fields */
+          var v = r[1];
+          if (v && typeof v === "object" && v["~s"] && Object.prototype.hasOwnProperty.call(v, "~v")) { st.stamps[r[0]] = v["~s"]; v = v["~v"]; }
+          put(st, r[0], v);
+        });
         st.sales.sort(function (a, b) { return a.at < b.at ? -1 : a.at > b.at ? 1 : 0; });
         st.moves.sort(function (a, b) { return a.at < b.at ? -1 : a.at > b.at ? 1 : 0; });
         st.shifts.sort(function (a, b) { return a.in < b.in ? -1 : a.in > b.in ? 1 : 0; });
@@ -5442,8 +5463,23 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       var pi = st[key].findIndex(function (x) { return x.id === v.id; }); if (pi >= 0) st[key][pi] = v; else st[key].push(v);
     }
     else if (kind === "counter") st.counters[id] = v;
+    else if (kind === "device") { st.devices = st.devices || {}; st.devices[id] = v; }
+    else if (kind === "sync") st.sync = v;
     else if (kind === "pad") st.pad[id] = v;
     else if (kind === "notes") st.notes[id] = (v && Array.isArray(v.notes)) ? v.notes : [];
+  }
+
+  /* the record kept under a key ("item:7xk2..."), as the books hold it now (the inverse of put) */
+  var LISTS = { sale: "sales", move: "moves", shift: "shifts", svc: "services", slot: "slots", swap: "swaps", booking: "bookings", settle: "settles", stmt: "stmts", paid: "paids" };
+  var MAPS = { user: "users", cat: "cats", item: "items", train: "train", plan: "plans", prov: "provs", rate: "rates", counter: "counters", device: "devices", pad: "pad" };
+  var ONES = { settings: "settings", course: "course", rota: "rota", payset: "payset", sync: "sync", head: "head" };
+  function getRec(st, k) {
+    var i = k.indexOf(":"), kind = k.slice(0, i), id = k.slice(i + 1);
+    if (ONES[kind]) return st[ONES[kind]] || null;
+    if (MAPS[kind]) return (st[MAPS[kind]] && st[MAPS[kind]][id]) || null;
+    if (LISTS[kind]) { var l = st[LISTS[kind]] || []; for (var j = l.length - 1; j >= 0; j--) if (l[j].id === id) return l[j]; return null; }
+    if (kind === "notes") return st.notes && st.notes[id] ? { notes: st.notes[id] } : null;
+    return null;
   }
 
   B.lock = function (why) {
@@ -6157,6 +6193,8 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     queue = p.catch(function () { });
     return p;
   };
+  /* the same one-at-a-time order, for work that writes in its own way (taking another device's lines, Build 24) */
+  function enqueue(fn) { var p = queue.then(fn); queue = p.catch(function () { }); return p; }
   /* ---------- exercises (Build 19): Lakay's real screens, with the sealed books set aside ----------
      While an exercise runs, the books that Lakay shows are a copy in memory. A sale, a delivery, a transfer or a break
      made then changes the copy, never the sealed books, and nothing is written to the device. When the exercise ends
@@ -6188,23 +6226,105 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     if (d && d.onLine) setTimeout(function () { try { d.onLine(line); } catch (e) { console.error(e); } }, 0);
     return c.result !== undefined ? c.result : line;
   }
-  function commit(type, data, recs, metaOps) {
-    var now = clock(), seq = state.head.seq + 1;
+  /* ---------- stamps (Build 24) ----------
+     Every line from Build 24 carries a time that only goes forward on this device (ts: the clock, or one millisecond after
+     the last line this device knows of, whichever is later), the records it wrote (w: each record whole, with the
+     fields it changed), the stock it moved (sd: item by item) and the door's or the vault's new parts (m). Each record
+     is sealed with the stamp of the line that last wrote each of its fields: the line's time, its device's letter and
+     its number. Two devices that hold the same lines then work out the same books, whatever order the lines reached
+     them in: for each field the later stamp wins; stock is the sum of every device's moves; counters stay each
+     device's own. */
+  function pad36(n, w) { return Math.max(0, Math.floor(n)).toString(36).padStart(w, "0"); }
+  function stampOf(ts, code, seq) { return pad36(ts, 9) + "." + code + "." + pad36(seq, 6); }
+  function stampCode(s) { var a = String(s || "").split("."); return a.length === 3 ? a[1] : ""; }
+  function stampSeq(s) { var a = String(s || "").split("."); return a.length === 3 ? parseInt(a[2], 36) : 0; }
+  function lineTs(line) { return line.ts || Date.parse(line.at) || 0; }
+  function lineStamp(line, code) { return stampOf(lineTs(line), code, line.seq); }
+  function stampF(s, f) { return (s && (s[f] !== undefined ? s[f] : s[""])) || ""; }
+  function same(a, b) { return U.canon(a === undefined ? null : a) === U.canon(b === undefined ? null : b); }
+  function changedFields(a, b) {
+    var keys = {}, out = [];
+    Object.keys(a || {}).forEach(function (k) { keys[k] = 1; }); Object.keys(b || {}).forEach(function (k) { keys[k] = 1; });
+    Object.keys(keys).forEach(function (k) { if (!same(a[k], b[k])) out.push(k); });
+    return out;
+  }
+  /* what travels to the other devices: everything but each device's own counters, its head, its sync record, and each
+     person's sticky notes (they stay on the device where they were written) */
+  var LOCAL = { counter: 1, head: 1, sync: 1, notes: 1 };
+  function kindOf(k) { return k.slice(0, k.indexOf(":")); }
+  var VAULT_PARTS = function (v) {
+    var out = { owner: (v && v.owner) || null, master: (v && v.master) || null };
+    Object.keys((v && v.people) || {}).forEach(function (id) { out["people:" + id] = v.people[id]; });
+    return out;
+  };
+  function vaultDiff(a, b) {
+    var pa = VAULT_PARTS(a), pb = VAULT_PARTS(b), keys = {}, out = [];
+    Object.keys(pa).forEach(function (k) { keys[k] = 1; }); Object.keys(pb).forEach(function (k) { keys[k] = 1; });
+    Object.keys(keys).sort().forEach(function (k) { if (!same(pa[k], pb[k])) out.push([k, pb[k] === undefined ? null : clone(pb[k])]); });
+    return out;
+  }
+  function wrapRec(v, s) { return { "~v": v, "~s": s }; }
+
+  /* opts (Build 24, taking another device's lines): raw, records already worked out with their own stamps; ops,
+     further writes for the same transaction; minTs, a time this line must come after */
+  function commit(type, data, recs, metaOps, opts) {
+    opts = opts || {};
+    var now = clock(), seq = state.head.seq + 1, ts = Math.max(now.getTime(), (state.head.ts || 0) + 1, (opts.minTs || 0) + 1);
+    var code = (B.device && B.device.code) || "A", stamp = stampOf(ts, code, seq);
     var line = { seq: seq, at: now.toISOString(), day: U.dayKey(now), by: B.user.id, dev: B.device.id, type: type, data: data,
-      prev: state.head.hash, build: E.BUILD.number };
-    var key = KEY, id = ID;
-    return U.sha256hex(U.canon(line)).then(function (hash) {
-      var head = { seq: seq, hash: hash, at: line.at };
-      return Promise.all([C.seal(key, line, aadLine(id, seq)), C.seal(key, head, aadRec(id, "head:main"))]
-        .concat(recs.map(function (r) { return C.seal(key, r.value, aadRec(id, r.kind + ":" + r.id)); }))).then(function (sealed) {
+      prev: state.head.hash, build: E.BUILD.number, ts: ts };
+    var key = KEY, id = ID, w = [], sd = {}, stamps = {};
+    recs.forEach(function (r) {
+      var k = r.kind + ":" + r.id, old = getRec(state, k), s;
+      if (old) {
+        var f = changedFields(old, r.value);
+        s = clone(state.stamps[k]) || {};
+        f.forEach(function (x) { s[x] = stamp; });
+        if (f.length && !LOCAL[r.kind]) w.push([k, clone(r.value), f]);
+      } else {
+        s = { "": stamp };
+        if (!LOCAL[r.kind]) w.push([k, clone(r.value), null]);
+      }
+      if (r.kind === "item") { var dl = ((r.value && r.value.stock) || 0) - ((old && old.stock) || 0); if (dl) sd[r.id] = dl; }
+      stamps[k] = s;
+    });
+    if (w.length) line.w = w;
+    if (Object.keys(sd).length) line.sd = sd;
+    var vaultOp = metaOps.filter(function (m) { return m.key === "vault"; })[0], customOp = metaOps.filter(function (m) { return m.key === "custom"; })[0];
+    var syncRec = null;
+    return (vaultOp ? D.get("meta", "vault") : Promise.resolve(null)).then(function (oldVault) {
+      var m = {};
+      if (vaultOp && B.mode !== "practice") { var vd = vaultDiff(oldVault, vaultOp.value); if (vd.length) m.v = vd; }
+      if (customOp && B.mode !== "practice") m.c = clone(customOp.value);
+      if (m.v || m.c) {
+        line.m = m;
+        syncRec = clone(state.sync) || { v: 1, chains: {}, vs: {}, cs: "" };
+        syncRec.vs = syncRec.vs || {};
+        (m.v || []).forEach(function (x) { syncRec.vs[x[0]] = stamp; });
+        if (m.c) syncRec.cs = stamp;
+      }
+      return U.sha256hex(U.canon(line));
+    }).then(function (hash) {
+      var head = { seq: seq, hash: hash, at: line.at, ts: ts };
+      var raw = opts.raw || [];
+      var seals = [C.seal(key, line, aadLine(id, seq)), C.seal(key, head, aadRec(id, "head:main"))]
+        .concat(recs.map(function (r) { var k = r.kind + ":" + r.id; return C.seal(key, wrapRec(r.value, stamps[k]), aadRec(id, k)); }))
+        .concat(raw.map(function (r) { return C.seal(key, r.s ? wrapRec(r.v, r.s) : r.v, aadRec(id, r.k)); }));
+      if (syncRec) seals.push(C.seal(key, syncRec, aadRec(id, "sync:main")));
+      return Promise.all(seals).then(function (sealed) {
         var ops = [{ store: "journal", key: seq, value: sealed[0], add: true }, { store: "rec", key: "head:main", value: sealed[1] }];
         recs.forEach(function (r, i) { ops.push({ store: "rec", key: r.kind + ":" + r.id, value: sealed[i + 2] }); });
-        metaOps.forEach(function (m) { ops.push({ store: "meta", key: m.key, value: m.value }); });
+        raw.forEach(function (r, i) { ops.push({ store: "rec", key: r.k, value: sealed[i + 2 + recs.length] }); });
+        if (syncRec) ops.push({ store: "rec", key: "sync:main", value: sealed[sealed.length - 1] });
+        metaOps.forEach(function (mo) { ops.push({ store: "meta", key: mo.key, value: mo.value }); });
+        (opts.ops || []).forEach(function (o) { ops.push(o); });
         return D.write(ops).then(function () {
-          metaOps.forEach(function (m) { if (m.key === "door") doorMeta = clone(m.value); });
+          metaOps.forEach(function (mo) { if (mo.key === "door") doorMeta = clone(mo.value); });
           if (state) {
             state.head = head;
-            recs.forEach(function (r) { put(state, r.kind + ":" + r.id, clone(r.value)); });
+            recs.forEach(function (r) { var k = r.kind + ":" + r.id; put(state, k, clone(r.value)); state.stamps[k] = stamps[k]; });
+            raw.forEach(function (r) { put(state, r.k, clone(r.v)); if (r.s) state.stamps[r.k] = r.s; });
+            if (syncRec) state.sync = syncRec;
           }
           emit("change", line);
           return line;
@@ -7303,23 +7423,59 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   B.verify = function (progress) {
     var key = KEY, id = ID, st = state;
     if (!key) return Promise.reject(err("locked"));
-    return D.entries("journal").then(function (entries) {
-      var res = { ok: true, lines: entries.length, problems: [] }, prev = ZERO, expect = 1, items = {}, svcs = {}, train = {}, money = { settle: {}, paid: {}, booking: {} }, i = 0;
+    return D.entries("journal").then(function (all) {
+      /* Build 24: this device's own lines (numbered), and the lines of the other devices of the store ("p:...") */
+      var entries = all.filter(function (e) { return typeof e[0] === "number"; }), peers = all.filter(function (e) { return typeof e[0] === "string"; });
+      var merged = peers.length > 0, kept = [], myCode = (B.device && B.device.code) || "A";
+      var res = { ok: true, lines: all.length, devices: 1, problems: [] }, prev = ZERO, expect = 1, items = {}, svcs = {}, train = {}, money = { settle: {}, paid: {}, booking: {}, bk: {} }, i = 0;
       function next() {
         if (i >= entries.length) return Promise.resolve();
         var e = entries[i++];
         return C.open(key, e[1], aadLine(id, e[0])).then(function (line) {
           if (line.seq !== e[0] || e[0] !== expect) res.problems.push({ seq: e[0], what: "order" });
           if (line.prev !== prev) res.problems.push({ seq: e[0], what: "chain" });
-          replay(items, line, res, svcs, train, money);
+          if (merged) kept.push([lineStamp(line, myCode), line, myCode]); else replay(items, line, res, svcs, train, money);
           expect = e[0] + 1;
           return U.sha256hex(U.canon(line)).then(function (hsh) { prev = hsh; });
         }, function () { res.problems.push({ seq: e[0], what: "unreadable" }); prev = null; expect = e[0] + 1; }).then(function () {
-          if (progress && i % 200 === 0) progress(i, entries.length);
+          if (progress && i % 200 === 0) progress(i, all.length);
           return next();
         });
       }
-      return next().then(function () {
+      /* each other device's chain, read the same way: numbered from 1, each line holding the fingerprint of the one before */
+      var chains = {}, j = 0;
+      function nextPeer() {
+        if (j >= peers.length) return Promise.resolve();
+        var e = peers[j++], m = /^p:(.+):(\d+)$/.exec(e[0]);
+        if (!m) { res.problems.push({ rec: e[0], what: "unreadable" }); return nextPeer(); }
+        var dev = m[1], seq = parseInt(m[2], 10), ch = chains[dev] || (chains[dev] = { seq: 0, hash: ZERO, code: codeOfDev(st, dev) });
+        return C.open(key, e[1], aadPeer(id, dev, seq)).then(function (line) {
+          if (line.seq !== seq || seq !== ch.seq + 1) res.problems.push({ dev: ch.code, seq: seq, what: "order" });
+          if (line.prev !== ch.hash) res.problems.push({ dev: ch.code, seq: seq, what: "chain" });
+          kept.push([lineStamp(line, ch.code), line, ch.code]);
+          ch.seq = seq;
+          return U.sha256hex(U.canon(line)).then(function (hsh) { ch.hash = hsh; });
+        }, function () { res.problems.push({ dev: ch.code, seq: seq, what: "unreadable" }); ch.seq = seq; ch.hash = null; }).then(function () {
+          if (progress && (i + j) % 200 === 0) progress(i + j, all.length);
+          return nextPeer();
+        });
+      }
+      return next().then(nextPeer).then(function () {
+        if (merged) {
+          var held = (st.sync && st.sync.chains) || {}, codes = {};
+          codes[myCode] = 1;
+          Object.keys(chains).forEach(function (dev) {
+            var c = chains[dev], h = held[dev];
+            res.devices += 1;
+            if (!h || h.seq !== c.seq || h.hash !== c.hash) res.problems.push({ dev: c.code, what: "head" });
+            if (codes[c.code]) res.problems.push({ dev: c.code, what: "letter" }); codes[c.code] = 1;
+          });
+          Object.keys(held).forEach(function (dev) { if (!chains[dev] && held[dev].seq > 0) res.problems.push({ dev: held[dev].code, what: "missing" }); });
+          /* every device's lines together, in the order of their stamps */
+          kept.sort(function (a, b) { return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0; });
+          kept.forEach(function (x) { replay(items, x[1], res, svcs, train, money, x[0]); });
+          Object.keys(money.bk).forEach(function (k) { money.booking[k] = money.bk[k].v; });
+        }
         if (!st.head || st.head.seq !== entries.length || st.head.hash !== prev) res.problems.push({ seq: st.head ? st.head.seq : 0, what: "head" });
         Object.keys(st.items).forEach(function (k) {
           var a = st.items[k], b = items[k];
@@ -7381,8 +7537,29 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       });
     });
   };
-  function replay(items, line, res, svcs, train, money) {
+  /* stamp: given when the books of several devices are replayed together (Build 24): stock is then counted by each
+     device's moves (each device checked its own figures as it wrote them), and a booking takes in what each line wrote */
+  function replay(items, line, res, svcs, train, money, stamp) {
     var d = line.data || {};
+    if (stamp && money && line.w && /^booking\./.test(line.type)) {
+      line.w.forEach(function (e) {
+        if (kindOf(e[0]) !== "booking") return;
+        var bid = e[0].slice(8), r = takeWrite(money.bk[bid] || null, "booking", e[1], e[2], stamp, function () { return false; });
+        money.bk[bid] = r.cur;
+      });
+      return;
+    }
+    if (stamp && money && /^booking\./.test(line.type) && d.booking) {
+      var prior = money.bk[d.booking.id] || null;
+      money.bk[d.booking.id] = takeWrite(prior, "booking", d.booking, null, stamp, function () { return false; }).cur;
+      return;
+    }
+    if (stamp) {
+      switch (line.type) {
+        case "stock.received": if (items[d.itemId]) { items[d.itemId].stock += d.qty; items[d.itemId].cost = d.costAfter; } return;
+        case "stock.adjusted": if (items[d.itemId]) items[d.itemId].stock += d.qty; return;
+      }
+    }
     switch (line.type) {
       case "provider.settled": if (money && d.settle) money.settle[d.settle.id] = clone(d.settle); break;
       case "provider.settleVoided": if (money) { if (money.settle[d.id]) money.settle[d.id].status = "void"; else res.problems.push({ seq: line.seq, what: "void" }); } break;
@@ -7412,10 +7589,20 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
 
   /* The ledger, read back for people (newest first), for the History of an item and the ledger viewer. */
   B.lines = function (filter) {
-    var key = KEY, id = ID;
+    var key = KEY, id = ID, st = state, peers = false, myCode = (B.device && B.device.code) || "A";
     return D.entries("journal").then(function (entries) {
-      return Promise.all(entries.map(function (e) { return C.open(key, e[1], aadLine(id, e[0])).catch(function () { return null; }); }));
-    }).then(function (lines) { return lines.filter(function (l) { return l && (!filter || filter(l)); }).reverse(); });
+      return Promise.all(entries.map(function (e) {
+        if (typeof e[0] === "number") return C.open(key, e[1], aadLine(id, e[0])).then(function (l) { l.code = myCode; return l; }).catch(function () { return null; });
+        /* Build 24: another device's lines, each marked with that device's letter */
+        var m = /^p:(.+):(\d+)$/.exec(e[0]); if (!m) return null;
+        peers = true;
+        return C.open(key, e[1], aadPeer(id, m[1], parseInt(m[2], 10))).then(function (l) { l.code = st ? codeOfDev(st, m[1]) : "?"; return l; }).catch(function () { return null; });
+      }));
+    }).then(function (lines) {
+      lines = lines.filter(function (l) { return l && (!filter || filter(l)); });
+      if (!peers) return lines.reverse();
+      return lines.sort(function (a, b) { var x = lineStamp(a, a.code), y = lineStamp(b, b.code); return x < y ? 1 : x > y ? -1 : 0; });
+    });
   };
 
   /* ---------- passwords and the Master Key ---------- */
@@ -7454,7 +7641,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   B.makeBackup = function () {
     if (B.user && !B.can("backup")) return Promise.reject(err("denied"));
     return Promise.all([D.get("meta", "vault"), D.get("meta", "door"), D.entries("rec"), D.entries("journal"), D.get("meta", "custom")]).then(function (r) {
-      var body = { format: "emporium-backup", v: 1, build: E.BUILD.number, at: new Date().toISOString(), door: r[1], vault: r[0], custom: r[4] || null,
+      var body = { format: "emporium-backup", v: 1, build: E.BUILD.number, at: new Date().toISOString(), door: r[1], vault: r[0], custom: r[4] || null, device: B.device,
         rec: r[2].map(function (e) { return [e[0], U.b64e(e[1].iv), U.b64e(e[1].ct)]; }),
         journal: r[3].map(function (e) { return [e[0], U.b64e(e[1].iv), U.b64e(e[1].ct)]; }) };
       return U.sha256hex(U.canon(body)).then(function (sum) { body.sum = sum; return JSON.stringify(body); });
@@ -7472,28 +7659,358 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   };
   /* Opens a backup's own envelope with the password (or the Master Key) that was valid when it was made, reads every
      line of its ledger, and only then replaces the books on this device, in one transaction. */
-  B.restoreBackup = function (body, secret, isMaster) {
+  function backupKey(body, secret, isMaster) {
     var v = body.vault, keyP;
     if (isMaster) keyP = C.readMaster(secret).then(function (s) { if (!s) throw err("badcode"); return C.masterKey(s, idBytes(v.storeId)); })
       .then(function (kek) { return C.unwrap(v.master, kek, aadEnv(v.storeId, "master"), false); });
     else keyP = C.passwordKey(secret, U.b64d(v.owner.salt), v.kdf.iterations).then(function (kek) { return C.unwrap(v.owner, kek, aadEnv(v.storeId, "owner"), false); });
-    return keyP.catch(function (e) { if (e && e.code) throw e; throw err(isMaster ? "wrongmaster" : "wrong"); }).then(function (key) {
+    return keyP.catch(function (e) { if (e && e.code) throw e; throw err(isMaster ? "wrongmaster" : "wrong"); });
+  }
+  /* A backup's ledger, read through: the device's own chain (numbered from 1), and from Build 24 the chain of each other
+     device of the store ("p:..."), each line holding the fingerprint of the one before. Gives back the own chain's
+     lines when asked (a device joining keeps them as the other device's), and where each chain ends. */
+  function readChains(key, storeId, journal, keepOwn) {
+    var own = journal.filter(function (e) { return typeof e[0] === "number"; }), peers = journal.filter(function (e) { return typeof e[0] !== "number"; });
+    var out = { lines: [], seq: 0, hash: ZERO, maxTs: 0, peers: {} }, i = 0, j = 0;
+    function next() {
+      if (i >= own.length) return Promise.resolve();
+      var e = own[i++];
+      return C.open(key, e[1], aadLine(storeId, e[0])).then(function (line) {
+        if (line.prev !== out.hash || line.seq !== i || e[0] !== i) throw err("chain");
+        if (keepOwn) out.lines.push(line);
+        out.maxTs = Math.max(out.maxTs, lineTs(line));
+        return U.sha256hex(U.canon(line)).then(function (h) { out.hash = h; out.seq = line.seq; return next(); });
+      });
+    }
+    function nextPeer() {
+      if (j >= peers.length) return Promise.resolve();
+      var e = peers[j++], m = /^p:(.+):(\d+)$/.exec(String(e[0]));
+      if (!m) throw err("chain");
+      var dev = m[1], seq = parseInt(m[2], 10), ch = out.peers[dev] || (out.peers[dev] = { seq: 0, hash: ZERO });
+      return C.open(key, e[1], aadPeer(storeId, dev, seq)).then(function (line) {
+        if (line.prev !== ch.hash || line.seq !== seq || seq !== ch.seq + 1) throw err("chain");
+        out.maxTs = Math.max(out.maxTs, lineTs(line));
+        return U.sha256hex(U.canon(line)).then(function (h) { ch.hash = h; ch.seq = seq; return nextPeer(); });
+      });
+    }
+    return next().then(nextPeer).then(function () { return out; });
+  }
+  B.restoreBackup = function (body, secret, isMaster) {
+    var v = body.vault, restoredAs = null;
+    return backupKey(body, secret, isMaster).then(function (key) {
       var journal = body.journal.map(function (e) { return [e[0], { iv: U.b64d(e[1]), ct: U.b64d(e[2]) }]; });
       var rec = body.rec.map(function (e) { return [e[0], { iv: U.b64d(e[1]), ct: U.b64d(e[2]) }]; });
-      var prev = ZERO, i = 0;
-      function next() {
-        if (i >= journal.length) return Promise.resolve();
-        var e = journal[i++];
-        return C.open(key, e[1], aadLine(v.storeId, e[0])).then(function (line) {
-          if (line.prev !== prev || line.seq !== i) throw err("chain");
-          return U.sha256hex(U.canon(line)).then(function (h) { prev = h; return next(); });
-        });
-      }
-      return next().then(function () { return B.lock("restore"); }).then(function () {
-        var meta = [["vault", v], ["door", body.door], ["device", B.device]];
+      return readChains(key, v.storeId, journal, false).then(function () { return B.lock("restore"); }).then(function () {
+        /* a restore puts this device in the place of the one that made the backup (Build 24: its letter, and its chain) */
+        if (body.device && body.device.id && body.device.code) restoredAs = { id: body.device.id, code: body.device.code, created: body.device.created || B.device.created };
+        var meta = [["vault", v], ["door", body.door], ["device", restoredAs || B.device]];
         if (body.custom) meta.push(["custom", E.cleanCustom ? E.cleanCustom(body.custom) : body.custom]);
         return D.replaceAll(meta, rec, journal);
-      }).then(function () { doorMeta = body.door || null; E.custom = body.custom && E.cleanCustom ? E.cleanCustom(body.custom) : null; if (E.ui && E.ui.applyLook) E.ui.applyLook(); return load(v, key); });
+      }).then(function () { if (restoredAs) B.device = restoredAs; doorMeta = body.door || null; E.custom = body.custom && E.cleanCustom ? E.cleanCustom(body.custom) : null; if (E.ui && E.ui.applyLook) E.ui.applyLook(); return load(v, key); });
+    });
+  };
+
+  /* ---------- devices in step (Build 24, stage 1): the books of several devices joined ----------
+     Each device of a store writes its own chain of ledger lines and keeps the other devices' chains beside it, sealed
+     with the same Store Key. A device joins from a copy (a sealed backup) of a device already in the store: it keeps
+     the copy's records, keeps that device's lines as that device's chain, takes a letter of its own, and starts a
+     chain of its own. Changes travel as a sealed bundle of lines. Taking a bundle in checks that each chain follows on
+     from what was last taken from it, fingerprint by fingerprint, then takes each line's writes field by field (the
+     later stamp wins), adds up the stock moves, never takes another device's counters, and writes one line of its own
+     saying what it took. Two changes to the same field made while the devices were apart: the later one stays, both
+     stay in the ledger, and the report says so. */
+  var LETTERS = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+  function nextCode(used) {
+    for (var i = 0; i < LETTERS.length; i++) if (!used[LETTERS[i]]) return LETTERS[i];
+    for (var a = 0; a < LETTERS.length; a++) for (var b = 0; b < LETTERS.length; b++) if (!used[LETTERS[a] + LETTERS[b]]) return LETTERS[a] + LETTERS[b];
+    throw err("letters");
+  }
+  function codeOfDev(st, dev) {
+    if (B.device && dev === B.device.id) return B.device.code;
+    var c = st && st.sync && st.sync.chains && st.sync.chains[dev]; if (c && c.code) return c.code;
+    var d = st && st.devices && st.devices[dev]; return d ? d.code : "?";
+  }
+  /* what a device knew of the others when it wrote a line: the lines it had taken from each (by letter) */
+  function learn(knows, line, code) {
+    var d = line.data || {};
+    if (line.type === "device.joined" && d.fromCode) knows[d.fromCode] = Math.max(knows[d.fromCode] || 0, d.at || 0);
+    if (line.type === "sync.took" && d.chains) Object.keys(d.chains).forEach(function (c) { knows[c] = Math.max(knows[c] || 0, (d.chains[c] || [])[1] || 0); });
+    knows[code] = Math.max(knows[code] || 0, line.seq);
+  }
+  /* fields two devices may both add to while apart, joined rather than one taking the other's place: a booking's
+     payments (by their own id; a payment voided on either device stays voided), and each person's training marks */
+  var MERGE = { booking: { pays: "byId" }, train: { done: "keys", ex: "keys", tasks: "keys" } };
+  /* when a record was last changed is kept like any field, but two devices both changing it is nothing to report */
+  var QUIET = { updated: 1, updatedAt: 1, updatedBy: 1 };
+  function mergeField(rule, loc, inc, incWins) {
+    if (rule === "keys") {
+      var o = clone(loc) || {};
+      Object.keys(inc || {}).forEach(function (k) { if (!Object.prototype.hasOwnProperty.call(o, k) || (incWins && !same(o[k], inc[k]))) o[k] = clone(inc[k]); });
+      return o;
+    }
+    var by = {}, out = [];
+    (loc || []).forEach(function (x) { by[x.id] = clone(x); });
+    (inc || []).forEach(function (x) {
+      var a = by[x.id];
+      if (!a) { by[x.id] = clone(x); return; }
+      if (same(a, x)) return;
+      var av = a.status === "void", xv = x.status === "void";
+      if (av !== xv) { if (xv) by[x.id] = clone(x); } else if (incWins) by[x.id] = clone(x);
+    });
+    Object.keys(by).forEach(function (k) { out.push(by[k]); });
+    out.sort(function (a, b) { var p = (a.at || "") + "|" + a.id, q = (b.at || "") + "|" + b.id; return p < q ? -1 : p > q ? 1 : 0; });
+    return out;
+  }
+  /* One record written by another device's line, taken in. cur: { v, s } as held (or null); fields: what the line
+     changed (null: the record was new there). Stock is never taken: it is the sum of every device's moves. apart(stamp)
+     says whether the field was changed here while the other device could not know it. */
+  function takeWrite(cur, kind, val, fields, stamp, apart) {
+    if (!cur) { var v = clone(val); if (kind === "item") v.stock = 0; return { cur: { v: v, s: { "": stamp } }, clash: [] }; }
+    var c = { v: clone(cur.v), s: clone(cur.s) || {} }, clash = [], fs = fields;
+    if (!fs) { var ks = {}; Object.keys(val || {}).forEach(function (k) { ks[k] = 1; }); Object.keys(c.v || {}).forEach(function (k) { ks[k] = 1; }); fs = Object.keys(ks); }
+    fs.forEach(function (f) {
+      if (kind === "item" && f === "stock") return;
+      var ls = stampF(c.s, f), later = stamp > ls, rule = MERGE[kind] && MERGE[kind][f];
+      if (same(c.v[f], val[f])) { if (later) c.s[f] = stamp; return; }
+      if (!rule && !QUIET[f] && apart(ls)) clash.push({ f: f, won: later ? stampCode(stamp) : stampCode(ls) });
+      if (rule) { c.v[f] = mergeField(rule, c.v[f], val[f], later); if (later) c.s[f] = stamp; }
+      else if (later) { if (val[f] === undefined) delete c.v[f]; else c.v[f] = clone(val[f]); c.s[f] = stamp; }
+    });
+    return { cur: c, clash: clash };
+  }
+  function myHave(st) {
+    var h = {}; h[B.device.id] = st.head.seq;
+    var ch = (st.sync && st.sync.chains) || {}; Object.keys(ch).forEach(function (d) { h[d] = ch[d].seq; });
+    return h;
+  }
+  /* What this device holds: its letter, each device's chain as far as it has it, and the devices of the store. */
+  B.syncInfo = function () {
+    var st = state; if (!st) return null;
+    var ch = (st.sync && st.sync.chains) || {}, list = [{ id: B.device.id, code: B.device.code, me: true, seq: st.head.seq, at: st.head.at }];
+    Object.keys(ch).forEach(function (d) { list.push({ id: d, code: ch[d].code, me: false, seq: ch[d].seq, at: ch[d].at || null }); });
+    list.forEach(function (x) { var r = st.devices && st.devices[x.id]; x.name = (r && r.name) || ""; x.joined = (r && r.joined) || null; });
+    list.sort(function (a, b) { return a.code < b.code ? -1 : a.code > b.code ? 1 : 0; });
+    return { device: { id: B.device.id, code: B.device.code }, have: myHave(st), devices: list };
+  };
+
+  /* ---------- a bundle: this device's lines (and those it holds of the others) that the other device lacks ---------- */
+  B.makeBundle = function (have) {
+    if (!KEY || !state) return Promise.reject(err("locked"));
+    if (B.mode === "practice") return Promise.reject(err("practice"));
+    if (B.user && !B.can("backup")) return Promise.reject(err("denied"));
+    have = have || {};
+    var key = KEY, id = ID, st = state, me = B.device.id;
+    return D.entries("journal").then(function (entries) {
+      var chains = {};
+      function into(dev, code, line) { var c = chains[dev] || (chains[dev] = { dev: dev, code: code, lines: [] }); c.lines.push(line); }
+      return Promise.all(entries.map(function (e) {
+        if (typeof e[0] === "number") {
+          if (e[0] <= (have[me] || 0)) return null;
+          return C.open(key, e[1], aadLine(id, e[0])).then(function (l) { into(me, B.device.code, l); });
+        }
+        var m = /^p:(.+):(\d+)$/.exec(e[0]); if (!m) return null;
+        var dev = m[1], seq = parseInt(m[2], 10);
+        if (seq <= (have[dev] || 0)) return null;
+        return C.open(key, e[1], aadPeer(id, dev, seq)).then(function (l) { into(dev, codeOfDev(st, dev), l); });
+      })).then(function () {
+        var list = Object.keys(chains).map(function (d) { var c = chains[d]; c.lines.sort(function (a, b) { return a.seq - b.seq; }); return c; });
+        list.forEach(function (c) { c.lines.forEach(function (l) { if (!l.ts) throw err("old", c.code); }); });
+        var payload = { v: 1, from: me, code: B.device.code, at: new Date().toISOString(), have: myHave(st), chains: list };
+        return C.seal(key, payload, aadBundle(id, me)).then(function (sealed) {
+          return JSON.stringify({ format: "lakay-changes", v: 1, store: id, from: me, iv: U.b64e(sealed.iv), ct: U.b64e(sealed.ct) });
+        });
+      });
+    });
+  };
+
+  /* ---------- taking a bundle in ---------- */
+  B.takeBundle = function (text) {
+    var bundle;
+    try { bundle = JSON.parse(text); } catch (e) { return Promise.reject(err("notbundle")); }
+    if (!bundle || bundle.format !== "lakay-changes" || bundle.v !== 1 || !bundle.iv || !bundle.ct || !bundle.from) return Promise.reject(err("notbundle"));
+    if (!KEY || !state) return Promise.reject(err("locked"));
+    if (B.mode === "practice") return Promise.reject(err("practice"));
+    if (B.user && !B.can("backup")) return Promise.reject(err("denied"));
+    if (bundle.store !== ID) return Promise.reject(err("otherstore"));
+    if (bundle.from === B.device.id) return Promise.reject(err("mine"));
+    var key = KEY, id = ID;
+    return C.open(key, { iv: U.b64d(bundle.iv), ct: U.b64d(bundle.ct) }, aadBundle(id, bundle.from)).then(null, function () { throw err("notbundle"); }).then(function (pl) {
+      if (!pl || pl.from !== bundle.from || !Array.isArray(pl.chains)) throw err("notbundle");
+      return enqueue(function () { return takeIn(pl, key, id); });
+    });
+  };
+  function takeIn(pl, key, id) {
+    if (!KEY || !state || KEY !== key) throw err("locked");
+    var st = state, sync = clone(st.sync) || { v: 1, chains: {}, vs: {}, cs: "" };
+    sync.chains = sync.chains || {}; sync.vs = sync.vs || {}; sync.cs = sync.cs || "";
+    var rep = { from: pl.code, lines: 0, chains: {}, clashes: [], problems: [] }, fresh = [];
+    /* 1. each chain must follow on from what this device holds of it */
+    return pl.chains.reduce(function (p, ch) {
+      return p.then(function () {
+        if (!ch || !ch.dev || ch.dev === B.device.id || !Array.isArray(ch.lines)) return;
+        var held = sync.chains[ch.dev] || { code: ch.code, seq: 0, hash: ZERO, knows: {} };
+        var code = held.code || ch.code, at = ch.lines.filter(function (l) { return l.seq === held.seq; })[0];
+        var lines = ch.lines.filter(function (l) { return l.seq > held.seq; }).sort(function (a, b) { return a.seq - b.seq; });
+        return (at ? U.sha256hex(U.canon(at)).then(function (h) { if (h !== held.hash) throw err("fork", code); }) : Promise.resolve()).then(function () {
+          if (!lines.length) return;
+          if (lines[0].seq !== held.seq + 1) throw err("gap", code);
+          var prev = held.hash, hashes = [], i = 0;
+          function next() {
+            if (i >= lines.length) return Promise.resolve();
+            var l = lines[i];
+            if (l.prev !== prev || l.seq !== held.seq + 1 + i) throw err("chain", code);
+            if (!l.ts) throw err("old", code);
+            i++;
+            return U.sha256hex(U.canon(l)).then(function (h) { prev = h; hashes.push(h); return next(); });
+          }
+          return next().then(function () { fresh.push({ dev: ch.dev, code: code, held: held, lines: lines, hashes: hashes }); });
+        });
+      });
+    }, Promise.resolve()).then(function () {
+      if (!fresh.length) return rep;
+      /* two devices may never share a letter (two joined from the same copy before either was heard of): the second is
+         refused, and joins again from a newer copy */
+      var codes = {}; codes[B.device.code] = B.device.id;
+      Object.keys(sync.chains).forEach(function (d) { var c = sync.chains[d].code; if (!codes[c]) codes[c] = d; });
+      fresh.forEach(function (c) { var o = codes[c.code]; if (o && o !== c.dev) throw err("letter", c.code); codes[c.code] = c.dev; });
+      /* 2. every new line, from every chain, in the order of the stamps */
+      var queue2 = [], work = {}, knows = {}, maxTs = 0, vaultTaken = {}, custom, customTaken = false;
+      fresh.forEach(function (c) {
+        knows[c.dev] = clone(c.held.knows) || {};
+        c.lines.forEach(function (l) { queue2.push([lineStamp(l, c.code), l, c]); maxTs = Math.max(maxTs, l.ts || 0); });
+        rep.chains[c.code] = c.lines.length; rep.lines += c.lines.length;
+      });
+      queue2.sort(function (a, b) { return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0; });
+      function workGet(k) { if (Object.prototype.hasOwnProperty.call(work, k)) return work[k]; var v = getRec(st, k); return v ? { v: v, s: st.stamps[k] || {} } : null; }
+      queue2.forEach(function (q) {
+        var stamp = q[0], line = q[1], c = q[2], kn = knows[c.dev];
+        var apart = function (ls) { if (!ls) return false; var lc = stampCode(ls); if (!lc || lc === c.code) return false; return (kn[lc] || 0) < stampSeq(ls); };
+        (line.w || []).forEach(function (e) {
+          var k = e[0], kind = kindOf(k); if (LOCAL[kind]) return;
+          var r = takeWrite(workGet(k), kind, e[1], e[2], stamp, apart);
+          work[k] = r.cur;
+          r.clash.forEach(function (x) { rep.clashes.push({ k: k, f: x.f, from: c.code, seq: line.seq, won: x.won }); });
+        });
+        Object.keys(line.sd || {}).forEach(function (iid) {
+          var k = "item:" + iid, cur = workGet(k);
+          if (!cur) { rep.problems.push({ seq: line.seq, from: c.code, what: "item", id: iid }); return; }
+          var v = clone(cur.v); v.stock = (v.stock || 0) + line.sd[iid]; work[k] = { v: v, s: cur.s };
+        });
+        if (line.m) {
+          (line.m.v || []).forEach(function (pt) { if (stamp > (sync.vs[pt[0]] || "")) { vaultTaken[pt[0]] = pt[1]; sync.vs[pt[0]] = stamp; } });
+          if (line.m.c !== undefined && stamp > sync.cs) { custom = line.m.c; customTaken = true; sync.cs = stamp; }
+        }
+        learn(kn, line, c.code);
+      });
+      /* 3. the books as they now stand: the records changed, the vault, the door, and what this device holds */
+      var raw = [], ops = [], took = {};
+      Object.keys(work).forEach(function (k) { raw.push({ k: k, v: work[k].v, s: work[k].s }); });
+      fresh.forEach(function (c) {
+        var last = c.lines[c.lines.length - 1];
+        sync.chains[c.dev] = { code: c.code, seq: last.seq, hash: c.hashes[c.hashes.length - 1], at: last.at, knows: knows[c.dev] };
+        took[c.code] = [c.lines[0].seq, last.seq];
+      });
+      sync.peers = sync.peers || {}; sync.peers[pl.from] = { have: pl.have || {}, at: new Date().toISOString() };
+      raw.push({ k: "sync:main", v: sync });
+      var users = clone(st.users), settings = st.settings;
+      Object.keys(work).forEach(function (k) { if (kindOf(k) === "user") users[k.slice(5)] = work[k].v; });
+      if (work["settings:main"]) settings = work["settings:main"].v;
+      var door = doorWith({ storeName: settings.storeName, people: peopleOf(users) });
+      if (work["settings:main"] && !same(settings.ownerName, st.settings.ownerName)) door.user = cleanName(settings.ownerName);
+      var meta = [{ key: "door", value: door }];
+      return Promise.all(fresh.map(function (c) {
+        return Promise.all(c.lines.map(function (l) { return C.seal(key, l, aadPeer(id, c.dev, l.seq)).then(function (env) { ops.push({ store: "journal", key: peerKey(c.dev, l.seq), value: env, add: true }); }); }));
+      })).then(function () {
+        if (!Object.keys(vaultTaken).length) return;
+        return D.get("meta", "vault").then(function (v) {
+          v = clone(v);
+          Object.keys(vaultTaken).forEach(function (pt) {
+            var env = vaultTaken[pt];
+            if (pt === "owner" || pt === "master") { if (env) v[pt] = env; }
+            else if (pt.indexOf("people:") === 0) { v.people = v.people || {}; if (env) v.people[pt.slice(7)] = env; else delete v.people[pt.slice(7)]; }
+          });
+          ops.push({ store: "meta", key: "vault", value: v });
+        });
+      }).then(function () {
+        if (customTaken) ops.push({ store: "meta", key: "custom", value: custom });
+        var data = { from: pl.from, code: pl.code, chains: took, lines: rep.lines, clashes: rep.clashes.length, list: rep.clashes.slice(0, 40) };
+        if (rep.problems.length) data.problems = rep.problems.slice(0, 20);
+        return commit("sync.took", data, [], meta, { raw: raw, ops: ops, minTs: maxTs });
+      }).then(function () {
+        if (state) E.settings = state.settings;
+        if (customTaken) { E.custom = E.cleanCustom ? E.cleanCustom(custom) : custom; if (E.ui && E.ui.applyLook) E.ui.applyLook(); }
+        return rep;
+      });
+    });
+  }
+
+  /* ---------- a device joins the store from a copy (a sealed backup) made by a device already in it ---------- */
+  B.joinFromBackup = function (body, secret, isMaster, name) {
+    var v = body.vault;
+    if (B.mode === "practice") B.useBooks(false);
+    /* only a device with no store of its own joins: the books of a store already here are never replaced this way */
+    return D.get("meta", "vault").then(function (here) {
+      if (here) throw err("hasstore");
+      return backupKey(body, secret, isMaster);
+    }).then(function (key) {
+      var journal = body.journal.map(function (e) { return [e[0], { iv: U.b64d(e[1]), ct: U.b64d(e[2]) }]; });
+      var rec = body.rec.map(function (e) { return [e[0], { iv: U.b64d(e[1]), ct: U.b64d(e[2]) }]; });
+      var src, devRecs = {}, copySync = null;
+      return readChains(key, v.storeId, journal, true).then(function (r) {
+        src = r;
+        return Promise.all(rec.filter(function (e) { return /^device:/.test(e[0]) || e[0] === "sync:main"; }).map(function (e) {
+          return C.open(key, e[1], aadRec(v.storeId, e[0])).then(function (val) {
+            if (val && val["~s"] && Object.prototype.hasOwnProperty.call(val, "~v")) val = val["~v"];
+            if (e[0] === "sync:main") copySync = val; else devRecs[e[0].slice(7)] = val;
+          });
+        }));
+      }).then(function () {
+        var last = src.lines[src.lines.length - 1];
+        var srcDev = (body.device && body.device.id) || (last && last.dev);
+        if (!last || !srcDev) throw err("notbackup");
+        if (srcDev === B.device.id || src.peers[B.device.id] || devRecs[B.device.id]) throw err("samedevice");
+        var used = {}, srcCode = (devRecs[srcDev] && devRecs[srcDev].code) || (body.device && body.device.code) || "A";
+        Object.keys(devRecs).forEach(function (d) { used[devRecs[d].code] = 1; });
+        Object.keys((copySync && copySync.chains) || {}).forEach(function (d) { used[copySync.chains[d].code] = 1; });
+        used[srcCode] = 1;
+        var myCode = nextCode(used), now = new Date(), ts = Math.max(now.getTime(), src.maxTs + 1), knowsSrc = {};
+        src.lines.forEach(function (l) { learn(knowsSrc, l, srcCode); });
+        var mine = { id: B.device.id, code: myCode, name: cleanName(name), joined: now.toISOString(), from: srcDev };
+        var w = [["device:" + B.device.id, mine, null]], newRecs = [["device:" + B.device.id, mine]];
+        if (!devRecs[srcDev]) {
+          var theirs = { id: srcDev, code: srcCode, name: "", joined: src.lines[0].at, from: null };
+          w.push(["device:" + srcDev, theirs, null]); newRecs.push(["device:" + srcDev, theirs]);
+        }
+        var line = { seq: 1, at: now.toISOString(), day: U.dayKey(now), by: "owner", dev: B.device.id, type: "device.joined",
+          data: { code: myCode, from: srcDev, fromCode: srcCode, at: last.seq, hash: src.hash, name: mine.name }, prev: ZERO, build: E.BUILD.number, ts: ts, w: w };
+        var stamp = stampOf(ts, myCode, 1), sync = { v: 1, chains: {}, vs: (copySync && copySync.vs) || {}, cs: (copySync && copySync.cs) || "" };
+        Object.keys((copySync && copySync.chains) || {}).forEach(function (d) { if (d !== B.device.id) sync.chains[d] = copySync.chains[d]; });
+        sync.chains[srcDev] = { code: srcCode, seq: last.seq, hash: src.hash, at: last.at, knows: knowsSrc };
+        var device = { id: B.device.id, code: myCode, created: B.device.created };
+        return U.sha256hex(U.canon(line)).then(function (hash) {
+          var head = { seq: 1, hash: hash, at: line.at, ts: ts };
+          return Promise.all([C.seal(key, line, aadLine(v.storeId, 1)), C.seal(key, head, aadRec(v.storeId, "head:main")), C.seal(key, sync, aadRec(v.storeId, "sync:main"))]
+            .concat(newRecs.map(function (r) { return C.seal(key, wrapRec(r[1], { "": stamp }), aadRec(v.storeId, r[0])); }))
+            .concat(src.lines.map(function (l) { return C.seal(key, l, aadPeer(v.storeId, srcDev, l.seq)); })));
+        }).then(function (sealed) {
+          var outRec = rec.filter(function (e) { return e[0] !== "head:main" && e[0] !== "sync:main" && !/^notes:/.test(e[0]); });
+          outRec.push(["head:main", sealed[1]], ["sync:main", sealed[2]]);
+          newRecs.forEach(function (r, i) { outRec = outRec.filter(function (e) { return e[0] !== r[0]; }); outRec.push([r[0], sealed[3 + i]]); });
+          var outJournal = [[1, sealed[0]]];
+          src.lines.forEach(function (l, i) { outJournal.push([peerKey(srcDev, l.seq), sealed[3 + newRecs.length + i]]); });
+          journal.forEach(function (e) { if (typeof e[0] !== "number") outJournal.push(e); });
+          return B.lock("join").then(function () {
+            var meta = [["vault", v], ["door", body.door], ["device", device]];
+            if (body.custom) meta.push(["custom", E.cleanCustom ? E.cleanCustom(body.custom) : body.custom]);
+            return D.replaceAll(meta, outRec, outJournal);
+          });
+        }).then(function () {
+          B.device = device;
+          doorMeta = body.door || null; E.custom = body.custom && E.cleanCustom ? E.cleanCustom(body.custom) : null;
+          if (E.ui && E.ui.applyLook) E.ui.applyLook();
+          return load(v, key);
+        });
+      });
     });
   };
 
@@ -7878,7 +8395,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     document.addEventListener("keydown", onKey, true);
     box.appendChild(head); box.appendChild(body); if (o.actions && o.actions.length) box.appendChild(foot);
     layer.appendChild(box); document.body.appendChild(layer);
-    setTimeout(function () { var f = o.focus ? box.querySelector(o.focus) : $allFocusable(body)[0] || $allFocusable(foot)[0]; if (f) f.focus(); }, 30);
+    setTimeout(function () { var f = o.focus ? box.querySelector(o.focus) : $allFocusable(body)[0] || $allFocusable(foot)[0]; if (f) U.focusSoon(f, box); }, 30);
     return { close: close, box: box, body: body, foot: foot };
   };
   function $allFocusable(root) {
@@ -8438,7 +8955,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       var ins = card.querySelectorAll("input:not([type=hidden]):not([type=file]),textarea"), f = null;
       for (var i = 0; i < ins.length; i++) if (!ins[i].value) { f = ins[i]; break; }
       f = f || ins[0] || card.querySelector("button.ild-key:not(.ild-ghost)");
-      if (f) try { f.focus(); } catch (e) { }
+      if (f) U.focusSoon(f, card);
     }, 40);
     return card;
   }
@@ -8514,7 +9031,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     app.appendChild(h("div#introDoor.intro-door", null, [ghost, h("div.intro-frost"), card]));
     app.appendChild(ui.doorBar(function () { door.view(); }));
     if (stored && o.open) setTimeout(openSignIn, 0);
-    setTimeout(function () { try { if (!o.open) enter.focus(); } catch (e) { } }, 60);
+    setTimeout(function () { if (!o.open) U.focusSoon(enter, card); }, 60);
   });
   function lockIcon() {
     var NS = "http://www.w3.org/2000/svg", svg = document.createElementNS(NS, "svg");
@@ -8562,7 +9079,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       B.signIn(nm.value, pw.value).then(function () {
         var first = pw.value; pw.value = ""; U.prefSet("fails", "0"); U.prefSet("waitUntil", "0"); door.outNote = "";
         if (B.user && B.user.mustChange) return ownPassword(first);
-        return door.arrive();
+        return door.arrive().catch(arriveFailed(card));
       }, function (x) {
         if (x && x.code === "wrong") return wrong();
         busy(card, false); err(card, t("door.problem")); console.error(x);
@@ -8573,13 +9090,19 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   }
   /* Once the books are open: a person on the staff is clocked in as they arrive (the owner clocks in by choice, from
      the status key), and the store opens. */
+  /* Build 24: the store opens even when something on its way fails. The clock in may wait at most fifteen seconds; if
+     drawing the store fails, it is tried once more; and a sign-in that still cannot open says so at the door, with its
+     keys working again, instead of waiting for ever. */
   door.arrive = function () {
-    var p = (!B.isOwner() && !B.openShift(B.user.id)) ? B.clockIn().catch(function (e) { console.error(e); return null; }) : Promise.resolve(null);
-    return p.then(function (sh) {
-      E.app.opened();
+    var clock = (!B.isOwner() && !B.openShift(B.user.id)) ? B.clockIn().catch(function (e) { console.error(e); return null; }) : Promise.resolve(null);
+    var limit = new Promise(function (res) { setTimeout(function () { res(null); }, 15000); });
+    return Promise.race([clock, limit]).then(function (sh) {
+      try { E.app.opened(); } catch (e) { console.error(e); E.app.opened(); }
       if (sh) ui.toast(t("clock.inAt", { name: B.user.name, t: E.fmtTime(new Date(sh.in)) }), "good");
     });
   };
+  /* a sign-in whose store could not open: the door's keys work again, and it says so */
+  function arriveFailed(card) { return function (x) { console.error(x); busy(card, false); err(card, t("door.problem")); }; }
   /* The first time a person signs in with the password the owner gave them, they choose their own. */
   var ownPassword = screen(function (given) {
     var card = lockDoor(document.getElementById("introDoor") ? "intro" : "door");
@@ -8592,13 +9115,13 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       if (a.value !== b.value) return err(card, t("setup.noMatch"));
       if (a.value === given) return err(card, t("own.notGiven"));
       busy(card, true);
-      B.changeMyPassword(given, a.value).then(function () { a.value = ""; b.value = ""; return door.arrive(); }, function (x) {
+      B.changeMyPassword(given, a.value).then(function () { a.value = ""; b.value = ""; return door.arrive().catch(arriveFailed(card)); }, function (x) {
         busy(card, false); err(card, t(x && x.code === "password" ? x.extra : "door.problem")); console.error(x);
       });
     } }, [label(t("own.new"), a), meter, label(t("own.again"), b),
       h("div.ild-keys", null, [h("button.ild-link#ldOwnLater", { type: "button", onclick: function () { B.lock("signout"); } }, t("own.later")), h("button.ild-key#ldOwnGo", { type: "submit" }, t("own.go"))])]);
     fill(card, [h("h2", null, t("own.h", { name: B.user ? B.user.name : "" })), h("p", null, t("own.p")), form]);
-    setTimeout(function () { try { a.focus(); } catch (e) { } }, 60);
+    setTimeout(function () { U.focusSoon(a, card); }, 60);
   });
   /* the sign-in, wherever the door is asked for it: the introduction, with the fold open */
   var signIn = function (why) { return intro({ store: true, open: true, why: why }); };

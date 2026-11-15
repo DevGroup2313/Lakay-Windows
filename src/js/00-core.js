@@ -175,8 +175,19 @@ function debounce(fn, ms) { var t; return function () { var a = arguments, self 
 function norm(s) { return String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim(); }
 function prefGet(k, d) { try { var v = localStorage.getItem("emporium." + k); return v === null ? d : v; } catch (e) { return d; } }
 function prefSet(k, v) { try { localStorage.setItem("emporium." + k, String(v)); } catch (e) { } }
+/* Build 24: a card or window puts the cursor in its first field a moment after it appears, unless the person is already
+   typing in one of its fields: then the cursor stays where it is (it used to jump back, and letters typed quickly
+   landed in the wrong field). */
+function focusSoon(el, scope) {
+  try {
+    if (!el || !el.isConnected) return false;
+    var a = document.activeElement;
+    if (a && a !== el && scope && scope.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return false;
+    el.focus(); return true;
+  } catch (e) { return false; }
+}
 
 E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, money: money, moneyPlain: moneyPlain, divRound: divRound,
   parseRate: parseRate, rateText: rateText, taxOn: taxOn, dayKey: dayKey, fromDayKey: fromDayKey, addDays: addDays,
   startOfWeek: startOfWeek, b64e: b64e, b64d: b64d, hex: hex, rnd: rnd, uid: uid, canon: canon, sha256hex: sha256hex,
-  norm: norm, debounce: debounce, prefGet: prefGet, prefSet: prefSet, pad2: pad2, TE: TE, TD: TD };
+  norm: norm, debounce: debounce, prefGet: prefGet, prefSet: prefSet, focusSoon: focusSoon, pad2: pad2, TE: TE, TD: TD };

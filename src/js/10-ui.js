@@ -84,7 +84,7 @@
     document.addEventListener("keydown", onKey, true);
     box.appendChild(head); box.appendChild(body); if (o.actions && o.actions.length) box.appendChild(foot);
     layer.appendChild(box); document.body.appendChild(layer);
-    setTimeout(function () { var f = o.focus ? box.querySelector(o.focus) : $allFocusable(body)[0] || $allFocusable(foot)[0]; if (f) f.focus(); }, 30);
+    setTimeout(function () { var f = o.focus ? box.querySelector(o.focus) : $allFocusable(body)[0] || $allFocusable(foot)[0]; if (f) U.focusSoon(f, box); }, 30);
     return { close: close, box: box, body: body, foot: foot };
   };
   function $allFocusable(root) {

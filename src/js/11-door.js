@@ -62,7 +62,7 @@
       var ins = card.querySelectorAll("input:not([type=hidden]):not([type=file]),textarea"), f = null;
       for (var i = 0; i < ins.length; i++) if (!ins[i].value) { f = ins[i]; break; }
       f = f || ins[0] || card.querySelector("button.ild-key:not(.ild-ghost)");
-      if (f) try { f.focus(); } catch (e) { }
+      if (f) U.focusSoon(f, card);
     }, 40);
     return card;
   }
@@ -138,7 +138,7 @@
     app.appendChild(h("div#introDoor.intro-door", null, [ghost, h("div.intro-frost"), card]));
     app.appendChild(ui.doorBar(function () { door.view(); }));
     if (stored && o.open) setTimeout(openSignIn, 0);
-    setTimeout(function () { try { if (!o.open) enter.focus(); } catch (e) { } }, 60);
+    setTimeout(function () { if (!o.open) U.focusSoon(enter, card); }, 60);
   });
   function lockIcon() {
     var NS = "http://www.w3.org/2000/svg", svg = document.createElementNS(NS, "svg");
@@ -228,7 +228,7 @@
     } }, [label(t("own.new"), a), meter, label(t("own.again"), b),
       h("div.ild-keys", null, [h("button.ild-link#ldOwnLater", { type: "button", onclick: function () { B.lock("signout"); } }, t("own.later")), h("button.ild-key#ldOwnGo", { type: "submit" }, t("own.go"))])]);
     fill(card, [h("h2", null, t("own.h", { name: B.user ? B.user.name : "" })), h("p", null, t("own.p")), form]);
-    setTimeout(function () { try { a.focus(); } catch (e) { } }, 60);
+    setTimeout(function () { U.focusSoon(a, card); }, 60);
   });
   /* the sign-in, wherever the door is asked for it: the introduction, with the fold open */
   var signIn = function (why) { return intro({ store: true, open: true, why: why }); };
