@@ -74,9 +74,9 @@ function png(file) { const b = fs.readFileSync(file); return { w: b.readUInt32BE
   ok(/rgb\(255, 255, 255\)/.test(win) && /rgb\(107, 115, 214\)/.test(win), "and the figures sit in a pearl card with the periwinkle woven in: its rim and a slim band along its top (Build 14)");
   const keyLook = await p.evaluate(() => ({ sale: getComputedStyle(document.querySelector("#homeSale .ct-key-face")).backgroundImage, recv: getComputedStyle(document.querySelector("#homeReceive .ct-key-face")).backgroundImage,
     find: getComputedStyle(document.querySelector("#homeFind .ct-key-face")).backgroundImage }));
-  const saleJewel = await p.evaluate(() => getComputedStyle(document.querySelector("#homeSale .ct-key-emo")).backgroundImage);
-  ok(/rgb\(255, 255, 255\)/.test(keyLook.sale) && /rgb\(141, 147, 226\)/.test(saleJewel) && /rgb\(248, 248, 255\)/.test(keyLook.recv) && /rgb\(248, 248, 255\)/.test(keyLook.find),
-    "New sale is a pearl key with a periwinkle jewel; Receive and Price check are the gentle lavender beside it (Build 14)");
+  const saleJewel = await p.evaluate(() => { const c = getComputedStyle(document.querySelector("#homeSale .ct-key-emo")); return { bg: c.backgroundImage, ring: c.borderTopColor, w: c.borderTopWidth }; });
+  ok(/rgb\(255, 255, 255\)/.test(keyLook.sale) && /rgb\(255, 255, 255\)/.test(saleJewel.bg) && saleJewel.w === "2px" && /rgb\(95, 103, 204\)/.test(saleJewel.ring) && /rgb\(250, 250, 255\)/.test(keyLook.recv) && /rgb\(250, 250, 255\)/.test(keyLook.find),
+    "New sale is a pearl key, its cart in a pearl window ringed in periwinkle so that it reads clearly; Receive and Price check are the gentle lavender beside it (Build 24) (" + saleJewel.ring + ")");
   const rooms = await p.evaluate(() => ({ slab: getComputedStyle(document.querySelector(".hm-rooms")).backgroundImage, drawer: getComputedStyle(document.querySelector(".ct-drawer")).backgroundImage,
     jewel: getComputedStyle(document.querySelector(".ct-plate-ico")).backgroundImage }));
   ok(/rgb\(255, 255, 255\)/.test(rooms.slab) && /rgb\(255, 255, 255\)/.test(rooms.drawer) && /rgb\(141, 147, 226\)/.test(rooms.jewel), "the rooms are white drawers on a white slab, each with an enamel jewel");
@@ -115,7 +115,7 @@ function png(file) { const b = fs.readFileSync(file); return { w: b.readUInt32BE
   const down = await p.evaluate(() => new DOMMatrix(getComputedStyle(document.querySelector("#homeSale .ct-key-face")).transform).m42);
   await p.mouse.move(5, 5); await p.mouse.up(); await wait(p, 300);
   const up = await p.evaluate(() => new DOMMatrix(getComputedStyle(document.querySelector("#homeSale .ct-key-face")).transform).m42);
-  ok(down >= 6 && up <= 0.5, "New sale travels down as it is pressed (" + down + " points) and comes back up (" + up + ")");
+  ok(down >= 0.9 && down <= 1.5 && up <= 0.5, "New sale presses in as it is pressed, as an acrylic key does (" + down + " points), and comes back up (" + up + ")");
   ok(await p.evaluate(() => E.ui.current) === "home", "and a press that slides off the key does nothing");
 
   console.log("Night, Calm, and \"reduce motion\"");
@@ -141,7 +141,7 @@ function png(file) { const b = fs.readFileSync(file); return { w: b.readUInt32BE
   ok(keys.length >= 6 && keys.every(Boolean), "on an iPad every key keeps its words whole");
   await p.setViewportSize({ width: 390, height: 900 }); await home();
   const names = await p.evaluate(() => Array.prototype.map.call(document.querySelectorAll(".hm-tile-t b"), (n) => n.scrollWidth <= n.clientWidth + 1));
-  ok(names.length === 8 && names.every(Boolean), "on a phone every room's name is whole on its drawer (eight drawers, Learning included since Build 17)");
+  ok(names.length === 7 && names.every(Boolean), "on a phone every room's name is whole on its drawer (seven drawers in the practice store, Learning included since Build 17, the Author Studio not shown there since Build 24)");
   ok(await p.evaluate(() => document.documentElement.scrollWidth - window.innerWidth) <= 0, "and nothing scrolls sideways");
   await p.setViewportSize({ width: 1280, height: 860 });
 

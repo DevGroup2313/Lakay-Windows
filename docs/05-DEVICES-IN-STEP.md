@@ -6,6 +6,10 @@ Written 15 November 2026. The owner approved its recommendations the same day: t
 pairing and carrying the changes by file (stage 2), then a relay on the Mac mini at the store (stage 3). Questions 1, 3
 and 4 below are still open; they matter from stage 2 on.
 
+**Stage 1 is built (Build 24, 15 November 2026), waiting for the owner's approval.** It has no screens yet: it is the
+joining of the books, tested with two, three and five simulated devices (`tests/t_build24.js`). The appendix says how it
+works.
+
 ## What the owner asked
 
 To reach everything from anywhere with the internet, while every device still works fully with no connection, and the
@@ -81,19 +85,41 @@ number. The practice store stays on each device alone.
 
 ## Appendix: how stage 1 is built (for whoever continues the work)
 
-- **Each device has its own letter** (A, B, C), kept in a `device` record in the books, so receipts and bookings
-  never share a number. The first device of a store is A.
-- **Every ledger line carries what it wrote** (from Build 24): the records it changed (`w`) and the door's or the
-  vault's new state (`m`). Lines written before that need nothing: a device joins from a copy made after them.
-- **A device joins from a copy** of the books made by a device already in the store (a backup, in stage 1). It keeps
-  the copy's records, keeps the other device's ledger lines as that device's chain, and starts a chain of its own
-  with a line that says where it came from. It never continues another device's chain.
-- **Changes travel as a sealed bundle**: one device's lines since a given point, sealed with the Store Key. Taking a
-  bundle in checks that the lines follow on from what was last taken from that device, fingerprint by fingerprint;
-  writes each record unless the device already holds a later change to it (the later time wins, the device's letter
-  breaks a tie); never takes another device's counters; and counts stock by the sales, deliveries and corrections in
-  the lines, not by the other device's figure. It then writes one line of its own saying what it took.
-- **Verify** checks the device's own chain and each other device's chain, then replays all of them together, in the
-  order of their time, against the books.
-- **Not carried in stage 1**: each person's sticky notes (they stay on the device where they were written), and the
-  practice store (it stays on each device alone).
+All of it is in `src/js/04-books.js`, in the section "devices in step", with the stamps beside `commit`.
+
+- **Lines.** From Build 24 every line carries `ts` (milliseconds; never behind the last line this device knows of, so
+  a device's lines always go forward even if its clock is wrong), `w` (each record written: its key, its value whole,
+  and the fields it changed, or null for a new record), `sd` (stock moved, by item) and `m` (the vault's changed parts:
+  `owner`, `master`, `people:<id>`; and the Author Studio's choices). Counters, the head, the sync record and sticky notes
+  are never in `w`.
+- **Stamps.** A stamp is the line's time, its device's letter and its number (`ts36.LETTER.seq36`), compared as text.
+  Each record is sealed as `{"~v": value, "~s": stamps}`, where `stamps[""]` is the stamp that wrote the record and
+  `stamps[field]` the stamp that last changed that field. Records from before Build 24 have none, and count as oldest.
+- **Letters.** Each device has a `device` record in the books (`device:<id>`: its letter, name, when it joined and from
+  whom). The first device of a store is A; a joining device takes the next letter its copy does not know (never I or O).
+- **Joining** (`B.joinFromBackup(body, secret, isMaster, name)`): only a device with no store of its own. It checks the
+  copy's chains, keeps its records (not the sticky notes, not its head, not its sync record), keeps the source's lines
+  as the source's chain (re-sealed under the peer's own associated data, `emporium|p|store|device|seq`), keeps any other
+  chains the copy held, and starts its own chain with `device.joined` (the source's letter and the last line it took).
+- **Bundles** (`B.makeBundle(have)`, `B.takeBundle(text)`): the lines the other device lacks, by chain, given what it
+  holds (`B.syncInfo().have`), sealed with the Store Key under `emporium|b|store|device`. Taking a bundle: each chain must
+  follow on from what is held (fingerprint by fingerprint; the line at the held point must match: else `fork`; a
+  missing line: `gap`; a line without `ts`: `old`; a second device with a letter in use: `letter`). The new lines of
+  every chain are taken in the order of their stamps. For each field the later stamp wins; stock is never taken but
+  summed from `sd`; a booking's `pays` are joined by their id (a payment voided on either device stays voided); a
+  person's training marks (`done`, `ex`, `tasks`) are joined by key. A field changed here while the other device could
+  not know it (by what that device had taken, read from its `device.joined` and `sync.took` lines) is reported as a
+  clash, except a record's "last changed" time. One line of this device's own, `sync.took`, says what was taken, from
+  whom, and the clashes. The door's list of people and the vault are brought up to date.
+- **Verify** reads this device's chain (numbered keys) and each other device's (`p:<device>:<seq>`), checks each against
+  what the sync record holds, then replays all lines together in the order of their stamps (stock by the moves, without
+  each device's own "stock before" check, which only holds on the device that wrote it).
+- **Not carried**: each person's sticky notes (they stay on the device where they were written), the practice store, and
+  each device's counters.
+- **Honest limits.** "The later change wins" trusts the devices' clocks only as far as `ts` allows: a device whose clock
+  runs ahead wins clashes it should not. Two devices that join from the same copy before either is heard of take the
+  same letter; the second is refused and must join again (stage 2's pairing will reserve the letter on the inviting
+  device). Two people added on two devices while apart may share a staff number; signing in still works (both envelopes
+  are tried), but the screens would show the same number twice. Anyone holding the Store Key can write lines, as today:
+  the limits on who may do what are kept by Lakay itself, not by the seal. Before the books travel between devices for
+  real, an independent security review of this part is recommended.

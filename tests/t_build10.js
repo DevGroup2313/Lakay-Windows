@@ -79,7 +79,7 @@ const OWNER_PW = "kreyol and coffee 2026";
   ok(true, "a sale opens its receipt");
   await p.keyboard.press("Escape"); await wait(p, 300);
   const tiles = await p.$$eval(".hm-tile", t => t.map(x => x.getAttribute("data-room")));
-  ok(tiles.length === 8 && tiles.indexOf("studio") >= 0 && tiles.indexOf("learn") >= 0, "the owner sees every room as a tile, Learning included since Build 17 (" + tiles.join(", ") + ")");
+  ok(tiles.length === 7 && tiles.indexOf("studio") < 0 && tiles.indexOf("learn") >= 0, "the practice store shows every room as a tile but the Author Studio, which is the real store's owner's alone since Build 24 (" + tiles.join(", ") + ")");
   await p.click('.hm-tile[data-room="reports"]'); await wait(p, 400);
   ok(await p.evaluate(() => E.ui.current) === "reports", "a tile opens its room");
   await home();

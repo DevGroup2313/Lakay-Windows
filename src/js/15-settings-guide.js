@@ -229,7 +229,9 @@
   /* ---------- the Guidebook ---------- */
   var ARTICLES = ["start", "learn", "train", "door", "team", "clock", "schedule", "earnings", "travel", "master", "sale", "pay", "items", "receive", "correct", "depts", "svc", "reports", "notes", "backup", "sealed", "verify", "display", "studio", "build", "limits"];
   var ART_EMO = { start: "🌟", learn: "🎓", train: "📋", door: "🚪", team: "👥", clock: "🕘", schedule: "🗓️", earnings: "💰", travel: "✈️", master: "🗝️", sale: "🛒", pay: "💳", items: "🏷️", receive: "🚚", correct: "✏️", depts: "🗂️", svc: "💱", reports: "📊", notes: "🗒️", backup: "💾", sealed: "🔐", verify: "🛡️", display: "🎨", studio: "⚒️", build: "🔢", limits: "🧭" };
-  E.guideCount = function () { return ARTICLES.length; };
+  /* the Author Studio's chapter only for whoever may open the Studio (Build 24) */
+  function chapters() { return ARTICLES.filter(function (id) { return id !== "studio" || ui.allowed("studio"); }); }
+  E.guideCount = function () { return chapters().length; };
   ui.rooms.guide = function (main) {
     var q = ui.input({ id: "guideSearch", type: "search", placeholder: t("guide.searchPh"), "aria-label": t("guide.search") });
     var list = h("ul.guide-list", { id: "guideList" }), art = h("article.guide-article.card", { id: "guideArticle", tabindex: "-1" });
@@ -248,7 +250,7 @@
     function draw() {
       U.clear(list);
       var n = U.norm(q.value), first = null;
-      ARTICLES.forEach(function (id) {
+      chapters().forEach(function (id) {
         var hay = U.norm(t("guide." + id + ".t") + " " + t("guide." + id + ".b") + " " + t("guide." + id + ".tip"));
         if (n && hay.indexOf(n) < 0) return;
         if (!first) first = id;

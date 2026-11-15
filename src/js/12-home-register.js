@@ -73,33 +73,85 @@
     });
     return box;
   }
-  function readout(id, emoji, label, value, text, tone, big) {
-    return h("div.ct-read.hx-gauge" + (tone ? "." + tone : "") + (big ? ".big" : ""), { id: id, "data-value": String(value) }, [
+  /* Build 24, at the owner's request: everything on the greeting card answers the hand. Each figure is a key: the
+     takings and the profit open the day's report, the sales the day's last receipts, the stock running low the items
+     that are; the drums roll again when the pointer comes to a figure; the card of the figures stands out in depth and
+     leans toward the pointer; the chips and the date are keys too. Calm and "reduce motion" hold it all still. */
+  function still() { return document.documentElement.getAttribute("data-calm") === "1" || !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches); }
+  function goDay() { if (B.can("reports")) { E.reports.period = "today"; ui.go("reports"); } else if (B.can("sell")) ui.go("register"); }
+  function goLow() { if (E.inventory) { E.inventory.filter = "low"; E.inventory.page = 0; E.inventory.dept = null; } ui.go("inventory"); }
+  function goSales() {
+    var s = document.querySelector(".hm-sales"); if (!s) return;
+    try { s.scrollIntoView({ behavior: still() ? "auto" : "smooth", block: "center" }); } catch (e) { s.scrollIntoView(); }
+    s.classList.remove("ct-glow"); void s.offsetWidth; s.classList.add("ct-glow");
+  }
+  /* the drums turn back to nought and roll to their figure again */
+  function reroll(el) {
+    if (still() || el.__rolling) return;
+    el.__rolling = true;
+    var strips = el.querySelectorAll(".ct-strip[data-d]");
+    Array.prototype.forEach.call(strips, function (x) { x.style.transition = "none"; x.style.transform = "translateY(0)"; });
+    void el.offsetWidth;
+    requestAnimationFrame(function () {
+      Array.prototype.forEach.call(strips, function (x, i) { x.style.transition = ""; x.style.transitionDelay = (i % 9) * 55 + "ms"; x.style.transform = "translateY(" + (-10 * Number(x.getAttribute("data-d"))) + "%)"; });
+      setTimeout(function () { el.__rolling = false; }, 1500);
+    });
+  }
+  /* a key on the card is pressed in, then does its work */
+  function press(el, go) { el.classList.add("ct-pressed"); setTimeout(function () { el.classList.remove("ct-pressed"); if (go) go(); }, still() ? 0 : 150); }
+  function readout(id, emoji, label, value, text, tone, big, go, hint) {
+    var b = h("button.ct-read.hx-gauge" + (tone ? "." + tone : "") + (big ? ".big" : ""), { type: "button", id: id, "data-value": String(value), title: hint || null,
+      "aria-label": label + ": " + text + (hint ? ". " + hint : ""), onclick: function (e) { e.stopPropagation(); press(b, go); } }, [
       h("span.g-label", null, [ui.emo(emoji), label]),
       h("span.g-value", null, [drums(text), h("span.sr-only", null, text)])]);
+    b.addEventListener("pointerenter", function () { reroll(b); });
+    return b;
+  }
+  /* the card of the figures leans toward the pointer, as a card held in the hand */
+  function lean(win) {
+    function at(e) {
+      if (still() || e.pointerType === "touch") return;
+      var r = win.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+      win.style.setProperty("--ry", (x * 9).toFixed(2) + "deg"); win.style.setProperty("--rx", (-y * 7).toFixed(2) + "deg");
+      win.style.setProperty("--mx", Math.round((x + .5) * 100) + "%"); win.style.setProperty("--my", Math.round((y + .5) * 100) + "%");
+      win.classList.add("leaning");
+    }
+    win.addEventListener("pointermove", at);
+    win.addEventListener("pointerleave", function () { win.classList.remove("leaning"); win.style.setProperty("--rx", "0deg"); win.style.setProperty("--ry", "0deg"); });
+    return win;
   }
 
   /* the register: the mark, the greeting, a few live facts, and the window of drums */
-  function chip(tone, emoji, text) { return h("li.hm-chip" + (tone ? "." + tone : ""), null, [ui.emo(emoji), h("span", null, text)]); }
+  function chip(tone, emoji, text, go, hint) {
+    if (!go) return h("li", null, h("span.hm-chip" + (tone ? "." + tone : ""), null, [ui.emo(emoji), h("span", null, text)]));
+    var b = h("button.hm-chip" + (tone ? "." + tone : ""), { type: "button", title: hint || null, onclick: function () { press(b, go); } }, [ui.emo(emoji), h("span", null, text)]);
+    return h("li", null, b);
+  }
   function hero(st, r, stock, me, staff, practice, greet, sealKey) {
     var now = new Date(), onClock = B.onClock(), todayKey = U.dayKey();
     var last = st.sales.filter(function (s) { return s.status === "completed" && s.day === todayKey; }).slice(-1)[0];
+    var dayGo = B.can("reports") || B.can("sell") ? goDay : null, dayHint = B.can("reports") ? t("home.go.day") : t("home.newSale");
     var chips = [
-      last ? chip(null, "🕰️", t("home.chipLast", { t: ui.time(last.at) })) : chip(null, "🧾", t("home.chipNoSale")),
-      !staff || B.can("team") ? chip(onClock.length ? "on" : null, "👥", t("home.chipClock", { n: onClock.length })) : null];
-    var window_ = h("div.ct-window", { "aria-label": t("home.today") }, [
-      readout("hxTaken", "💵", t("home.takenToday"), r.gross, money(r.gross), null, true),
+      last ? chip(null, "🕰️", t("home.chipLast", { t: ui.time(last.at) }), function () { if (E.register && E.register.showReceipt) E.register.showReceipt(last); }, t("home.recentTitle"))
+        : chip(null, "🧾", t("home.chipNoSale"), B.can("sell") ? function () { if (E.rail && E.rail.toSale) E.rail.toSale(); else ui.go("register"); } : null, t("home.newSale")),
+      !staff || B.can("team") ? chip(onClock.length ? "on" : null, "👥", t("home.chipClock", { n: onClock.length }), function () { ui.go("team"); }, t("room.team")) : null];
+    var window_ = lean(h("div.ct-window.ct-pop", { role: "group", "aria-label": t("home.today") }, [
+      readout("hxTaken", "💵", t("home.takenToday"), r.gross, money(r.gross), null, true, dayGo, dayHint),
       h("div.ct-reads", null, [
-        readout("hxSales", "🧾", t("home.salesToday"), r.count, String(r.count)),
-        B.can("costs") ? readout("hxProfit", "📈", t("home.profitToday"), r.profit, money(r.profit), r.profit < 0 ? "bad" : "good") : readout("hxOnClock", "🕘", t("clock.nowH"), onClock.length, String(onClock.length)),
-        readout("hxLow", "📦", t("home.lowStock"), stock.low.length, String(stock.low.length), stock.low.length ? "warn" : null)])]);
+        readout("hxSales", "🧾", t("home.salesToday"), r.count, String(r.count), null, false, goSales, t("home.recentTitle")),
+        B.can("costs") ? readout("hxProfit", "📈", t("home.profitToday"), r.profit, money(r.profit), r.profit < 0 ? "bad" : "good", false, dayGo, dayHint)
+          : readout("hxOnClock", "🕘", t("clock.nowH"), onClock.length, String(onClock.length), null, false, function () { ui.go("team"); }, t("room.team")),
+        readout("hxLow", "📦", t("home.lowStock"), stock.low.length, String(stock.low.length), stock.low.length ? "warn" : null, false, goLow, t("inv.f.low"))])]));
+    /* a press on the card itself, between its figures, does what the takings do */
+    window_.addEventListener("click", function (e) { if (dayGo && e.target.closest && !e.target.closest("button") && window_.contains(e.target)) press(window_, dayGo); });
+    window_.addEventListener("pointerenter", function () { reroll(window_.querySelector("#hxTaken")); });
     return h("header.hm-hero.ct-hero", null, [
       engraving(),
       h("span.ct-nacre", { "aria-hidden": "true" }),
       h("div.ct-intro", null, [
         h("div.ct-mark", null, sealKey),
         h("div.ct-words", null, [
-          h("div.hx-eyebrow", null, [h("h1", null, E.appName()), h("span.hx-date", null, E.fmtDate(now, "long"))]),
+          h("div.hx-eyebrow", null, [h("h1", null, E.appName()), h("button.hx-date", { type: "button", title: t("room.schedule"), onclick: function () { var self = this; press(self, function () { ui.go("schedule"); }); } }, E.fmtDate(now, "long"))]),
           h("p.hm-hello", null, practice && !staff ? t("home.helloPractice") : t(greet, { name: me.name || "" })),
           h("p.hm-lede", null, practice ? t("home.ledePractice") : t("home.ledeReal")),
           h("ul.hm-chips", { "aria-label": t("home.chipsH") }, chips)])]),

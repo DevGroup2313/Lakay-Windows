@@ -4,6 +4,32 @@ Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED.
 
 The newest build is first. The build number also shows in Lakay's About.
 
+## Build 24 (15 November 2026): devices in step (stage 1), the owner's requests for the Home, the rail, the notes and the Studio
+
+The owner approved the plan for Devices in step on 15 November 2026 (`docs/05-DEVICES-IN-STEP.md`). This build is its first stage: the books of several devices join, tested with no network. The owner's requests of the same day are in it too.
+
+**Devices in step, stage 1: the books join**
+- Every ledger line now carries its time (a time that only goes forward on a device), the records it wrote, the stock it moved, and the vault's new parts (a person's envelope, the owner's, the Master Key's). Every record is sealed with the stamp of the line that last wrote each of its fields.
+- A device joins from a sealed copy (a backup) of a device already in the store, opened with the owner's password or the Master Key. It takes a letter of its own (A, B, C, and on; never I or O), keeps the copy's records, keeps the other device's lines as that device's chain, and starts its own chain with a line saying where it came from. Receipt and booking numbers carry the letter, so two devices never give the same number.
+- Changes travel as one sealed bundle of lines, sealed with the Store Key. Taking one checks that each device's lines follow on from what was last taken from it, fingerprint by fingerprint. It takes each field's later change; adds up every device's sales, deliveries and corrections for the stock; joins a booking's payments and each person's training marks; never takes another device's counters or anyone's sticky notes; and writes one line of its own saying what it took. A field changed on two devices while they were apart is reported: the later change stays, and both stay in the ledger.
+- It refuses a bundle changed on its way, a bundle from another store, a gap (a bundle that skips lines), a fork (a device whose chain no longer matches), lines written before Build 24, and a second device with a letter already in use (two devices joined from the same copy before either was heard of: the second joins again from a newer copy).
+- Verify checks this device's chain and each other device's, then replays all of them together in the order of their stamps. A restore puts the device in the place of the one that made the backup.
+- There is nothing to see of this yet in the screens: pairing a device and carrying the changes by file come in stage 2. The functions are `B.joinFromBackup`, `B.makeBundle`, `B.takeBundle` and `B.syncInfo` in `04-books.js`.
+
+**The owner's requests**
+- **Schedae: Carpe Diem's light blue paper is back.** Build 11 had given Carpe Diem's blue notes the sea glass of Aquamarine. Larimar is now a seventh paper, in Carpe Diem's exact shade (by day #dcefff to #b6e0ff, by night its midnight paper #1f2a3d), named for the blue stone of Hispaniola. Notes that were Carpe Diem's blue are light blue again.
+- **The name tip, as in the other apps of the Offline Project.** Carpe Diem's name tip is now Lakay's: rest the pointer on a key that shows no words (a swatch, an emoji key) and its name appears above it, dressed in the colours of the surface beneath, with a pointer to the key. A paper's swatch shows a chip of its colour, its name, and its colour by day or by night ("Larimar, sky blue"; by night "midnight blue"). It also shows when a key is reached with the keyboard. It takes the place of the browser's own small tooltip.
+- **The side rail:** the calculator left the top bar and stands on the rail, directly under the cart and over the notes; the Sun and Moon key (day or night for the whole store) stands at the top of the rail.
+- **The counter's three keys (New sale, Receive a delivery, Price check) are sharp acrylic**, made as Ingenium's keys and cards are: a crisp face from white to a breath of lilac, a hairline edge, a thin ledge and a soft shadow, with no gloss and no soft skirt. They rise as the hand comes near and press in when pressed. The colours stay. New sale's cart now sits in a pale pearl window ringed in periwinkle, so it shows clearly by day and by night.
+- **The greeting card answers the hand.** The card of the day's figures stands out in depth, rises into place, leans toward the pointer, and its light follows the hand; a press on it opens the day's report. Each figure is a key: Taken today and Profit today open the day's report, Sales today brings the latest sales into view, Low on stock opens the items running low. The drums roll again when the pointer comes to a figure. The chips are keys (the last sale opens its receipt, the clock opens the Team), and so is the date (the Schedule). The words of the welcome rise into place one after another. Calm and "reduce motion" hold it all still.
+- **The Author Studio is the owner's alone, in the store's own books.** The practice store opens with no sign-in, for anyone who visits the website, so it no longer shows the Studio, its tile or its Guidebook chapter; its address leads home, and the books refuse its changes there. No one on the staff could open it before, and still cannot.
+
+**Fixes**
+- **The cursor stays where one types.** A window or a card at the door put the cursor in its first field a moment after it appeared, even when the person had already moved on: letters typed quickly landed in the wrong field. It now leaves the cursor where it is. This was the cause of the Build 19 test's rare stalls.
+- **The door opens even when something on its way fails.** After a sign-in, the clock in waits at most fifteen seconds; drawing the store is tried once more if it fails; and a sign-in that still cannot open says so at the door, with its keys working again.
+- Every word is in English, French and Kreyòl (23 new phrases; the Kreyòl is marked for review by a native speaker).
+- tests/t_build24.js: @@CHECKS24@@ checks, with two, three and five simulated devices. @@TOTAL@@
+
 ## Build 23 (15 November 2026): who keeps the customer's fee on a transfer
 
 The owner's answer of 15 November 2026: only the commission counts as the store's, "but I might want the option for both added".

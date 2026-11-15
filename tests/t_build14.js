@@ -80,15 +80,15 @@ function serve() {
     return { wBg: w.backgroundImage, wBorder: w.borderTopColor, kBg: k.backgroundImage, kShadow: k.boxShadow, value: getComputedStyle(document.querySelector(".ct-window .g-value")).color };
   });
   ok(/linear-gradient\(90deg/.test(look.wBg) && /rgb\(255, 255, 255\)/.test(look.wBg) && !/rgb\(89, 96, 190\) 100%/.test(look.wBg), "the figures' card is pearl, with a slim periwinkle band along its top instead of a solid purple face");
-  ok(/rgb\(255, 255, 255\)/.test(look.kBg) && /4px 0px 0px 0px inset/.test(look.kShadow), "New sale is a pearl key marked by a periwinkle edge and its periwinkle jewel");
+  ok(/rgb\(255, 255, 255\)/.test(look.kBg) && /3px 0px 0px 0px inset/.test(look.kShadow), "New sale is a pearl key marked by a periwinkle edge (Build 24: a sharp acrylic key)");
   ok(await p.locator(".hm-proverb, .ct-plaque, .hm-pv-ht").count() === 0, "the gold band at the foot of the Home is gone");
 
-  console.log("The side rail: three keys");
+  console.log("The side rail (Build 24: the calculator under the cart, the Sun and Moon at the top)");
   const rail = await p.evaluate(() => Array.prototype.map.call(document.querySelectorAll("#rail .rail-btn"), b => b.id));
-  ok(rail.join() === "rail-notes,rail-sale,rail-find", "the rail carries notes, a new sale and price check, and nothing else (" + rail.join(", ") + ")");
-  ok(await p.locator("#rail-bell, #rail-low, #rail-calc, #rail-theme, #fabTheme").count() === 0, "the reminders, low stock, calculator and day or night keys left the rail");
+  ok(rail.join() === "rail-notes,rail-calc,rail-sale,rail-find,rail-theme", "from the foot: notes, the calculator, a new sale, price check, and day or night (" + rail.join(", ") + ")");
+  ok(await p.locator("#rail-bell, #rail-low, #fabTheme").count() === 0, "the reminders and low stock stay in the Alerts panel");
   const gaps = await p.evaluate(() => Array.prototype.map.call(document.querySelectorAll("#rail .rail-btn, #railChevron"), b => parseFloat(getComputedStyle(b).bottom)));
-  ok(gaps.length === 4 && gaps[1] - gaps[0] === 56 && gaps[2] - gaps[1] === 56 && gaps[3] - gaps[2] === 56, "evenly spaced, with the key that lays them down above them (" + gaps.join(", ") + ")");
+  ok(gaps.length === 6 && gaps.every((g, i) => i === 0 || g - gaps[i - 1] === 56), "evenly spaced, with the key that lays them down above them (" + gaps.join(", ") + ")");
   await p.click("#rail-sale"); await wait(p, 300);
   ok(await p.evaluate(() => E.ui.current) === "register", "the sale key opens the register, ready to scan");
   await home();
@@ -96,13 +96,13 @@ function serve() {
   ok(await p.evaluate(() => document.getElementById("rail").classList.contains("down")), "the rail still lays down at a touch");
   await p.click("#railChevron"); await wait(p, 300);
 
-  console.log("The calculator, in the top bar");
-  ok(await p.locator("#topCluster #calcBtn").count() === 1, "the calculator has its own key in the top bar");
-  await p.click("#calcBtn"); await wait(p, 300);
+  console.log("The calculator, on the side rail (Build 24)");
+  ok(await p.locator("#topCluster #calcBtn").count() === 0 && await p.locator("#rail #rail-calc").count() === 1, "the calculator's key is on the rail, no longer in the top bar");
+  await p.click("#rail-calc"); await wait(p, 300);
   ok(await p.locator("#calcWin").isVisible(), "it opens the floating calculator");
   for (const k of ["7", "×", "6", "="]) await p.click('#calcWin .calc-k[aria-label="' + k + '"]');
   ok(await p.textContent("#calcWin .calc-val") === "42", "and it works as before: 7 × 6 = " + await p.textContent("#calcWin .calc-val"));
-  await p.click("#calcBtn"); await wait(p, 300);
+  await p.click("#rail-calc"); await wait(p, 300);
   ok(await p.locator("#calcWin").count() === 0, "and the same key puts it away");
 
   console.log("Alerts: what needs seeing to, and the reminders");
@@ -129,11 +129,11 @@ function serve() {
   await p.click('#alertsNeeds .alert-list li button:not(.primary)'); await wait(p, 600);
   ok(await p.evaluate(() => E.ui.current) === "inventory", "Open goes to the item's room");
   await p.evaluate(() => { E.util.prefSet("theme", "night"); E.ui.applyLook(); E.ui.refreshTop(); }); await home();
-  ok(await p.locator("#rail .rail-btn").count() === 3, "by night the rail is the same three keys");
+  ok(await p.locator("#rail .rail-btn").count() === 5, "by night the rail is the same five keys");
   await p.setViewportSize({ width: 390, height: 844 }); await home();
   const phone = await p.evaluate(() => ({ keys: Array.prototype.every.call(document.querySelectorAll("#rail .rail-btn"), b => { const r = b.getBoundingClientRect(); return r.right <= innerWidth && r.top >= 0; }),
     wide: document.documentElement.scrollWidth <= innerWidth }));
-  ok(phone.keys && phone.wide, "on a phone the three keys sit inside the screen, and nothing is wider than it");
+  ok(phone.keys && phone.wide, "on a phone the keys sit inside the screen, and nothing is wider than it");
   ok(errors.length === 0, "no errors in the page" + (errors.length ? ": " + errors.join(" | ") : ""));
   await ctx.close();
 
@@ -192,7 +192,7 @@ function serve() {
   ok(true, "with the server gone, Lakay opens again from what the worker kept");
   await w.evaluate(() => E.books.openPractice().then(() => E.app.opened(true)));
   await w.waitForSelector(".shell", { timeout: 60000 }); await w.evaluate(() => E.ui.go("home")); await w.waitForSelector(".ct-hero");
-  ok(await w.locator("#rail .rail-btn").count() === 3, "and the practice store opens in it, with no connection at all");
+  ok(await w.locator("#rail .rail-btn").count() === 5, "and the practice store opens in it, with no connection at all");
   ok(werr.length === 0, "no errors in the web app" + (werr.length ? ": " + werr.join(" | ") : ""));
   ok(wcsp.length === 0 && csp.length === 0, "the page's security policy refused nothing, on disk or on the web" + (wcsp.length + csp.length ? ": " + wcsp.concat(csp).slice(0, 3).join(" | ") : ""));
   await browser.close();

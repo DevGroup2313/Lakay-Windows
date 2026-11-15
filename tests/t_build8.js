@@ -56,7 +56,7 @@ const wait = (p, ms) => p.waitForTimeout(ms);
   let look = await bg();
   ok(look.bg === "rgb(253, 244, 217)" && look.sh.indexOf("rgb(167, 161, 143)") >= 0, "a new note is Citrine, a light pastel, with its edge at two thirds of its light (" + look.bg + ")");
   await p.click('.sticky-note .sn-iconbtn[aria-label="Menu"]'); await p.waitForSelector(".sn-menu");
-  ok(await p.locator(".sn-menu .sn-dot").count() === 6, "the ⋯ menu offers Lakay's six papers");
+  ok(await p.locator(".sn-menu .sn-dot").count() === 7, "the ⋯ menu offers Lakay's seven papers (Larimar, Carpe Diem's light blue, since Build 24)");
   await p.click('.sn-menu .sn-dot[data-sn-col="aquamarine"]'); await wait(p, 250);
   look = await bg();
   ok(look.bg === "rgb(226, 244, 241)" && look.sh.indexOf("rgb(149, 161, 159)") >= 0, "Aquamarine by day: the pastel sea glass #e2f4f1 with its edge (" + look.bg + ")");

@@ -130,6 +130,9 @@ are data, never code: the tested build stays exactly the same.
   only phrases that exist. Everything is shown as text and never run.
 - Whatever the app is called, receipts, reports and About keep the software's own name and build, which an auditor checks
   against the release.
+- Only the owner, in the store's own books, opens the Studio (Build 24). The practice store opens with no sign-in, and
+  the web app is open to anyone who visits it, so the practice store neither shows the Studio nor lets the books take its
+  changes (`B.saveCustom` refuses them there). No one on the staff opens it.
 
 ## 4. The ledger and its seal
 
@@ -145,6 +148,25 @@ paper copy of that fingerprint, kept outside the computer, proves later that the
 Devices will exchange sealed ledger lines through a relay on the internet. The relay only ever stores sealed data and
 cannot read it. A new device joins only when the owner approves it on a device that is already open (or with the Master
 Key). Several services can serve as the relay; the choice and its cost are yours (question 10 in `04-QUESTIONS.md`).
+
+**Stage 1, the books join (Build 24).** The plan the owner approved is `05-DEVICES-IN-STEP.md`; its appendix says how it
+works. What matters for security:
+
+- A device joins from a sealed backup, opened with the owner's password or the Master Key, and only if it holds no
+  store of its own. Nothing new is ever sent in the clear.
+- Each device writes its own chain of lines; another device's lines are kept as its chain, sealed again with the Store
+  Key under associated data that names the store, the device and the line's number, so a line cannot be moved from one
+  chain to another or taken for this device's own without Verify seeing it.
+- A bundle of lines is sealed whole with the Store Key under associated data naming the store and the sending device.
+  A bundle changed on its way, from another store, with a gap, from a device whose chain no longer matches (a fork),
+  with lines written before Build 24, or from a second device with a letter already in use, is refused, and nothing is
+  written.
+- Taking a bundle writes everything (the other device's lines, the records, the vault, the door, its own `sync.took`
+  line) in one transaction: all of it or none of it.
+- Each person's sticky notes and each device's counters are never carried.
+- Limits: the later change wins by the devices' stamps, so a device whose clock runs ahead wins clashes it should not
+  (each is reported). Anyone who holds the Store Key can write lines, as before: the limits on who may do what are kept
+  by Lakay itself. An independent review of this part is recommended before the books travel between devices for real.
 
 ## 6. Payments (Stage 7)
 

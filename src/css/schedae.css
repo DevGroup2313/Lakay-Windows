@@ -20,6 +20,8 @@ body:has(.sticky-panel-back) #rail-notes { opacity: 0 !important; pointer-events
 /* Lakay's six papers, light pastels by day: each paper's own light, its edge at two thirds of that light (as Carpe Diem shades its paper),
    and its night paper with a deeper edge, made to sit on Lakay's periwinkle ink */
 .sticky-note[data-sn-col="citrine"] { --sn-paper: #fdf4d9; --sn-edge: rgb(167, 161, 143); --sn-night: #3b3216; --sn-nedge: #231d0c; }
+/* Larimar (Build 24): Carpe Diem's light blue paper, in its own shade by day and by night */
+.sticky-note[data-sn-col="larimar"] { --sn-paper: linear-gradient(180deg, #dcefff, #b6e0ff); --sn-edge: rgb(120, 148, 168); --sn-night: #1f2a3d; --sn-nedge: #131a26; }
 .sticky-note[data-sn-col="aquamarine"] { --sn-paper: #e2f4f1; --sn-edge: rgb(149, 161, 159); --sn-night: #15332f; --sn-nedge: #0b1e1c; }
 .sticky-note[data-sn-col="rosequartz"] { --sn-paper: #fde9e3; --sn-edge: rgb(167, 154, 150); --sn-night: #3f201a; --sn-nedge: #25120e; }
 .sticky-note[data-sn-col="jade"] { --sn-paper: #ebf3dc; --sn-edge: rgb(155, 160, 145); --sn-night: #283117; --sn-nedge: #171d0c; }
@@ -104,6 +106,7 @@ body:has(.sticky-panel-back) #rail-notes { opacity: 0 !important; pointer-events
 
 /* ---------- the paper dots (the menu, the list): the day paper by day, the night paper by night ---------- */
 .sn-dot, .sn-rowdot { --dot: linear-gradient(180deg, #fdf4d9, #f7e7b8); --dot-n: #3b3216; background: var(--dot); }
+.sn-dot[data-sn-col="larimar"], .sn-rowdot[data-sn-col="larimar"] { --dot: linear-gradient(180deg, #dcefff, #b6e0ff); --dot-n: #1f2a3d; }
 .sn-dot[data-sn-col="aquamarine"], .sn-rowdot[data-sn-col="aquamarine"] { --dot: linear-gradient(180deg, #e2f4f1, #c9e9e4); --dot-n: #15332f; }
 .sn-dot[data-sn-col="rosequartz"], .sn-rowdot[data-sn-col="rosequartz"] { --dot: linear-gradient(180deg, #fde9e3, #f8d4c9); --dot-n: #3f201a; }
 .sn-dot[data-sn-col="jade"], .sn-rowdot[data-sn-col="jade"] { --dot: linear-gradient(180deg, #ebf3dc, #d9e8c2); --dot-n: #283117; }

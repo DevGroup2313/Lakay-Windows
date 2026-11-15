@@ -28,8 +28,9 @@ const wait = (p, ms) => p.waitForTimeout(ms);
   const seq = () => p.evaluate(() => E.books.state().head.seq);
   const type = async (sel, text) => { await p.fill(sel, ""); await p.type(sel, text, { delay: 5 }); await wait(p, 120); };
 
-  await p.goto(PAGE); await p.waitForSelector("#introEnter", { timeout: 20000 });
-  await p.evaluate(() => E.books.openPractice().then(() => E.app.opened(true)));
+  /* Build 24: the Author Studio opens only in the store's own books, for the owner; this test sets one up */
+  await p.goto(PAGE); await p.waitForSelector("#introProtect", { timeout: 20000 });
+  await p.evaluate(() => E.books.prepareSetup({ storeName: "Lakay Author Test", ownerName: "Yannie", password: "a long owner sentence for the studio", currency: "USD" }).then(h => h.finish()).then(() => E.app.opened()));
   await p.waitForSelector(".shell", { timeout: 90000 });
   await p.evaluate(() => { E.util.prefSet("theme", "day"); E.util.prefSet("tips", "0"); E.ui.applyLook(); });
 

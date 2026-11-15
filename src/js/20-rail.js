@@ -4,8 +4,9 @@
    person's sticky notes, 22-schedae.js), a new sale, and Price check (any item by name, code or barcode: its price and
    its stock, and a sale or a delivery from there). The rest moved to the top bar at the owner's request, so that the
    rail stays uncrowded: the reminders (orders, deliveries, bills; they ring when due; each person's own, sealed in the
-   books) and what runs low now share the Alerts panel; the calculator, which floats and can be carried anywhere, has
-   its own small key there; day or night is in Display. */
+   books) and what runs low now share the Alerts panel. Since Build 24, at the owner's request, the calculator (which
+   floats and can be carried anywhere) is back on the rail, directly under the cart and over the notes, and the
+   Sun and Moon key (day or night for the whole store) stands at the top of the rail; neither is in the top bar. */
 "use strict";
 (function () {
   var U = E.util, h = U.h, t = E.t, B = E.books, ui = E.ui;
@@ -17,7 +18,8 @@
   function when(iso) { try { var d = new Date(iso); return d.toLocaleString(E.lang === "ht" ? "fr" : E.lang, { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }); } catch (e) { return iso; } }
 
   /* ---------- the rail ---------- */
-  var KEYS = [["notes", "🗒️", "rail.notes"], ["sale", "🛒", "rail.sale"], ["find", "🔎", "rail.find"]];
+  var KEYS = [["notes", "🗒️", "rail.notes"], ["calc", "🧮", "rail.calc"], ["sale", "🛒", "rail.sale"], ["find", "🔎", "rail.find"], ["theme", "", "top.dayNight"]];
+  function isNight() { return document.documentElement.getAttribute("data-theme") === "night"; }
   /* On a phone the three keys would stand over the page, so a phone starts with them laid down: one press of the small
      key stands them up, and the device remembers the choice (the owner, 15 November 2026). A computer and a tablet start
      with them standing, as before. */
@@ -29,8 +31,10 @@
     /* the new-sale key only for those who sell */
     var keys = KEYS.filter(function (k) { return k[0] !== "sale" || !B.isOpen || B.can("sell"); });
     keys.forEach(function (k, i) {
+      /* the lamp shows the Sun by night (to bring the day) and the Moon by day */
+      var emo = k[0] === "theme" ? (isNight() ? "☀️" : "🌙") : k[1];
       var b = h("button.rail-btn#rail-" + k[0], { type: "button", title: t(k[2]), "aria-label": t(k[2]), onclick: function () { R.press(k[0], b); } },
-        h("span", { "aria-hidden": "true" }, k[1]));
+        h("span", { "aria-hidden": "true" }, emo));
       b.style.bottom = "calc(" + (52 + i * 56) + "px + env(safe-area-inset-bottom, 0px))";
       box.appendChild(b);
     });
@@ -57,6 +61,7 @@
   };
   R.press = function (k, b) {
     if (k === "calc") { closePop(); return calc.toggle(); }
+    if (k === "theme") { closePop(); U.prefSet("theme", isNight() ? "day" : "night"); ui.applyLook(); ui.refreshTop(); snd("lamp"); var nb = document.getElementById("rail-theme"); if (nb) try { nb.focus({ preventScroll: true }); } catch (e) { } return; }
     if (k === "sale") { closePop(); return toSale(); }
     if (k === "notes") { closePop(); return E.schedae && E.schedae.toggle(); }
     if (pop && pop.__k === k) { closePop(); return; }

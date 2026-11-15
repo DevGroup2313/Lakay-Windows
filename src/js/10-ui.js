@@ -264,7 +264,10 @@
   ui.allowed = function (room) {
     if (room === "register" || room === "travel") return B.can("sell");
     if (room === "reports") return B.can("reports");
-    if (room === "settings" || room === "studio") return B.can("owner");
+    if (room === "settings") return B.can("owner");
+    /* Build 24: the Author Studio is the owner's alone, in the store's own books. The practice store opens with no
+       sign-in (on the website too, for anyone who visits), so the Studio is neither shown nor opened there. */
+    if (room === "studio") return B.can("owner") && B.mode !== "practice";
     return true;
   };
   ui.go = function (room, quiet) {
@@ -342,9 +345,7 @@
       [h("span.pdot", { "aria-hidden": "true" }), h("span.nm", null, practice ? (B.isOwner() ? t("practice.pill") : t("practice.pill") + " · " + who) : who || t("status.h"))]));
     c.appendChild(h("button.cl-key#alertsBtn", { type: "button", title: t("top.alertsTip"), "aria-label": t("top.alerts") + (alertsN ? " (" + alertsN + ")" : ""), onclick: ui.alertsPanel },
       [t("top.alerts"), alertsN ? h("span.cnt", { "aria-hidden": "true" }) : null]));
-    /* the calculator: it floats above the page and can be carried anywhere (20-rail.js) */
-    c.appendChild(h("button.cl-key.icon#calcBtn", { type: "button", title: t("rail.calc"), "aria-label": t("rail.calc"), onclick: function () { if (E.rail && E.rail.calc) E.rail.calc.toggle(); } },
-      h("span", { "aria-hidden": "true" }, "🧮")));
+    /* the calculator moved to the side rail in Build 24, under the cart (20-rail.js) */
     c.appendChild(h("button.cl-key#displayBtn", { type: "button", title: t("top.display"), onclick: ui.displayPanel }, t("top.display")));
     c.appendChild(h("button.cl-key#guideBtn", { type: "button", title: t("room.guide"), onclick: function () { ui.go("guide"); } }, t("top.guide")));
     c.appendChild(h("button.cl-key#aboutBtn", { type: "button", title: t("top.about") + " " + E.appName(), onclick: ui.about }, t("top.about")));

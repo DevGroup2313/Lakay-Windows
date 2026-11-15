@@ -1118,6 +1118,8 @@
   /* The Author Studio's choices (names, words, look, receipt) are kept beside the envelopes, so the door can wear them
      before the store is opened; each change is also a ledger line, written in the same transaction. */
   B.saveCustom = function (custom, changed) {
+    /* the Author Studio's choices: the owner's alone, and never from the practice store (Build 24) */
+    if (B.mode === "practice") return Promise.reject(err("denied"));
     return B.change(function () { need("owner"); return { type: "author.changed", data: { changed: changed }, meta: [{ key: "custom", value: custom }] }; })
       .then(function (r) { E.custom = custom; return r; });
   };

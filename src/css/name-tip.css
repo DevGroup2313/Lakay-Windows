@@ -1,0 +1,14 @@
+/* LAKAY | The name tip (09-nametip.js, Build 24), as Carpe Diem draws it: a small label above a key, in the colours of
+   the surface beneath, with a pointer to the key; below the key when there is no room above. */
+#name-tip { position: fixed; z-index: 2147483602; display: none; pointer-events: none; width: max-content; max-width: 260px; padding: 6px 11px 7px;
+  border-radius: 8px; border: 1px solid transparent; text-align: center; opacity: 0; transition: opacity .12s ease; box-sizing: border-box;
+  font-family: var(--sans); }
+#name-tip.show { opacity: 1; }
+#name-tip .nt-title { font-size: 12.5px; font-weight: 600; line-height: 1.3; }
+#name-tip .nt-chip { display: inline-block; width: 11px; height: 11px; border-radius: 50%; vertical-align: -1px; margin-right: 6px; }
+#name-tip .nt-line { font-size: 11.5px; font-weight: 400; margin-top: 2px; line-height: 1.35; opacity: .78; }
+#name-tip::after { content: ""; position: absolute; left: var(--nt-x, 50%); bottom: -5px; transform: translateX(-50%) rotate(45deg); width: 8px; height: 8px;
+  background: var(--nt-bg); border-right: 1px solid var(--nt-edge); border-bottom: 1px solid var(--nt-edge); }
+#name-tip.below::after { bottom: auto; top: -5px; border: none; border-left: 1px solid var(--nt-edge); border-top: 1px solid var(--nt-edge); }
+@media (prefers-reduced-motion: reduce) { #name-tip { transition: none; } }
+@media print { #name-tip { display: none !important; } }

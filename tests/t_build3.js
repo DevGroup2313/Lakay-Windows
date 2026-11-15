@@ -42,7 +42,9 @@ function ok(cond, what) { if (cond) { passed++; console.log("  ok   " + what); }
   ok(await page.locator("footer.app-foot .crest-key .lk-crest").count() === 1, "the footer's mark is a key");
 
   console.log("Every room");
-  for (const room of ["register", "inventory", "reports", "guide", "settings", "studio", "home"]) {
+  /* Build 24: the Author Studio is the real store's owner's alone, so the practice store does not show it */
+  ok(await page.locator('.nav-btn[data-room="studio"]').count() === 0, "the practice store does not show the Author Studio");
+  for (const room of ["register", "inventory", "reports", "guide", "settings", "home"]) {
     await page.click('.nav-btn[data-room="' + room + '"]');
     await page.waitForTimeout(350);
     ok(await page.locator("main#room h1, main#room .hx").count() > 0, "the room opens: " + room);

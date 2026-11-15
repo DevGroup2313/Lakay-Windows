@@ -11,13 +11,21 @@
 (function () {
   var U = E.util, h = U.h, t = E.t, B = E.books, ui = E.ui;
   var S = E.schedae = {};
-  /* Lakay's own six papers, light pastels named for gems (Build 11): Citrine, Aquamarine, Rose Quartz, Jade, Moonstone
-     and Pearl. A note made in an earlier build keeps its colour under the paper's new name. */
+  /* Lakay's own papers, light pastels named for gems (Build 11): Citrine, Aquamarine, Rose Quartz, Jade, Moonstone and
+     Pearl; and since Build 24 Larimar, Carpe Diem's light blue paper in its exact shade (by day #dcefff to #b6e0ff, by
+     night #1f2a3d), named for the blue stone of Hispaniola. Build 11 had given Carpe Diem's blue notes the sea glass of
+     Aquamarine; they are light blue again. A note made in an earlier build keeps its colour under the paper's new name. */
   var COLORS = [
-    { id: "citrine", name: "Citrine" }, { id: "aquamarine", name: "Aquamarine" }, { id: "rosequartz", name: "Rose Quartz" },
+    { id: "citrine", name: "Citrine" }, { id: "larimar", name: "Larimar" }, { id: "aquamarine", name: "Aquamarine" }, { id: "rosequartz", name: "Rose Quartz" },
     { id: "jade", name: "Jade" }, { id: "moonstone", name: "Moonstone" }, { id: "pearl", name: "Pearl" }];
-  var BEFORE = { gold: "citrine", sky: "aquamarine", rose: "rosequartz", sage: "jade", violet: "moonstone", ivory: "pearl",
+  var BEFORE = { gold: "citrine", sky: "larimar", rose: "rosequartz", sage: "jade", violet: "moonstone", ivory: "pearl",
     mango: "citrine", lanme: "aquamarine", flanbwayan: "rosequartz", zaboka: "jade", douvanjou: "moonstone", kokoye: "pearl" };
+  /* a paper's swatch carries its name, and its colour by day and by night, for the name tip (09-nametip.js), as in
+     Carpe Diem: the name appears over the swatch when the pointer rests on it */
+  function paperName(el, id) {
+    el.setAttribute("data-tip-name", t("sn.nm." + id)); el.setAttribute("data-tip-day", t("sn.day." + id)); el.setAttribute("data-tip-night", t("sn.night." + id));
+    return el;
+  }
   function col(id) { id = BEFORE[id] || id; for (var i = 0; i < COLORS.length; i++) if (COLORS[i].id === id) return COLORS[i]; return COLORS[0]; }
   function still() { return document.documentElement.getAttribute("data-calm") === "1" || !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches); }
   function snd(n) { if (E.sound) E.sound.play(n); }
@@ -333,7 +341,8 @@
     box.style.left = Math.max(8, left) + "px"; box.style.top = Math.round(r.bottom + 4) + "px";
     var dots = h("div.sn-dots", { role: "group", "aria-label": t("sn.paper") });
     COLORS.forEach(function (c) {
-      var d = h("button.sn-dot", { type: "button", "data-sn-col": c.id, title: t("sn.col." + c.id), "aria-label": t("sn.col." + c.id), "aria-pressed": String(col(n.color).id === c.id) });
+      var d = h("button.sn-dot", { type: "button", "data-sn-col": c.id, "aria-label": t("sn.col." + c.id), "aria-pressed": String(col(n.color).id === c.id) });
+      paperName(d, c.id);
       d.addEventListener("click", function () {
         n.color = c.id; save(); render(); document.body.appendChild(back);
         Array.prototype.forEach.call(dots.children, function (x) { x.setAttribute("aria-pressed", String(x.getAttribute("data-sn-col") === c.id)); });
@@ -376,7 +385,7 @@
     list.forEach(function (n) {
       var row = h("div.sn-row", { "data-sn-row": n.id });
       row.__pv = plain(n.doc).toLowerCase();
-      row.appendChild(h("div.sn-row-top", null, [h("span.sn-rowdot", { "data-sn-col": col(n.color).id, title: t("sn.col." + col(n.color).id) }), h("span.sn-rowtext", null, preview(n))]));
+      row.appendChild(h("div.sn-row-top", null, [paperName(h("span.sn-rowdot", { "data-sn-col": col(n.color).id }), col(n.color).id), h("span.sn-rowtext", null, preview(n))]));
       var pin = h("button.sn-b.sn-b-soft", { type: "button" }, n.pinned ? t("sn.unpinShort") : t("sn.pin"));
       pin.addEventListener("click", function () { S.togglePin(n.id); });
       var copy = h("button.sn-b.sn-b-soft", { type: "button" }, t("sn.copy"));

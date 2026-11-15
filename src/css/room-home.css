@@ -3,9 +3,10 @@
    are the logo's periwinkle enamel, or a gentle lavender beside it. Every colour comes from Lakay's mark: its
    periwinkle enamel, the indigo of the shell's sides, the pearl of the shell, and the fine champagne gold of its rim.
    The welcome is a white slab with the shell's spiral engraved faintly across it, and the mark standing alone in its
-   own depth and motion; the day's figures roll into place on pearl drums in a pearl card touched with periwinkle; the
-   counter's keys travel down when pressed; the rooms are white drawers with enamel jewels in a lavender tray (Build 14:
-   the ring around the mark, the solid enamel card and key, and the champagne plaque are gone, at the owner's request).
+   own depth and motion; the day's figures roll into place on pearl drums in a pearl card touched with periwinkle, which
+   stands out in depth and leans toward the hand (Build 24); every figure, chip and the date is a key; the counter's
+   keys are sharp acrylic (Build 24); the rooms are white drawers with enamel jewels in a lavender tray (Build 14: the
+   ring around the mark, the solid enamel card and key, and the champagne plaque are gone, at the owner's request).
    Calm and "reduce motion" hold it all still. */
 
 /* ---------- the shell's colours, by day ---------- */
@@ -88,8 +89,19 @@
 :root[data-theme="night"] .ct-hero .hm-hello { color: #f5f2fd; }
 .ct-hero .hm-lede { margin: 8px 0 0; max-width: 56ch; font-size: .9rem; line-height: 1.5; color: var(--ink-2); }
 .hm-chips { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.hm-chips > li { display: flex; }
 .hm-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 27px; padding: 0 11px; border-radius: 999px; box-sizing: border-box;
   font: 600 .74rem/1 var(--sans); color: var(--pri-text); background: var(--pri-soft); border: 1px solid rgba(var(--pri-rgb), .20); }
+/* Build 24: each chip is a key: the last sale opens its receipt, no sale yet opens a new one, the clock opens the Team */
+button.hm-chip { appearance: none; -webkit-appearance: none; margin: 0; cursor: pointer; transition: transform .2s var(--spring), background-color .2s ease, box-shadow .2s ease; -webkit-tap-highlight-color: transparent; }
+button.hm-chip:hover { transform: translateY(-2px); background-color: rgba(var(--pri-rgb), .15); box-shadow: 0 4px 10px rgba(40, 36, 110, .12); }
+:root[data-theme="night"] button.hm-chip:hover { box-shadow: 0 4px 10px rgba(0, 0, 0, .35); }
+button.hm-chip:active, button.hm-chip.ct-pressed { transform: translateY(0) scale(.96); }
+button.hm-chip:focus-visible { outline: 2px solid var(--pri-ring); outline-offset: 2px; }
+button.hm-chip:hover .emo { animation: ctWiggle .5s ease; }
+@keyframes ctWiggle { 0%, 100% { transform: none; } 30% { transform: rotate(-12deg) scale(1.12); } 60% { transform: rotate(8deg); } }
+.hm-chip.on::after { animation: ctBeat 2.4s ease-in-out infinite; }
+@keyframes ctBeat { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .55; transform: scale(.8); } }
 .hm-chip .emo { font-size: .85rem; }
 .hm-chip.on::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #8d93ff; box-shadow: 0 0 6px rgba(141, 147, 255, .9); }
 
@@ -134,36 +146,90 @@
   background: linear-gradient(180deg, var(--tray), var(--bg-wash)); border: 1px solid var(--line); border-top: 0;
   box-shadow: inset 0 14px 12px -12px rgba(34, 28, 60, .16), 0 2px 0 rgba(34, 28, 60, .05), 0 10px 22px rgba(34, 28, 60, .07); }
 :root[data-theme="night"] .ct-keys { background: linear-gradient(180deg, #171724, #13131e); box-shadow: inset 0 14px 12px -12px rgba(0, 0, 0, .6), 0 2px 0 rgba(0, 0, 0, .4), 0 10px 22px rgba(0, 0, 0, .35); }
+/* Build 24, at the owner's request: the keys are sharp acrylic, made as Ingenium's keys and cards are, with no gloss
+   and no soft skirt: a crisp face from white to a breath of lilac, a hairline edge, a thin ledge beneath and a soft
+   shadow; each rises as the hand comes near and presses in when pressed. The colours stay: New sale wears the
+   periwinkle (its edge, its title, the ring around its cart); Receive and Price check the gentle lavender. */
+.hm { --k-line: rgba(34, 28, 60, .13);
+  --k-pop: inset 0 1px 0 rgba(255, 255, 255, .9), inset 0 -1.5px 0 rgba(34, 28, 60, .08), 0 2.5px 0 rgba(34, 28, 60, .13), 0 7px 13px rgba(34, 28, 60, .11), 0 15px 26px rgba(34, 28, 60, .08);
+  --k-pop-hi: inset 0 1px 0 rgba(255, 255, 255, .95), inset 0 -1.5px 0 rgba(34, 28, 60, .08), 0 4px 0 rgba(34, 28, 60, .12), 0 10px 17px rgba(34, 28, 60, .15), 0 20px 36px rgba(34, 28, 60, .11);
+  --k-press: inset 0 2px 6px rgba(34, 28, 60, .24), 0 1px 0 rgba(34, 28, 60, .08); }
+:root[data-theme="night"] .hm { --k-line: rgba(214, 210, 255, .14);
+  --k-pop: inset 0 1px 0 rgba(255, 255, 255, .10), inset 0 -1.5px 0 rgba(0, 0, 0, .30), 0 2px 0 rgba(0, 0, 0, .45), 0 8px 15px rgba(0, 0, 0, .46), 0 17px 30px rgba(0, 0, 0, .38);
+  --k-pop-hi: inset 0 1px 0 rgba(255, 255, 255, .13), inset 0 -1.5px 0 rgba(0, 0, 0, .30), 0 4px 0 rgba(0, 0, 0, .46), 0 11px 20px rgba(0, 0, 0, .50), 0 24px 40px rgba(0, 0, 0, .42);
+  --k-press: inset 0 2px 6px rgba(0, 0, 0, .55), 0 1px 0 rgba(0, 0, 0, .3); }
 /* each key keeps room for its words: three in a row on a wide counter, fewer to a row on a narrow one */
-.ct-key { position: relative; flex: 1 1 210px; min-width: 0; display: block; padding: 0 0 7px; border: 0; border-radius: 16px; background: transparent; color: inherit; font: inherit; text-align: left;
+.ct-key { position: relative; flex: 1 1 210px; min-width: 0; display: block; padding: 0; border: 0; border-radius: 12px; background: transparent; color: inherit; font: inherit; text-align: left;
   cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .ct-key.enamel { flex: 1.3 1 240px; }
-/* the key's skirt, seen below its cap; the cap travels down onto it when pressed */
-.ct-key::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; bottom: 0; border-radius: 16px; background: var(--k-skirt); box-shadow: 0 6px 12px rgba(34, 28, 60, .16); }
-:root[data-theme="night"] .ct-key::before { box-shadow: 0 6px 12px rgba(0, 0, 0, .55); }
-.ct-key-face { position: relative; display: flex; align-items: center; gap: 14px; min-height: 78px; padding: 13px 16px; border-radius: 16px; border: 1px solid var(--k-rim);
-  background: var(--k-face); color: var(--k-ink);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .55), inset 0 -2px 0 rgba(34, 28, 60, .06); transition: transform .1s cubic-bezier(.3, .7, .4, 1), filter .15s ease; }
-.ct-key:hover .ct-key-face { transform: translateY(-1px); filter: brightness(1.03); }
-.ct-key:active .ct-key-face { transform: translateY(6px); filter: brightness(.98); transition-duration: .05s; }
+.ct-key-face { position: relative; display: flex; align-items: center; gap: 14px; min-height: 76px; padding: 13px 16px; border-radius: 12px; border: 1px solid var(--k-rim);
+  background: linear-gradient(180deg, var(--k-face-hi), var(--k-face-lo)); color: var(--k-ink); box-shadow: var(--k-shadow, var(--k-pop));
+  transition: transform .16s ease, box-shadow .16s ease, filter .16s ease; }
+.ct-key:hover .ct-key-face { transform: translateY(-3px); box-shadow: var(--k-shadow-hi, var(--k-pop-hi)); }
+.ct-key:active .ct-key-face { transform: translateY(1px); box-shadow: var(--k-shadow-press, var(--k-press)); filter: brightness(.98); transition-duration: .06s; }
 .ct-key:focus { outline: none; }
 .ct-key:focus-visible .ct-key-face { outline: 2.5px solid var(--pri-ring); outline-offset: 3px; }
-.ct-key-emo { flex: none; width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%; font: 1.55rem/1 var(--emoji);
-  background: #ffffff; box-shadow: inset 0 -2px 3px rgba(60, 56, 140, .10), 0 1px 0 rgba(255, 255, 255, .8), 0 2px 5px rgba(34, 28, 60, .10); transition: transform .45s var(--spring); }
-:root[data-theme="night"] .ct-key-emo { background: rgba(255, 255, 255, .10); box-shadow: inset 0 -2px 3px rgba(0, 0, 0, .3), 0 1px 0 rgba(255, 255, 255, .06); }
-.ct-key:hover .ct-key-emo { transform: rotate(-8deg) scale(1.08); }
+/* the emoji in a crisp round window: a flat face and a fine rim, no gloss */
+.ct-key-emo { flex: none; width: 46px; height: 46px; box-sizing: border-box; display: grid; place-items: center; border-radius: 50%; font: 1.5rem/1 var(--emoji);
+  background: #ffffff; border: 1px solid var(--k-line); box-shadow: 0 1px 0 rgba(34, 28, 60, .06); transition: transform .3s var(--spring); }
+:root[data-theme="night"] .ct-key-emo { background: rgba(255, 255, 255, .07); box-shadow: 0 1px 0 rgba(0, 0, 0, .35); }
+.ct-key:hover .ct-key-emo { transform: rotate(-8deg) scale(1.06); }
 .ct-key-t { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .ct-key-t b { font: 600 1.12rem/1.15 var(--serif); letter-spacing: .02em; }
 .ct-key-t small { font-size: .76rem; line-height: 1.3; opacity: .86; }
-/* New sale leads with the enamel woven in (a periwinkle jewel, a periwinkle edge and title); Receive and Price check
-   are the gentle lavender beside it (Build 14) */
-.ct-key.enamel { --k-face: var(--sh-card); --k-ink: var(--ink); --k-rim: rgba(var(--pri-rgb), .34); --k-skirt: linear-gradient(180deg, #b4b8ea, #9196d6); }
-.ct-key.enamel .ct-key-face { box-shadow: inset 4px 0 0 var(--pri), inset 0 1px 0 rgba(255, 255, 255, .9), inset 0 -2px 0 rgba(34, 28, 60, .05); }
+/* New sale: a pearl key with the periwinkle woven in. Its cart sits in a pale pearl window ringed in periwinkle, so that
+   it reads clearly by day and by night (on the solid periwinkle jewel it was hard to see) */
+.ct-key.enamel { --k-face-hi: #ffffff; --k-face-lo: #f3f2fc; --k-ink: var(--ink); --k-rim: rgba(var(--pri-rgb), .34);
+  --k-shadow: inset 3px 0 0 var(--pri), var(--k-pop); --k-shadow-hi: inset 3px 0 0 var(--pri), var(--k-pop-hi); --k-shadow-press: inset 3px 0 0 var(--pri), var(--k-press); }
 .ct-key.enamel .ct-key-t b { color: var(--pri-text); }
-.ct-key.enamel .ct-key-emo { background: var(--jewel); box-shadow: var(--jsh); }
-:root[data-theme="night"] .ct-key.enamel { --k-skirt: linear-gradient(180deg, #2a2d6a, #1c1e4c); }
-.ct-key.pearl, .ct-key.blush { --k-face: var(--sh-soft); --k-ink: var(--sh-soft-ink); --k-rim: rgba(var(--pri-rgb), .26); --k-skirt: var(--sh-soft-skirt); }
-:root[data-theme="night"] .ct-key.pearl, :root[data-theme="night"] .ct-key.blush { --k-rim: rgba(176, 181, 245, .22); }
+.ct-key.enamel .ct-key-emo { background: linear-gradient(180deg, #ffffff, #eceefe); border: 2px solid var(--pri); box-shadow: 0 0 0 3px rgba(var(--pri-rgb), .12); }
+:root[data-theme="night"] .ct-key.enamel { --k-face-hi: #2c2b45; --k-face-lo: #201f33; --k-rim: rgba(176, 181, 245, .36); }
+:root[data-theme="night"] .ct-key.enamel .ct-key-emo { background: linear-gradient(180deg, #f3f4ff, #dcdffb); border-color: var(--pri-hi); box-shadow: 0 0 0 3px rgba(176, 181, 245, .16); }
+.ct-key.pearl, .ct-key.blush { --k-face-hi: #fafaff; --k-face-lo: #ecedfb; --k-ink: var(--sh-soft-ink); --k-rim: rgba(var(--pri-rgb), .22); }
+:root[data-theme="night"] .ct-key.pearl, :root[data-theme="night"] .ct-key.blush { --k-face-hi: #2d2d48; --k-face-lo: #22223a; --k-rim: rgba(176, 181, 245, .20); }
+
+/* ---------- Build 24: the greeting card answers the hand ---------- */
+/* the card of the day's figures stands out from the slab in depth, leans toward the pointer, and its light follows the
+   hand; a press on it opens the day's report */
+.ct-window.ct-pop { cursor: pointer; transform-style: preserve-3d; transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform .55s cubic-bezier(.22, .8, .3, 1), box-shadow .3s ease; animation: ctPopIn .75s cubic-bezier(.34, 1.3, .64, 1) .12s backwards;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 2.5px 0 rgba(40, 36, 110, .10), 0 10px 18px rgba(40, 36, 110, .12), 0 26px 44px rgba(40, 36, 110, .12); }
+.ct-window.ct-pop.leaning { transition: transform .12s ease-out, box-shadow .3s ease; }
+.ct-window.ct-pop:hover { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .95), 0 4px 0 rgba(40, 36, 110, .10), 0 16px 26px rgba(40, 36, 110, .16), 0 36px 60px rgba(40, 36, 110, .16); }
+:root[data-theme="night"] .ct-window.ct-pop { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 2px 0 rgba(0, 0, 0, .5), 0 12px 22px rgba(0, 0, 0, .45), 0 30px 50px rgba(0, 0, 0, .4); }
+:root[data-theme="night"] .ct-window.ct-pop:hover { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 4px 0 rgba(0, 0, 0, .5), 0 18px 30px rgba(0, 0, 0, .55), 0 40px 64px rgba(0, 0, 0, .45); }
+.ct-window.ct-pop::after { content: ""; position: absolute; inset: 0; border-radius: 17px; pointer-events: none; opacity: 0; transition: opacity .3s ease;
+  background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 0%), rgba(255, 255, 255, .5), rgba(255, 255, 255, 0) 46%); }
+:root[data-theme="night"] .ct-window.ct-pop::after { background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 0%), rgba(176, 181, 245, .14), rgba(176, 181, 245, 0) 46%); }
+.ct-window.ct-pop:hover::after { opacity: 1; }
+/* the figures stand a little above the card, so that it shows its depth as it leans */
+.ct-window.ct-pop > #hxTaken { transform: translateZ(22px); }
+.ct-window.ct-pop > .ct-reads { transform: translateZ(14px); }
+.ct-window.ct-pop.ct-pressed { transform: perspective(900px) translateY(1px) scale(.99); transition-duration: .08s; }
+@keyframes ctPopIn { from { opacity: 0; transform: perspective(900px) rotateX(16deg) translateY(18px) scale(.94); } to { opacity: 1; transform: perspective(900px) rotateX(0deg) rotateY(0deg); } }
+/* each figure is a key: it rises a little as the hand comes near, and its drums roll again */
+.ct-window button.ct-read { appearance: none; -webkit-appearance: none; margin: -6px -8px; padding: 6px 8px; border: 0; border-radius: 12px; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer;
+  transition: transform .2s var(--spring), background-color .2s ease, box-shadow .2s ease; -webkit-tap-highlight-color: transparent; }
+.ct-window.ct-pop > button#hxTaken:hover { transform: translateZ(30px) translateY(-2px); }
+.ct-reads button.ct-read:hover { transform: translateY(-2px); }
+.ct-window button.ct-read:hover { background-color: rgba(var(--pri-rgb), .07); box-shadow: 0 6px 14px rgba(40, 36, 110, .10); }
+:root[data-theme="night"] .ct-window button.ct-read:hover { background-color: rgba(176, 181, 245, .08); box-shadow: 0 6px 14px rgba(0, 0, 0, .32); }
+.ct-window button.ct-read:active, .ct-window button.ct-read.ct-pressed { transform: translateY(1px) scale(.985); }
+.ct-window button.ct-read:focus { outline: none; }
+.ct-window button.ct-read:focus-visible { outline: 2.5px solid var(--pri-ring); outline-offset: 2px; }
+/* the words of the welcome rise into place one after another */
+.ct-words > * { animation: ctWordIn .6s cubic-bezier(.22, .8, .3, 1) backwards; }
+.ct-words > :nth-child(1) { animation-delay: .06s; } .ct-words > :nth-child(2) { animation-delay: .14s; } .ct-words > :nth-child(3) { animation-delay: .22s; } .ct-words > :nth-child(4) { animation-delay: .3s; }
+@keyframes ctWordIn { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
+/* the date is a key to the Schedule */
+.ct-hero button.hx-date { appearance: none; -webkit-appearance: none; margin: -3px -7px; padding: 3px 7px; border: 0; border-radius: 6px; background: transparent; cursor: pointer;
+  transition: background-color .2s ease, transform .2s var(--spring); }
+.ct-hero button.hx-date:hover { background: rgba(191, 159, 98, .14); transform: translateY(-1px); }
+.ct-hero button.hx-date:focus-visible { outline: 2px solid var(--pri-ring); outline-offset: 2px; }
+.ct-hero button.hx-date.ct-pressed { transform: translateY(1px); }
+/* the sales, brought into view from their figure, glow for a moment */
+.hm-sales.ct-glow { animation: ctGlow 1.6s ease; }
+@keyframes ctGlow { 0% { box-shadow: 0 0 0 0 rgba(var(--pri-rgb), 0), var(--slab); } 25% { box-shadow: 0 0 0 4px rgba(var(--pri-rgb), .30), var(--slab); } 100% { box-shadow: 0 0 0 0 rgba(var(--pri-rgb), 0), var(--slab); } }
 
 /* ---------- the strip: the first steps, your shift, or the practice store ---------- */
 .hm-strip { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 16px; padding: 12px 16px 12px 20px; box-shadow: inset 4px 0 0 var(--pri), var(--slab); }
@@ -335,7 +401,11 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .hm > *, .hm-need, .hm-sale { animation: none !important; }
+  .ct-window.ct-pop, .ct-words > *, .hm-chip.on::after, button.hm-chip .emo, .hm-sales.ct-glow { animation: none !important; }
+  .ct-window.ct-pop, .ct-window.ct-pop > * { transform: none !important; }
   .hm-bar, .ct-strip { transition: none; }
   .ct-engr { animation: none !important; }
 }
 :root[data-calm="1"] .ct-engr { animation: none !important; }
+:root[data-calm="1"] .ct-window.ct-pop, :root[data-calm="1"] .ct-words > *, :root[data-calm="1"] .hm-chip.on::after, :root[data-calm="1"] button.hm-chip .emo, :root[data-calm="1"] .hm-sales.ct-glow { animation: none !important; }
+:root[data-calm="1"] .ct-window.ct-pop, :root[data-calm="1"] .ct-window.ct-pop > * { transform: none !important; }
