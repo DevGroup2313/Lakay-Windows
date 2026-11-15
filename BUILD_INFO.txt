@@ -1,6 +1,6 @@
 Lakay
-Build: 20
+Build: 22
 Date: 15 November 2026
-Stage: Lakay Build 20: the Schedule, with each week planned person by person, filled from the usual week, shifts swapped between colleagues with a leader's approval, and each shift held against the time clock
+Stage: Lakay Build 22: Travel, a short record of each flight booked for a client on a website (the trip, the confirmation code, the ticket and the store's fee, the payments until paid in full), the fee counted in Earnings; never a passport or card number; a client's name and phone only if the owner turns it on
 Copyright (c) 2026 Yannie D. Forest. All rights reserved.
 NO LICENCE IS GRANTED.
