@@ -85,6 +85,7 @@
 .sch-mine-row .ico, .sch-req .ico { width: 14px; height: 14px; }
 .sch-sub { margin: 10px 0 6px; font: 700 .7rem/1.4 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .sch-times { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.sch-busy { margin: .4rem 0 .2rem; padding: 8px 12px; border-radius: 10px; color: var(--warn); font-weight: 600; background: var(--warn-soft); }
 .sch-times .field { margin-top: .4rem; }
 
 @media (max-width: 760px) {

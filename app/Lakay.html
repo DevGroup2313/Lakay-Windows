@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-yEbwhDxYC4j5AONeuJKds/cDGcPoB8kS6iISFLbCJec='; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-UyVaLRbmlvei/TwvO4AJuz01H1I6XCuDeBa6g68VtbA='; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#f5f4f8">
@@ -1933,6 +1933,7 @@ body:has(.sticky-panel-back) #rail-notes { opacity: 0 !important; pointer-events
 .sch-mine-row .ico, .sch-req .ico { width: 14px; height: 14px; }
 .sch-sub { margin: 10px 0 6px; font: 700 .7rem/1.4 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .sch-times { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.sch-busy { margin: .4rem 0 .2rem; padding: 8px 12px; border-radius: 10px; color: var(--warn); font-weight: 600; background: var(--warn-soft); }
 .sch-times .field { margin-top: .4rem; }
 
 @media (max-width: 760px) {
@@ -4389,7 +4390,8 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     ["sch.askH", "Ask a colleague", "Demander à un collègue", "Mande yon kòlèg"],
     ["sch.askWho", "Whom you ask", "À qui vous demandez", "Ki moun ou mande"],
     ["sch.theirShift", "Their shift that you take", "Son service que vous prenez", "Sèvis pa l ou pran"],
-    ["sch.noTheirs", "{name} has no shift to trade in the coming days.", "{name} n'a pas de service à échanger dans les jours qui viennent.", "{name} pa gen sèvis pou boukante nan jou k ap vini yo."],
+    ["sch.noTheirs", "{name} has no shift that fits a trade in the coming days.", "{name} n'a pas de service qui convienne à un échange dans les jours qui viennent.", "{name} pa gen sèvis ki ka boukante nan jou k ap vini yo."],
+    ["sch.busy", "{name} already works then. Choose someone else, or a trade.", "{name} travaille déjà à ce moment-là. Choisissez quelqu'un d'autre, ou un échange.", "{name} deja travay lè sa a. Chwazi yon lòt moun, oswa yon boukantaj."],
     ["sch.askNote", "A word for them", "Un mot pour la personne", "Yon mo pou moun nan"],
     ["sch.askNotePh", "If it helps", "Si cela aide", "Si sa ede"],
     ["sch.askP", "They answer first. Then a leader approves, and only then do the shifts change hands.", "La personne répond d'abord. Puis un responsable approuve, et alors seulement les services changent de mains.", "Moun nan reponn anvan. Apre sa yon chèf apwouve, epi se lè sa a sèlman sèvis yo chanje men."],
@@ -12607,6 +12609,13 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   };
 
   /* ---------- asking a colleague: cover my shift, or trade one of theirs for it ---------- */
+  /* whether a person is free for a shift's hours that day (leaving out the shifts named, which change hands) */
+  function freeFor(user, x, skip) {
+    var a = +x.from.slice(0, 2) * 60 + +x.from.slice(3, 5), b = +x.to.slice(0, 2) * 60 + +x.to.slice(3, 5);
+    return !B.slots(function (y) { return y.user === user && y.day === x.day && skip.indexOf(y.id) < 0; }).some(function (y) {
+      var c = +y.from.slice(0, 2) * 60 + +y.from.slice(3, 5), d = +y.to.slice(0, 2) * 60 + +y.to.slice(3, 5); return c < b && a < d;
+    });
+  }
   S.askForm = function (sl) {
     var me = B.user, others = people().filter(function (u) { return u.id !== me.id; });
     if (!others.length) { ui.toast(t("sch.noOne")); return; }
@@ -12614,28 +12623,38 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     var kindSeg = ui.seg([["cover", t("sch.kind.cover")], ["trade", t("sch.kind.trade")]], kind, function (v) { kind = v; draw(); }, t("sch.kindH"));
     kindSeg.id = "swKind";
     var who = ui.select(others.map(function (u) { return [u.id, u.name]; }), others.filter(function (u) { return u.role !== "owner"; }).concat(others)[0].id, { id: "swWho" });
-    var theirsBox = h("div#swTheirsBox"), note = ui.input({ id: "swNote", maxlength: "120", placeholder: t("sch.askNotePh") }), theirs = null;
+    var theirsBox = h("div#swTheirsBox"), note = ui.input({ id: "swNote", maxlength: "120", placeholder: t("sch.askNotePh") }), theirs = null, ok = true;
+    /* only what can work is offered: a colleague who already works then cannot cover, and a trade is listed only when
+       each of the two is free for the other's shift (the books check it all again when the request is sent) */
     function draw() {
-      U.clear(theirsBox); theirs = null;
-      if (kind !== "trade") return;
-      var list = B.slots(function (x) { return x.user === who.value && x.day >= U.dayKey() && startsLater(x) && !openSwapOn(x.id); });
-      if (!list.length) { theirsBox.appendChild(h("p.muted#swNoTheirs", null, t("sch.noTheirs", { name: nameOf(who.value) }))); return; }
-      theirs = ui.select(list.map(function (x) { return [x.id, dayName(x.day) + ", " + S.range(x)]; }), list[0].id, { id: "swTheirs" });
-      theirsBox.appendChild(ui.field("sch.theirShift", theirs));
+      U.clear(theirsBox); theirs = null; ok = true;
+      if (kind !== "trade") {
+        if (!freeFor(who.value, sl, [])) { ok = false; theirsBox.appendChild(h("p.hint.sch-busy#swBusy", null, t("sch.busy", { name: nameOf(who.value) }))); }
+      } else {
+        var list = B.slots(function (x) { return x.user === who.value && x.day >= U.dayKey() && startsLater(x) && !openSwapOn(x.id) && freeFor(me.id, x, [sl.id]) && freeFor(who.value, sl, [x.id]); });
+        if (!list.length) { ok = false; theirsBox.appendChild(h("p.hint.sch-busy#swNoTheirs", null, t("sch.noTheirs", { name: nameOf(who.value) }))); }
+        else { theirs = ui.select(list.map(function (x) { return [x.id, dayName(x.day) + ", " + S.range(x)]; }), list[0].id, { id: "swTheirs" }); theirsBox.appendChild(ui.field("sch.theirShift", theirs)); }
+      }
+      var send = document.getElementById("swSend"); if (send) send.disabled = !ok;
     }
     who.addEventListener("change", draw);
+    /* the first colleague offered is one who is free then, if there is one */
+    var free = others.filter(function (u) { return u.role !== "owner" && freeFor(u.id, sl, []); })[0];
+    if (free) who.value = free.id;
     draw();
     ui.dialog({ title: t("sch.askH"), emoji: "🔁", body: [h("p", null, [h("b", null, dayName(sl.day)), h("br"), S.range(sl)]),
       h("div.field", null, [h("div.label-row", null, h("span.lbl", null, t("sch.kindH"))), kindSeg]), ui.field("sch.askWho", who), theirsBox, ui.field("sch.askNote", note),
       h("p.hint", null, t("sch.askP"))],
       actions: [{ label: t("cancel") }, { label: t("sch.send"), kind: "primary", id: "swSend", onClick: function (close, btn) {
-        if (kind === "trade" && !theirs) { ui.toast(t("sch.noTheirs", { name: nameOf(who.value) }), "bad"); return false; }
+        if (!ok || (kind === "trade" && !theirs)) return false;
         btn.disabled = true;
         B.askSwap({ slot: sl.id, to: who.value, kind: kind, theirSlot: theirs ? theirs.value : null, note: note.value }).then(function () {
           close(); ui.toast(t("sch.sent", { name: nameOf(who.value) }), "good"); redraw();
         }, function (e) { btn.disabled = false; failed(e); });
         return false;
       } }] });
+    /* the Send key exists now: closed while nothing that can work is chosen */
+    draw();
   };
 
   /* ---------- the Home: the next shift, what is asked of the person, and what waits for a leader ---------- */

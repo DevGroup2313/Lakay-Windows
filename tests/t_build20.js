@@ -119,15 +119,18 @@ const wait = (p, ms) => p.waitForTimeout(ms);
   await p.click(`#schMine li[data-slot] [data-act="ask"]`); await wait(p, 400);
   ok(await p.locator(".layer #swKind").count() === 1 && await p.locator(".layer #swWho").count() === 1, "Ask to swap: cover or trade, and with whom");
   ok(await p.textContent("#swWho") === "Jean", "a colleague is offered first: Jean");
-  await p.click("#swSend"); await wait(p, 600);
-  ok(/two shifts at the same time/.test(await p.textContent("#toasts")) && await p.locator(".layer #swSend").count() === 1
-    && await p.evaluate(() => E.books.swaps(w => w.from === "u_practice_marie" && w.status === "asked").length) === 0, "Jean works that afternoon: the request is refused, and the window stays open");
-  await p.keyboard.press("Escape"); await wait(p, 300);
-  const own = await p.evaluate(() => {
-    const open = E.books.swaps(w => E.books.SWAP_OPEN.indexOf(w.status) >= 0), s = E.books.slots(x => x.user === "u_practice_marie" && x.day > E.util.dayKey() && !open.some(w => w.slot === x.id || w.theirSlot === x.id))[0];
-    return E.books.askSwap({ slot: s.id, to: "owner", kind: "cover", note: "A doctor's visit" }).then(w => w.status + "|" + w.note, e => e.code);
-  });
-  ok(own === "asked|A doctor's visit", "she asks the owner to cover another shift, with a word");
+  ok(await p.locator("#swBusy").isVisible() && await p.isDisabled("#swSend"), "Jean works that afternoon: the window says so, and Send stays closed");
+  await p.click('#swKind [data-v="trade"]'); await wait(p, 250);
+  const fits = await p.evaluate(() => Array.from(document.querySelectorAll("#swTheirsBox")).map(b => b.textContent)[0]);
+  ok(await p.locator("#swTheirs").count() === 1 && /Wednesday/.test(fits) && !(await p.isDisabled("#swSend")), "a trade lists only the shifts that fit: Jean's Wednesday afternoon for her morning");
+  await p.click('#swKind [data-v="cover"]'); await wait(p, 250);
+  await p.evaluate(() => { const s = document.querySelector("#swWho"); s.value = "owner"; s.dispatchEvent(new Event("change")); }); await wait(p, 250);
+  ok(!(await p.isDisabled("#swSend")) && await p.locator("#swBusy").count() === 0, "the owner is free then: Send opens");
+  await p.fill("#swNote", "A doctor's visit"); await p.click("#swSend"); await wait(p, 700);
+  const own = await p.evaluate(() => E.books.swaps(w => w.from === "u_practice_marie" && w.status === "asked").map(w => w.to + "|" + w.note)[0]);
+  ok(own === "owner|A doctor's visit", "she asks the owner to cover it, with a word");
+  const twiceAsk = await p.evaluate(() => { const w = E.books.swaps(w => w.from === "u_practice_marie" && w.status === "asked")[0]; return E.books.askSwap({ slot: w.slot, to: "owner", kind: "cover" }).then(() => "asked", e => e.code); });
+  ok(twiceAsk === "already", "one request at a time on a shift");
   const cancel = await p.evaluate(() => { const w = E.books.swaps(w => w.from === "u_practice_marie" && w.status === "asked")[0]; return E.books.cancelSwap(w.id).then(w => w.status); });
   ok(cancel === "cancelled" && (await lastLine()).type === "swap.cancelled", "and cancels it");
   const notMine = await p.evaluate(() => { const s = E.books.slots(x => x.user === "u_practice_jean" && x.day > E.util.dayKey())[0]; return E.books.askSwap({ slot: s.id, to: "owner", kind: "cover" }).then(() => "asked", e => e.code); });
