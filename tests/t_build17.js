@@ -64,9 +64,12 @@ const wait = (p, ms) => p.waitForTimeout(ms);
   ok(await p.locator('#learnList .lesson [data-act="tour"]').count() === 8 && await p.locator('#learnList .lesson [data-act="read"]').count() === 8 && await p.locator('#learnList .lesson [data-act="quiz"]').count() === 8,
     "each lesson has Show me, Read and Questions");
   ok(await p.locator("#learnNext").getAttribute("data-lesson") === "welcome", "the next lesson is the welcome");
+  /* Build 19: the team's table is under its own tab */
+  await p.click("#lrnTab-team"); await wait(p, 250);
   const team = await p.$$eval("#learnPeople tbody tr", rs => rs.map(r => r.textContent));
   ok(team.length === 3 && team.some(x => /Marie/.test(x) && /2 \/ 5/.test(x)) && team.some(x => /Jean/.test(x) && /6 \/ 7/.test(x)), "the team's lessons: Marie 2 of 5, Jean 6 of 7 (" + team.length + " people)");
   ok(await p.locator("#learnPeople .learn-mark.on").count() === 8, "each finished lesson is marked, the rest are not");
+  await p.click("#lrnTab-lessons"); await wait(p, 250);
   ok(await p.locator("#learnTips details").count() >= 8, "every tip, room by room");
   await p.click('#learnList .lesson[data-lesson="sale"] [data-act="read"]'); await p.waitForSelector(".learn-read");
   ok((await p.textContent(".layer h2")).includes(await p.evaluate(() => E.t("guide.sale.t"))), "Read opens the lesson's chapter of the Guidebook");
@@ -196,14 +199,15 @@ const wait = (p, ms) => p.waitForTimeout(ms);
 
   console.log("A cashier's lessons");
   await p.click("#statusPill"); await p.click('.as-keys [data-person="u_practice_marie"]'); await wait(p, 700);
-  await go("learn");
+  await go("learn"); await p.click("#lrnTab-lessons"); await wait(p, 250);
   ok(await p.locator("#learnList .lesson").count() === 5 && /2 of 5 done/.test(await p.textContent("#learnCount")), "Marie has five lessons, two done");
   ok(await p.locator("#learnTeam").count() === 0, "a cashier does not see the team's lessons");
   await go("inventory");
   ok(await p.getAttribute(".room-head #showMe", "data-tour") === "svc", "in Inventory, a cashier's tour is the money transfers");
   await go("home");
-  ok(/Your lessons: 3 to go/.test(await p.textContent(".hm-needs")), "the Home reminds her: 3 lessons to go");
-  await p.locator(".hm-need", { hasText: "Your lessons" }).locator(".hm-need-k").click(); await wait(p, 400);
+  /* Build 19: Marie's onboarding holds her lessons, so the Home counts her training */
+  ok(/Your training: 8 to do/.test(await p.textContent(".hm-needs")), "the Home reminds her: her training, 8 to do");
+  await p.locator(".hm-need", { hasText: "Your training" }).locator(".hm-need-k").click(); await wait(p, 400);
   ok(await p.evaluate(() => E.ui.current) === "learn", "its key opens Learning");
   const deniedTour = await p.evaluate(() => E.tour.start("safe"));
   ok(deniedTour === false, "a lesson her access does not open does not start");

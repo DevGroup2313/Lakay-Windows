@@ -214,15 +214,23 @@
       list.push(need("🔔", x.text, t("home.attnRem", { t: ui.time(x.at) }), Date.parse(x.at) <= Date.now() ? "warn" : null,
         [t("home.open"), function () { ui.alertsPanel(); }]));
     });
-    /* a person's lessons still to take (Build 17) */
-    if (staff && E.learn) {
+    /* a person's training (Build 19): what was assigned, the onboarding and the refreshers; for leaders, the team's */
+    var trained = false;
+    if (E.train && B.user) {
+      E.train.homeRows(need).forEach(function (x) { list.push(x); });
+      var mine = E.train.statusOf(B.user);
+      trained = mine.items.length > 0 || mine.refresh.length > 0;
+    }
+    /* a person's lessons still to take (Build 17), when nothing has been assigned to them */
+    if (staff && E.learn && !trained) {
       var left = E.learn.leftFor(B.user).length;
       if (left) list.push(need("🎓", t(left === 1 ? "learn.homeLeft1" : "learn.homeLeft", { n: left }), t("learn.homeLeftSub"), null, [t("home.open"), function () { ui.go("learn"); }]));
     }
-    if (!staff && !practice) {
+    /* the backup: the owner's, from Settings; a manager given Backups saves it from here (Build 19) */
+    if (!practice && (!staff || B.can("backup"))) {
       var lastB = U.prefGet("lastBackup", ""), days = lastB ? Math.floor((Date.now() - Date.parse(lastB)) / 86400000) : null;
       if (days === null || days >= 7) list.push(need("💾", days === null ? t("home.attnBackupNone") : t("home.attnBackupOld", { n: days }), t("home.attnBackupSub"), days === null ? "warn" : null,
-        [t("home.backupKey"), function () { ui.go("settings"); }]));
+        [t("home.backupKey"), staff ? function () { E.saveBackup(); } : function () { ui.go("settings"); }]));
     }
     return h("section.hm-needs", { "aria-label": t("home.attnH") }, [
       h("div.hx-sech", null, [h("h2", null, [ui.emo("📌"), t("home.attnH")]), h("p", null, t("home.attnP"))]),

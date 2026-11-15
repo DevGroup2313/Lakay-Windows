@@ -4,6 +4,27 @@ Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED.
 
 The newest build is first. The build number also shows in Lakay's About.
 
+## Build 19 (15 November 2026): team leaders and managers, training assigned to each person, exercises, onboarding and refreshers
+
+The owner's request of 15 November 2026: limited administrative access for team leaders and managers; training and exercises on the system and the app, assigned to employees and new hires; a full onboarding system, with refreshers, built into the app.
+
+- **Access to lead, within limits.** Three new kinds of access: Training (assign lessons and exercises, start a new person's onboarding and sign it off), The people (add people, give a first password, take a key back) and Backups (save a sealed backup). A new level, Team leader: selling, the stock, the team's hours and Training. A Manager has all of them. Only the owner gives them at first.
+- **The limits are kept by the books, not only by the screens.** A person who looks after the people gives only the access they hold themselves, and never The people itself. They change no one who holds more, never the owner, and never themselves. What they cannot give is shown in the window, but closed. Settings, restoring a backup and the Author Studio stay the owner's.
+- **A manager adds a person with their own password.** Their password opens the store's key from their own envelope, and a new envelope is sealed for the new person, as the owner's does. A wrong password gives no key. The ledger says who added whom.
+- **A manager's backup:** the Team room has the key to save a sealed backup, and the Home reminds them after a week.
+- **Learning has tabs:** My training, Lessons, Exercises and, for those who train, The team and Plans. The room opens on the person's own training when they have some, and on the lessons when they have none.
+- **Exercises on the real screens.** Six: a break, a sale in cash, a sale paid in two parts, a card payment, a delivery, a money transfer. Each says what to do, opens the right room and watches for the work. While it runs, the books Lakay shows are a copy in memory: the sale, the delivery, the transfer or the break change the copy, never the sealed books, and nothing is written to the device. A band across the top says so, with What to do and End the exercise. When the work is done, the copy is let go, and only the mark that it was done is written. Work other than the counter's is refused while an exercise runs; a lock ends it; a sale waiting at the Register is put aside and brought back. The card exercise follows the store's own payment settings.
+- **Assigning:** who, what (lessons, exercises, the store's own tasks) and by when. Each person gets only what their access opens, and nothing is given twice. A lesson assigned counts once it is taken after it was assigned; an onboarding counts what was done before.
+- **Onboarding, day by day.** Starting a person's onboarding gives them the store's path, each item due on its day. A new person's starts the day they are added (a box in the window, checked at first). The person sees it in My training, day by day: what is done, what is due today, what is overdue. When everything is done, a leader signs it off. No one signs off their own, and the books refuse an early sign-off.
+- **The store's own tasks**, such as reading the cash rules, or a first shift beside a leader. The person marks one done, or a leader signs it.
+- **Refreshers:** in Plans, how long after a lesson or exercise was last done it comes due again (3, 6 or 12 months). It shows a week before.
+- **The Home** says what is waiting: the person's own training and how much of it is overdue; for leaders, the onboardings ready to sign off, or the people with overdue training.
+- **The practice store** has a plan of its own: two tasks, a path of six days and three refreshers. Jean, the manager, started Marie's onboarding two days ago; the owner gave Jean the Reports lesson. A practice store made by an earlier build is given these samples once, as it opens, and Jean the manager's new access.
+- **A manager added before Build 19 keeps the access they had.** Nothing is given without the owner: to give a manager the new access, press their name in Team and choose Manager again. A level's name is now kept only when the access is that level's own.
+- **Every step is a ledger line** (`course.updated`, `training.assigned`, `training.unassigned`, `onboarding.started`, `onboarding.signedoff`, `training.exercise`, `training.task`), and Verify replays the marks of the exercises and the tasks with those of the lessons.
+- A new chapter in the Guidebook: Training, onboarding and refreshers. Every word is in English, French and Kreyòl (171 new phrases; the Kreyòl is marked for review by a native speaker).
+- tests/t_build19.js: 108 checks, among them a store of its own where a manager adds a person with her own password and that person signs in, and a practice store made by an earlier build. tests/t_build17.js now opens the Learning room's tabs and finds a cashier's training on the Home. Every suite passes: 646 checks in all.
+
 ## Build 18 (15 November 2026): the Author Studio made new
 
 The fourth item on the owner's list: the Author Studio, which the owner found poor, redesigned from the ground up.

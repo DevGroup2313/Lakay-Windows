@@ -211,8 +211,8 @@
   }
 
   /* ---------- the Guidebook ---------- */
-  var ARTICLES = ["start", "learn", "door", "team", "clock", "master", "sale", "pay", "items", "receive", "correct", "depts", "svc", "reports", "notes", "backup", "sealed", "verify", "display", "studio", "build", "limits"];
-  var ART_EMO = { start: "🌟", learn: "🎓", door: "🚪", team: "👥", clock: "🕘", master: "🗝️", sale: "🛒", pay: "💳", items: "🏷️", receive: "🚚", correct: "✏️", depts: "🗂️", svc: "💱", reports: "📊", notes: "🗒️", backup: "💾", sealed: "🔐", verify: "🛡️", display: "🎨", studio: "⚒️", build: "🔢", limits: "🧭" };
+  var ARTICLES = ["start", "learn", "train", "door", "team", "clock", "master", "sale", "pay", "items", "receive", "correct", "depts", "svc", "reports", "notes", "backup", "sealed", "verify", "display", "studio", "build", "limits"];
+  var ART_EMO = { start: "🌟", learn: "🎓", train: "📋", door: "🚪", team: "👥", clock: "🕘", master: "🗝️", sale: "🛒", pay: "💳", items: "🏷️", receive: "🚚", correct: "✏️", depts: "🗂️", svc: "💱", reports: "📊", notes: "🗒️", backup: "💾", sealed: "🔐", verify: "🛡️", display: "🎨", studio: "⚒️", build: "🔢", limits: "🧭" };
   E.guideCount = function () { return ARTICLES.length; };
   ui.rooms.guide = function (main) {
     var q = ui.input({ id: "guideSearch", type: "search", placeholder: t("guide.searchPh"), "aria-label": t("guide.search") });

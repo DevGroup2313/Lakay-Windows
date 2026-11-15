@@ -245,6 +245,7 @@
 
   /* ---------- running a tour ---------- */
   T.start = function (id, opt) {
+    if (B.drilling && B.drilling()) { ui.toast(t("ex.busy"), "warn"); return false; }
     if (run) T.stop(false, true);
     var l = lesson(id);
     if (!TOURS[id] || !l || !B.isOpen || !canTake(B.user, l)) return false;
@@ -411,6 +412,7 @@
   /* ---------- the questions ---------- */
   L.quiz = function (id) {
     var l = lesson(id); if (!l || !B.isOpen) return null;
+    if (B.drilling && B.drilling()) { ui.toast(t("ex.busy"), "warn"); return null; }
     var qs = questions(id), i = 0, right = 0, missed = false, solved = false, d;
     var body = h("div.quiz#quiz");
     function step() {
@@ -466,22 +468,24 @@
       ui.readAloud(t("guide." + id + ".t") + ". " + paras.join(" "))], actions: [{ label: t("gotIt"), kind: "primary" }] });
   };
 
-  /* ---------- the Learning room ---------- */
-  ui.rooms.learn = function (main) {
+  /* ---------- the Learning room's parts (the room itself, with its tabs, is in 25-train.js since Build 19) ---------- */
+  /* the person's own lessons: how many are done, and the next one */
+  L.mineCard = function () {
     var me = B.user, mine = L.lessonsFor(me), done = L.doneOf(me), practice = B.mode === "practice";
     var n = mine.filter(function (l) { return done[l.id]; }).length, next = mine.filter(function (l) { return !done[l.id]; })[0];
-    main.appendChild(ui.roomHead("room.learn", "tip.learn", [h("button.key.primary#learnTour", { type: "button", onclick: function () { T.start("welcome"); } }, [U.icon("play"), t("learn.tour")])]));
-
     var fill = h("span.learn-fill"); fill.style.width = (mine.length ? Math.round(100 * n / mine.length) : 0) + "%";
-    main.appendChild(h("section.card.learn-mine#learnMine", { "aria-labelledby": "learnMineH" }, [
+    return h("section.card.learn-mine#learnMine", { "aria-labelledby": "learnMineH" }, [
       h("div.learn-mine-head", null, [h("span.learn-cap", { "aria-hidden": "true" }, U.icon("cap")),
         h("div.learn-mine-t", null, [h("h2#learnMineH", null, t("learn.mineH")), h("p#learnCount", null, n === mine.length ? t("learn.allDone") : t("learn.progress", { n: n, m: mine.length }))]),
         next ? h("div.learn-next", null, [h("small", null, t("learn.next", { name: t("learn." + next.id + ".t") })),
           h("button.key.primary#learnNext", { type: "button", "data-lesson": next.id, onclick: function () { T.start(next.id); } }, [U.icon("play"), t("learn.start")])]) : null]),
       h("div.learn-bar", { role: "progressbar", "aria-valuemin": "0", "aria-valuemax": String(mine.length), "aria-valuenow": String(n), "aria-label": t("learn.mineH") }, fill),
-      h("p.hint.learn-note", null, [ui.emo(practice ? "🧪" : "🛡️"), t(practice ? "learn.practiceNote" : "learn.realNote")])]));
-
-    main.appendChild(h("div.learn-grid#learnList", null, mine.map(function (l) {
+      h("p.hint.learn-note", null, [ui.emo(practice ? "🧪" : "🛡️"), t(practice ? "learn.practiceNote" : "learn.realNote")])]);
+  };
+  /* every lesson the person may take, each with Show me, Read and Questions */
+  L.lessonsGrid = function () {
+    var me = B.user, mine = L.lessonsFor(me), done = L.doneOf(me);
+    return h("div.learn-grid#learnList", null, mine.map(function (l) {
       var x = done[l.id];
       return h("article.lesson" + (x ? ".done" : ""), { "data-lesson": l.id, "aria-labelledby": "ls-" + l.id }, [
         h("div.lesson-head", null, [h("span.lesson-emo", { "aria-hidden": "true" }, l.emo), h("h3.lesson-t#ls-" + l.id, null, t("learn." + l.id + ".t")),
@@ -492,35 +496,28 @@
           h("button.key.sm.primary", { type: "button", "data-act": "tour", onclick: function () { T.start(l.id); } }, [U.icon("play"), t("learn.showMe")]),
           h("button.key.sm", { type: "button", "data-act": "read", onclick: function () { L.read(l.guide); } }, [U.icon("book"), t("learn.read")]),
           h("button.key.sm", { type: "button", "data-act": "quiz", onclick: function () { L.quiz(l.id); } }, [U.icon("edit"), t("learn.quiz")])])]);
-    })));
-
-    /* the team's lessons, for the owner and those with the team access */
-    if (B.can("team")) {
-      var people = B.people().filter(function (u) { return u.active !== false; });
-      main.appendChild(h("section.card.learn-team#learnTeam", { "aria-labelledby": "learnTeamH" }, [
-        h("div.card-head", null, h("h2#learnTeamH", null, [ui.emo("👥"), t("learn.teamH")])), h("p.hint", null, t("learn.teamP")),
-        h("div.table-wrap", null, h("table.grid#learnPeople", null, [
-          h("thead", null, h("tr", null, [h("th", null, t("people.name")), h("th.num", null, t("learn.colDone")), h("th", null, t("learn.colLast")), h("th", null, t("learn.colMarks"))])),
-          h("tbody", null, people.map(function (u) {
-            var theirs = L.lessonsFor(u), d = L.doneOf(u), k = theirs.filter(function (l) { return d[l.id]; }).length, lastAt = null;
-            theirs.forEach(function (l) { if (d[l.id] && (!lastAt || d[l.id].at > lastAt)) lastAt = d[l.id].at; });
-            return h("tr", { "data-person": u.id }, [h("td", null, ui.personTag(u)), h("td.num", null, h("span.badge" + (k === theirs.length ? ".ok" : ""), null, k + " / " + theirs.length)),
-              h("td.muted", null, lastAt ? E.fmtDate(new Date(lastAt), "short") : t("learn.never")),
-              h("td", null, h("span.learn-marks", null, theirs.map(function (l) {
-                var on = !!d[l.id], label = t(on ? "learn.markDone" : "learn.markTodo", { name: t("learn." + l.id + ".t") }) + (on ? " (" + d[l.id].score + "/" + d[l.id].of + ")" : "");
-                return h("span.learn-mark" + (on ? ".on" : ""), { role: "img", "aria-label": label, title: label }, l.emo);
-              })))]);
-          }))]))]));
-    }
-
-    /* every tip, room by room */
-    main.appendChild(h("section.card.learn-tips#learnTips", { "aria-labelledby": "learnTipsH" }, [
+    }));
+  };
+  /* a person's lessons, for the team's table: how many are done, the last one, and a mark for each */
+  L.lessonCells = function (u) {
+    var theirs = L.lessonsFor(u), d = L.doneOf(u), k = theirs.filter(function (l) { return d[l.id]; }).length, lastAt = null;
+    theirs.forEach(function (l) { if (d[l.id] && (!lastAt || d[l.id].at > lastAt)) lastAt = d[l.id].at; });
+    return [h("td.num", null, h("span.badge" + (k === theirs.length ? ".ok" : ""), null, k + " / " + theirs.length)),
+      h("td.muted", null, lastAt ? E.fmtDate(new Date(lastAt), "short") : t("learn.never")),
+      h("td", null, h("span.learn-marks", null, theirs.map(function (l) {
+        var on = !!d[l.id], label = t(on ? "learn.markDone" : "learn.markTodo", { name: t("learn." + l.id + ".t") }) + (on ? " (" + d[l.id].score + "/" + d[l.id].of + ")" : "");
+        return h("span.learn-mark" + (on ? ".on" : ""), { role: "img", "aria-label": label, title: label }, l.emo);
+      })))];
+  };
+  /* every tip, room by room */
+  L.tipsCard = function () {
+    return h("section.card.learn-tips#learnTips", { "aria-labelledby": "learnTipsH" }, [
       h("div.card-head", null, h("h2#learnTipsH", null, [ui.emo("💡"), t("learn.allTipsH")])),
       h("div.learn-tip-rooms", null, Object.keys(TIPS).filter(function (r) { return r === "learn" || ui.allowed(r); }).map(function (r) {
         var list = [];
         for (var k = 1; k <= TIPS[r]; k++) list.push(h("li", null, t("tips." + r + "." + k)));
         return h("details.learn-tip-room", null, [h("summary", null, [ui.emo(ui.ROOM_EMO[r] || "💡"), t("room." + r)]), h("ul", null, list)]);
-      }))]));
+      }))]);
   };
 
   /* ---------- tips at the foot of each room ---------- */

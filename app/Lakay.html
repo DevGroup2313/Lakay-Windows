@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-xwL/vTi25Bv5a3lrhDbYYuR9LNEutUA/cCrbQwGzQdg='; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-39k6ezEltZoaSB9uk/I3IU3V5Zvs2a4ByMhdXUvVMcQ='; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#f5f4f8">
 <meta name="application-name" content="Lakay">
-<meta name="lakay-build" content="18">
-<!-- LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt. Build 18 (2026-11-14). -->
+<meta name="lakay-build" content="19">
+<!-- LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt. Build 19 (2026-11-15). -->
 <title>Lakay</title>
 <!-- Lakay's logo, inside the page (the page's own policy shows only pictures it carries): the square tile, filled edge to
      edge with the coin's periwinkle, for the shortcuts a browser makes on a home screen; the round coin, on nothing, for the
@@ -2109,6 +2109,146 @@ tr.retired td { opacity: .58; }
 @media (prefers-reduced-motion: reduce) { .who-dot, .cl-key .pdot { box-shadow: none; } }
 #peopleList .badge, #peopleList td:nth-child(3) { white-space: nowrap; }
 
+/* LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt.
+   Training (Build 19): the Learning room's tabs, a person's onboarding day by day, the lines of training with their
+   keys, the team's table, the plans, and the band across the top while an exercise runs. White slabs and pearl, the
+   periwinkle woven in; done wears the periwinkle check, overdue the brick, never green. */
+
+/* ---------- the tabs and their panes ---------- */
+.lrn-tabs { margin-top: 4px; }
+.inv-tab-n.late { background: var(--danger-soft); color: var(--danger); }
+.lrn-pane { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.lrn-pane > .card, .lrn-pane > .learn-grid { margin-bottom: 0; }
+.tr-intro { display: flex; align-items: flex-start; gap: 8px; margin: 0; padding: 10px 14px; border-radius: 14px; color: var(--ink-2); line-height: 1.45;
+  background: var(--surface); border: 1px solid var(--line); box-shadow: inset 3px 0 0 rgba(var(--pri-rgb), .55); }
+.tr-intro .ico { width: 16px; height: 16px; flex: none; margin-top: 2px; color: var(--pri-text); }
+
+/* ---------- lines of training ---------- */
+.tr-sec .card-head { margin-bottom: 4px; }
+.tr-sec h3 { margin: 14px 0 6px; font: 600 1rem/1.3 var(--sans); color: var(--ink); }
+.tr-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.tr-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 12px; border-radius: 14px; min-width: 0;
+  background: var(--surface); border: 1px solid var(--line); box-shadow: var(--pill); }
+.tr-row.done { background: linear-gradient(180deg, var(--surface), rgba(var(--pri-rgb), .04)); border-color: rgba(var(--pri-rgb), .22); }
+.tr-row.late { box-shadow: inset 3px 0 0 var(--danger), var(--pill); }
+.tr-emo { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; flex: none; border-radius: 50%; font-size: 1.15rem;
+  background: rgba(var(--pri-rgb), .08); box-shadow: inset 0 0 0 1px rgba(var(--pri-rgb), .16); }
+.tr-row.done .tr-emo { filter: saturate(.7); }
+.tr-t { flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.tr-t b { color: var(--ink); font-weight: 600; line-height: 1.3; }
+.tr-t small { color: var(--muted); line-height: 1.35; }
+.tr-t small.tr-body { color: var(--ink-2); }
+.tr-row .badge { display: inline-flex; align-items: center; gap: 4px; flex: none; }
+.tr-row .badge .ico { width: 12px; height: 12px; }
+.tr-keys { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-left: auto; }
+.tr-keys .key.sm { padding-left: 9px; padding-right: 10px; gap: 5px; }
+.tr-keys .ico, .tr-check .ico { width: 14px; height: 14px; }
+.tr-wait { color: var(--muted); font-style: italic; margin-left: auto; }
+.tr-calm { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 16px 18px; border-radius: 18px; background: var(--surface); border: 1px dashed var(--line-2); }
+.tr-calm p { margin: 0; flex: 1 1 240px; color: var(--ink-2); line-height: 1.45; }
+.tr-calm-emo { font-size: 1.6rem; }
+
+/* ---------- a person's onboarding ---------- */
+.tr-onb { display: flex; flex-direction: column; gap: 12px; padding: 18px 20px 16px;
+  background: linear-gradient(180deg, var(--surface), var(--surface-2)); border-color: rgba(var(--pri-rgb), .22); }
+.tr-onb-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.tr-onb-t { flex: 1 1 220px; min-width: 0; }
+.tr-onb-t h2 { margin: 0 0 2px; font: 600 1.2rem/1.2 var(--serif); color: var(--ink); }
+.tr-onb-t p { margin: 0; color: var(--ink-2); }
+.tr-onb-n { display: flex; flex-direction: column; align-items: flex-end; }
+.tr-onb-n b { font: 600 1.4rem/1 var(--serif); color: var(--pri-text); font-variant-numeric: tabular-nums; }
+.tr-onb-n small { color: var(--muted); }
+.tr-ready, .tr-signed { display: flex; align-items: center; gap: 8px; margin: 0; padding: 8px 12px; border-radius: 12px; color: var(--pri-text); font-weight: 600;
+  background: rgba(var(--pri-rgb), .08); box-shadow: inset 0 0 0 1px rgba(var(--pri-rgb), .2); }
+.tr-ready .ico, .tr-signed .ico { width: 16px; height: 16px; flex: none; }
+.tr-days { display: flex; flex-direction: column; gap: 12px; }
+.tr-day { display: flex; flex-direction: column; gap: 6px; }
+.tr-day-h { display: flex; align-items: baseline; gap: 8px; margin: 0; }
+.tr-day-h b { font: 700 .72rem/1.4 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--pri-text); }
+.tr-day-h small { color: var(--muted); }
+.tr-day.done .tr-day-h b::after { content: " ✓"; }
+
+/* ---------- the team's table ---------- */
+.tr-mini { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.tr-mini-bar { display: inline-block; width: 64px; height: 6px; border-radius: 999px; background: var(--sunk); box-shadow: var(--inset); overflow: hidden; }
+.tr-mini-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, rgba(var(--pri-rgb), .55), var(--pri)); }
+#learnPeople td { vertical-align: middle; }
+#learnPeople .key.sm .ico { width: 13px; height: 13px; }
+
+/* ---------- assigning: who and what ---------- */
+.tr-h3 { margin: 12px 0 6px; font: 600 .95rem/1.3 var(--sans); color: var(--ink); }
+.tr-pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 6px; }
+.tr-check { display: flex; align-items: flex-start; gap: .6rem; padding: .45rem .6rem; border-radius: 10px; border: 1px solid var(--line-soft); background: var(--surface-2); cursor: pointer; min-width: 0; }
+.tr-check input { margin-top: .2rem; width: 1.05rem; height: 1.05rem; accent-color: var(--pri); flex: none; }
+.tr-check b { display: block; font-size: .93rem; font-weight: 600; }
+.tr-check small { display: block; color: var(--muted); font-size: .82rem; }
+.tr-check:has(input:checked) { border-color: rgba(var(--pri-rgb), .4); background: rgba(var(--pri-rgb), .06); }
+.tr-check select { margin-left: .4rem; }
+.tr-group { margin: 8px 0 0; padding: 0; border: 0; min-width: 0; }
+.tr-group legend { padding: 0; margin-bottom: 6px; font: 700 .7rem/1.4 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.tr-err { margin: .4rem 0 0; min-height: 1.2em; }
+
+/* ---------- the plans ---------- */
+.tr-path { gap: 6px; }
+.tr-path .tr-path-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 5px 8px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); }
+.tr-path .tr-emo, .tr-ref .tr-emo { width: 30px; height: 30px; font-size: .95rem; }
+.tr-path .tr-t, .tr-ref .tr-t { flex-basis: 180px; }
+.tr-path .tr-t b, .tr-ref .tr-t b { font-size: .93rem; }
+.tr-path .tr-t small, .tr-ref .tr-t small { font-size: .78rem; }
+.tr-path .icon-key { width: 30px; height: 30px; }
+.tr-path-row.day-start { margin-top: 6px; }
+.tr-day-sel, #trPathAdd, #trPathAddDay { padding: .35rem .5rem; border-radius: 10px; border: 1px solid var(--field-line); background: var(--field); color: var(--ink); font: inherit; max-width: 100%; }
+.tr-path-add { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+.tr-path-add #trPathAdd { flex: 1 1 220px; min-width: 0; }
+.tr-ref { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 470px), 1fr)); gap: 6px; }
+.tr-ref .tr-row { padding: 5px 8px; gap: 10px; box-shadow: none; }
+.tr-ref .seg { margin-left: auto; }
+.tr-ref .seg button { padding: .3rem .55rem; font-size: .8rem; }
+
+/* ---------- the Team room: a name that cannot be changed, a new person's onboarding ---------- */
+.row-fixed { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); }
+.onb-row { margin-top: .6rem; border-color: rgba(var(--pri-rgb), .22); background: rgba(var(--pri-rgb), .04); }
+.access-row:has(input:disabled) { opacity: .55; cursor: not-allowed; }
+.seg button:disabled { opacity: .45; cursor: not-allowed; }
+
+/* ---------- an exercise: its brief, and the band across the top while it runs ---------- */
+.ex-what { margin: 0 0 8px; color: var(--ink-2); line-height: 1.45; }
+.ex-steps { margin: 0 0 10px; padding-left: 1.4em; line-height: 1.5; color: var(--ink); }
+.ex-steps li + li { margin-top: 4px; }
+.ex-safe { display: flex; align-items: flex-start; gap: 8px; margin: 0; padding: 8px 12px; border-radius: 12px; color: var(--ink-2); line-height: 1.4;
+  background: rgba(var(--pri-rgb), .06); box-shadow: inset 0 0 0 1px rgba(var(--pri-rgb), .18); }
+.ex-safe .ico { width: 15px; height: 15px; flex: none; margin-top: 2px; color: var(--pri-text); }
+.drill-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 2600; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: calc(8px + env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px)) 8px max(14px, env(safe-area-inset-left, 0px));
+  color: var(--on-pri); background: linear-gradient(90deg, var(--pri-lo), var(--pri), var(--pri-lo)); box-shadow: 0 2px 14px rgba(var(--pri-rgb), .35); }
+.drill-emo { font-size: 1.2rem; flex: none; }
+.drill-t { flex: 1 1 200px; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
+.drill-t b { font-weight: 700; }
+.drill-t small { opacity: .9; }
+.drill-bar .key.sm { gap: 5px; padding-left: 9px; padding-right: 10px; background: rgba(255, 255, 255, .14); color: var(--on-pri); border-color: rgba(255, 255, 255, .35); box-shadow: none; }
+.drill-bar .key.sm.primary { background: var(--surface); color: var(--pri-text); border-color: transparent; }
+.drill-bar .ico { width: 14px; height: 14px; }
+/* the band's height (--drill-h, measured as it shows) moves the page, the top keys and the windows below it */
+html.drilling body { padding-top: var(--drill-h, 52px); }
+html.drilling .cl-cluster { top: calc(4px + var(--drill-h, 52px)); }
+html.drilling .layer { padding-top: calc(16px + var(--drill-h, 52px)); }
+html.drilling .shell { outline: 3px solid rgba(var(--pri-rgb), .35); outline-offset: -3px; }
+
+@media (max-width: 560px) {
+  .tr-keys { margin-left: 50px; }
+  .tr-onb { padding: 14px; }
+  .drill-t small { display: none; }
+  .drill-bar { flex-wrap: nowrap; gap: 8px; }
+  .drill-t { flex-basis: auto; }
+  .drill-t b { font-size: .9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #drillHow { width: 34px; padding: 0; justify-content: center; }
+  #drillHow .drill-key-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  #drillHow .ico { width: 16px; height: 16px; }
+}
+:root[data-theme="night"] .tr-row, :root[data-theme="night"] .tr-path .tr-path-row { background: var(--surface); }
+:root[data-theme="night"] .drill-bar .key.sm.primary { background: #2d2d40; color: var(--pri-hi); }
+@media print { .drill-bar { display: none; } }
+
 /* EMPORIUM | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt.
    The door and the sign-in, after Ingenium 6.50's own (its .intro-door and its sign-in, r197): the same card, the
    same corner switches, the same emblem disc, the same raised key, the same dialogs and their numbered grid. Ingenium's
@@ -2352,7 +2492,7 @@ tr.retired td { opacity: .58; }
 "use strict";
 
 var E = window.Emporium = window.Emporium || {};
-E.BUILD = { number: "18", date: "2026-11-14" };
+E.BUILD = { number: "19", date: "2026-11-15" };
 
 /* ---------- drawing: every piece of text goes in as text, never as markup ---------- */
 function $(sel, root) { return (root || document).querySelector(sel); }
@@ -3303,7 +3443,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     ["people.retired", "Key taken back", "Clé reprise", "Kle a repran"],
     ["people.firstPw", "First password", "Premier mot de passe", "Premye modpas"],
     ["people.everything", "Everything", "Tout", "Tout bagay"],
-    ["people.ownerOnly", "Only the owner: Settings, backups, the Author Studio, and the people with their keys.", "Le propriétaire seul : les Réglages, les sauvegardes, le Studio d'auteur, et les personnes avec leurs clés.", "Mèt magazen an sèlman: Reglaj, kopi sekirite, Estidyo otè a, ak moun yo ak kle yo."],
+    ["people.ownerOnly", "Only the owner: Settings, restoring a backup, and the Author Studio. A person who looks after the people gives only what they have themselves, never that access, and changes no one who has more.", "Le propriétaire seul : les Réglages, la restauration d'une sauvegarde, et le Studio d'auteur. Une personne qui s'occupe des personnes ne donne que ce qu'elle a elle-même, jamais cet accès, et ne change personne qui en a plus.", "Mèt magazen an sèlman: Reglaj, remete yon kopi, ak Estidyo otè a. Yon moun k ap okipe moun yo bay sèlman sa li genyen li menm, pa janm aksè sa a, epi li pa chanje okenn moun ki gen plis."],
     ["people.keyH", "Their key to the books", "Sa clé des livres", "Kle liv yo pou li"],
     ["people.keyP", "Type a first password for this person (at least 10 characters) and tell it to them. The first time they sign in, they choose their own.", "Tapez un premier mot de passe pour cette personne (au moins 10 caractères) et dites-le-lui. À sa première connexion, elle choisira le sien.", "Tape yon premye modpas pou moun sa a (omwen 10 karaktè) epi di l li. Premye fwa li konekte, l ap chwazi pa l."],
     ["people.ownerPw", "Your own password", "Votre propre mot de passe", "Pwòp modpas ou"],
@@ -3358,7 +3498,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   );
   add(
     ["guide.team.t", "Your team: user IDs and access", "Votre équipe : numéros et accès", "Ekip ou: nimewo ak aksè"],
-    ["guide.team.b", "You, the owner, are the administrator: every room and every key is open to you. You are ID 1001.\nIn the Team room, Add a person gives each one a name, a user ID (1002, 1003 and on) and a level of access: Cashier, Stock keeper, Manager, or chosen one by one. Type a first password for them, and your own password to give them a key. The first time they sign in, they choose their own password.\nTheir ID stays on every sale, receipt, stock move, change and shift they make. The reports can show each person's sales.\nOnly you see Settings, backups and the Author Studio. To stop a person from signing in, press their name and Take the key back. What they did stays in the books.", "Vous, le propriétaire, êtes l'administrateur : chaque pièce et chaque touche vous sont ouvertes. Votre numéro est le 1001.\nDans la pièce Équipe, Ajouter une personne lui donne un nom, un numéro (1002, 1003 et ainsi de suite) et un niveau d'accès : Caissier, Magasinier, Gérant, ou choisi un à un. Tapez un premier mot de passe pour elle, et votre propre mot de passe pour lui donner une clé. À sa première connexion, elle choisit son propre mot de passe.\nSon numéro reste sur chaque vente, reçu, mouvement de stock, changement et service qu'elle fait. Les rapports peuvent montrer les ventes de chaque personne.\nVous seul voyez les Réglages, les sauvegardes et le Studio d'auteur. Pour qu'une personne ne puisse plus se connecter, appuyez sur son nom puis Reprendre la clé. Ce qu'elle a fait reste dans les livres.", "Ou menm, mèt magazen an, se administratè a: tout pyès ak tout bouton louvri pou ou. Nimewo ou se 1001.\nNan pyès Ekip la, Ajoute yon moun ba li yon non, yon nimewo (1002, 1003 elatriye) ak yon nivo aksè: Kesye, Responsab stòk, Jeran, oswa chwazi youn pa youn. Tape yon premye modpas pou li, ak pwòp modpas ou pou ba li yon kle. Premye fwa li konekte, l ap chwazi pwòp modpas li.\nNimewo li rete sou chak vant, resi, mouvman stòk, chanjman ak sèvis li fè. Rapò yo ka montre vant chak moun.\nSe ou sèl ki wè Reglaj, kopi sekirite yo ak Estidyo otè a. Pou yon moun pa ka konekte ankò, peze sou non l epi Repran kle a. Sa l te fè rete nan liv yo."],
+    ["guide.team.b", "You, the owner, are the administrator: every room and every key is open to you. You are ID 1001.\nIn the Team room, Add a person gives each one a name, a user ID (1002, 1003 and on) and a level of access: Cashier, Stock keeper, Team leader, Manager, or chosen one by one. Type a first password for them, and your own password to give them a key. The first time they sign in, they choose their own password.\nYou may let a manager look after the people (The people) and save backups (Backups). They add people with their own password, and give only the access they hold themselves. They never change you, themselves, or anyone who has more.\nTheir ID stays on every sale, receipt, stock move, change and shift they make. The reports can show each person's sales.\nOnly you see Settings and the Author Studio, and only you restore a backup. To stop a person from signing in, press their name and Take the key back. What they did stays in the books.", "Vous, le propriétaire, êtes l'administrateur : chaque pièce et chaque touche vous sont ouvertes. Votre numéro est le 1001.\nDans la pièce Équipe, Ajouter une personne lui donne un nom, un numéro (1002, 1003 et ainsi de suite) et un niveau d'accès : Caissier, Magasinier, Chef d'équipe, Gérant, ou choisi un à un. Tapez un premier mot de passe pour elle, et votre propre mot de passe pour lui donner une clé. À sa première connexion, elle choisit son propre mot de passe.\nVous pouvez confier à un gérant les personnes (Les personnes) et les sauvegardes (Sauvegardes). Il ajoute des personnes avec son propre mot de passe, et ne donne que les accès qu'il a lui-même. Il ne change jamais ni vous, ni lui-même, ni personne qui en a plus.\nSon numéro reste sur chaque vente, reçu, mouvement de stock, changement et service qu'elle fait. Les rapports peuvent montrer les ventes de chaque personne.\nVous seul voyez les Réglages et le Studio d'auteur, et vous seul restaurez une sauvegarde. Pour qu'une personne ne puisse plus se connecter, appuyez sur son nom puis Reprendre la clé. Ce qu'elle a fait reste dans les livres.", "Ou menm, mèt magazen an, se administratè a: tout pyès ak tout bouton louvri pou ou. Nimewo ou se 1001.\nNan pyès Ekip la, Ajoute yon moun ba li yon non, yon nimewo (1002, 1003 elatriye) ak yon nivo aksè: Kesye, Responsab stòk, Chèf ekip, Jeran, oswa chwazi youn pa youn. Tape yon premye modpas pou li, ak pwòp modpas ou pou ba li yon kle. Premye fwa li konekte, l ap chwazi pwòp modpas li.\nOu ka kite yon jeran okipe moun yo (Moun yo) ak kopi sekirite yo (Kopi sekirite). Li ajoute moun ak pwòp modpas li, epi li bay sèlman aksè li genyen li menm. Li pa janm chanje ou, li menm, ni okenn moun ki gen plis.\nNimewo li rete sou chak vant, resi, mouvman stòk, chanjman ak sèvis li fè. Rapò yo ka montre vant chak moun.\nSe ou sèl ki wè Reglaj ak Estidyo otè a, epi se ou sèl ki remete yon kopi. Pou yon moun pa ka konekte ankò, peze sou non l epi Repran kle a. Sa l te fè rete nan liv yo."],
     ["guide.team.tip", "Give each person only what their work needs. You can change it at any time.", "Ne donnez à chacun que ce dont son travail a besoin. Vous pouvez le changer à tout moment.", "Bay chak moun sèlman sa travay li bezwen. Ou ka chanje l nenpòt lè."],
     ["guide.notes.t", "Sticky notes (Schedae)", "Notes autocollantes (Schedae)", "Ti nòt (Schedae)"],
     ["guide.notes.b", "The 🗒️ key at the foot of the side keys opens Schedae, the list of your sticky notes. New note puts a note on the page, ready to write in. A note floats over every room until you unpin it with its ✕; it stays in the list, and Pin brings it back.\nCarry a note by its top, and make it larger from any edge or from its corner. The ⋯ key on a note changes its paper (six light pastels: Citrine, Aquamarine, Rose Quartz, Jade, Moonstone and Pearl, each with its own night paper), folds it to its top, copies its words, or deletes it. The keys at its foot make words bold, italic, underlined or struck through, start a list, or add a picture.\nYour notes are yours. They are sealed in the books like everything else, each person sees only their own, and a backup carries them. A note saves itself half a second after you stop typing, and again when the books lock.", "La touche 🗒️ au bas des touches de côté ouvre Schedae, la liste de vos notes autocollantes. Nouvelle note pose une note sur la page, prête à écrire. Une note flotte sur chaque pièce jusqu'à ce que vous la détachiez avec son ✕ ; elle reste dans la liste, et Épingler la ramène.\nDéplacez une note par son haut, et agrandissez-la par n'importe quel bord ou par son coin. La touche ⋯ d'une note change son papier (six pastels clairs : Citrine, Aigue-marine, Quartz rose, Jade, Pierre de lune et Perle, chacun avec son papier de nuit), la replie sur son haut, copie ses mots ou la supprime. Les touches du bas mettent les mots en gras, en italique, soulignés ou barrés, commencent une liste ou ajoutent une image.\nVos notes sont à vous. Elles sont scellées dans les livres comme tout le reste, chacun ne voit que les siennes, et une sauvegarde les emporte. Une note s'enregistre une demi-seconde après la dernière frappe, et encore quand les livres se verrouillent.", "Bouton 🗒️ anba bouton sou kote yo louvri Schedae, lis ti nòt ou yo. Nouvo nòt mete yon nòt sou paj la, pare pou ekri. Yon nòt rete sou chak chanm jiskaske ou detache l ak ✕ li; li rete nan lis la, epi Tache mete l tounen.\nDeplase yon nòt pa anwo li, epi fè l pi gwo pa nenpòt bò oswa pa kwen li. Bouton ⋯ yon nòt chanje papye li (sis koulè pal: Sitrin, Akwamarin, Kwats woz, Jad, Wòch lalin ak Pèl, chak ak papye lannwit pa l), pliye l, kopye mo li yo, oswa efase l. Bouton anba yo mete mo yo an gra, an italik, souliye oswa bare, kòmanse yon lis, oswa mete yon foto.\nNòt ou yo se pou ou. Yo sele nan liv yo tankou tout lòt bagay, chak moun wè pa yo sèlman, epi yon sovgad pote yo. Yon nòt anrejistre tèt li yon mwatye segonn apre ou fin tape, epi ankò lè liv yo fèmen."],
@@ -3877,6 +4017,180 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     ["studio.h.receiptNote", "The note at the foot of receipts", "La note au pied des reçus", "Nòt anba resi yo"],
     ["studio.h.some", "Some choices", "Quelques choix", "Kèk chwa"]
   );
+  /* Team leaders, training and onboarding (Build 19). The Kreyòl is marked for review by a native speaker. */
+  add(
+    ["level.lead", "Team leader", "Chef d'équipe", "Chèf ekip"],
+    ["access.train.s", "Training", "Formation", "Fòmasyon"],
+    ["access.train.d", "Assign lessons and exercises, start a new person's onboarding, and sign it off.", "Assigner des leçons et des exercices, commencer l'intégration d'une nouvelle personne, et la valider.", "Bay leson ak egzèsis, kòmanse entegrasyon yon nouvo moun, epi siyen l."],
+    ["access.people.s", "The people", "Les personnes", "Moun yo"],
+    ["access.people.d", "Add people, give a first password, and take a key back. Only with access you have yourself.", "Ajouter des personnes, donner un premier mot de passe, et reprendre une clé. Seulement avec les accès que vous avez vous-même.", "Ajoute moun, bay yon premye modpas, epi reprann yon kle. Sèlman ak aksè ou genyen ou menm."],
+    ["access.backup.s", "Backups", "Sauvegardes", "Kopi sekirite"],
+    ["access.backup.d", "Save a sealed backup of the books.", "Enregistrer une sauvegarde scellée des livres.", "Fè yon kopi sekirite sele liv yo."],
+    ["people.limitP", "You look after the people with what you have yourself. A name you cannot press holds more than you may give: only the owner changes it.", "Vous vous occupez des personnes avec ce que vous avez vous-même. Un nom sur lequel vous ne pouvez pas appuyer a plus que ce que vous pouvez donner : seul le propriétaire le change.", "W ap okipe moun yo ak sa ou genyen ou menm. Yon non ou pa ka peze gen plis pase sa ou ka bay: se mèt la sèlman ki ka chanje l."],
+    ["people.limitHint", "You give only what you have yourself. What you cannot give is shown, but closed.", "Vous ne donnez que ce que vous avez vous-même. Ce que vous ne pouvez pas donner est affiché, mais fermé.", "Ou bay sèlman sa ou genyen ou menm. Sa ou pa ka bay la parèt, men li fèmen."],
+    ["people.notGiven", "Only the owner can give this.", "Seul le propriétaire peut donner ceci.", "Se mèt la sèlman ki ka bay sa."],
+    ["people.notYours", "This person has more than you may give. Only the owner changes them.", "Cette personne a plus que ce que vous pouvez donner. Seul le propriétaire la change.", "Moun sa a gen plis pase sa ou ka bay. Se mèt la sèlman ki ka chanje l."],
+    ["people.onboard", "Start their onboarding today", "Commencer son intégration aujourd'hui", "Kòmanse entegrasyon li jodi a"],
+    ["people.onboardD", "The lessons, exercises and tasks of their first days, each due on its day.", "Les leçons, exercices et tâches de ses premiers jours, chacun prévu pour son jour.", "Leson, egzèsis ak travay premye jou li yo, chak pou jou pa l."],
+    ["people.onboarded", "{name}'s onboarding has started. It is in Learning, under The team.", "L'intégration de {name} a commencé. Elle est dans Formation, sous L'équipe.", "Entegrasyon {name} kòmanse. Li nan Fòmasyon, anba Ekip la."],
+    ["people.backupH", "A sealed backup", "Une sauvegarde scellée", "Yon kopi sele"],
+    ["people.backupP", "The books, sealed as they are, in one file. Keep it on a drive away from this device. Only the owner can restore it.", "Les livres, scellés tels quels, dans un seul fichier. Gardez-le sur une clé loin de cet appareil. Seul le propriétaire peut la restaurer.", "Liv yo, sele jan yo ye a, nan yon sèl fichye. Kenbe l sou yon kle USB lwen aparèy sa a. Se mèt la sèlman ki ka remete l."],
+    ["lrn.tab.mine", "My training", "Ma formation", "Fòmasyon mwen"],
+    ["lrn.tab.lessons", "Lessons", "Leçons", "Leson"],
+    ["lrn.tab.exercises", "Exercises", "Exercices", "Egzèsis"],
+    ["lrn.tab.team", "The team", "L'équipe", "Ekip la"],
+    ["lrn.tab.plans", "Plans", "Programmes", "Plan yo"],
+    ["ex.begin", "Begin", "Commencer", "Kòmanse"],
+    ["ex.again", "Do it again", "Refaire", "Refè l"],
+    ["ex.end", "End the exercise", "Finir l'exercice", "Fini egzèsis la"],
+    ["ex.how", "What to do", "Quoi faire", "Kisa pou fè"],
+    ["ex.now", "Exercise: {name}", "Exercice : {name}", "Egzèsis: {name}"],
+    ["ex.nothingKept", "Nothing done now is kept in the books.", "Rien de ce qui est fait maintenant n'est gardé dans les livres.", "Anyen ou fè kounye a pa rete nan liv yo."],
+    ["ex.safe", "This is an exercise on the real screens. The books are set aside: nothing you do is kept, and they stay exactly as they were.", "C'est un exercice sur les vrais écrans. Les livres sont mis de côté : rien de ce que vous faites n'est gardé, et ils restent exactement comme ils étaient.", "Sa a se yon egzèsis sou vrè ekran yo. Liv yo mete sou kote: anyen ou fè pa rete, epi yo rete egzakteman jan yo te ye a."],
+    ["ex.intro", "Each exercise asks for real work on Lakay's own screens. The books are set aside while it runs, so nothing is kept but the mark that you did it.", "Chaque exercice demande un vrai travail sur les écrans de Lakay. Les livres sont mis de côté pendant ce temps : rien n'est gardé, sauf la marque que vous l'avez fait.", "Chak egzèsis mande yon vrè travay sou ekran Lakay yo. Liv yo mete sou kote pandan l ap fèt: anyen pa rete, sof mak ki di ou fè l la."],
+    ["ex.ended", "The exercise has ended. The books are as they were.", "L'exercice est terminé. Les livres sont comme avant.", "Egzèsis la fini. Liv yo jan yo te ye a."],
+    ["ex.doneT", "Well done", "Bien joué", "Bravo"],
+    ["ex.doneP", "You did it: {name}.", "Vous l'avez fait : {name}.", "Ou fè l: {name}."],
+    ["ex.doneKept", "The books are as they were. Only the mark that you did it is kept.", "Les livres sont comme avant. Seule la marque que vous l'avez fait est gardée.", "Liv yo jan yo te ye a. Se sèlman mak ki di ou fè l la ki rete."],
+    ["ex.busy", "An exercise is running. End it first.", "Un exercice est en cours. Terminez-le d'abord.", "Gen yon egzèsis k ap fèt. Fini l anvan."],
+    ["ex.where.register", "On the Register", "À la caisse", "Nan kès la"],
+    ["ex.where.inventory", "In Inventory", "Dans l'Inventaire", "Nan Envantè"],
+    ["ex.where.team", "With your name, at the top", "Avec votre nom, en haut", "Ak non w, anwo a"],
+    ["ex.break.t", "A break", "Une pause", "Yon poz"],
+    ["ex.break.d", "Start a break, then end it when you come back, as on a real shift.", "Commencez une pause, puis terminez-la à votre retour, comme pendant un vrai service.", "Kòmanse yon poz, epi fini l lè w tounen, menm jan ak yon vrè jou travay."],
+    ["ex.break.how", "Press the key with your name, at the top.\nIf you are not on the clock, press Clock in.\nPress Start a break.\nOpen it again, and press End the break.", "Appuyez sur la touche à votre nom, en haut.\nSi vous n'êtes pas en service, appuyez sur Pointer l'arrivée.\nAppuyez sur Commencer une pause.\nRouvrez-la, et appuyez sur Finir la pause.", "Peze bouton ki gen non w lan, anwo a.\nSi ou pa nan sèvis, peze Antre nan sèvis.\nPeze Kòmanse yon poz.\nLouvri l ankò, epi peze Fini poz la."],
+    ["ex.sale.t", "A sale, paid in cash", "Une vente, payée en espèces", "Yon vant, peye kach"],
+    ["ex.sale.d", "Ring up two different items and take cash, with the change.", "Enregistrez deux articles différents et encaissez en espèces, avec la monnaie.", "Mete de atik diferan nan vant lan epi pran lajan kach, ak monnen an."],
+    ["ex.sale.how", "Find an item by its name, or scan it, and press it.\nAdd a second item, a different one.\nPress Take payment, or F9.\nPress the amount the customer gives, then Complete the sale.", "Trouvez un article par son nom, ou scannez-le, et appuyez dessus.\nAjoutez un deuxième article, différent.\nAppuyez sur Encaisser, ou F9.\nAppuyez sur le montant que donne le client, puis Terminer la vente.", "Chèche yon atik ak non li, oswa eskane l, epi peze l.\nAjoute yon dezyèm atik, yon lòt.\nPeze Pran peman, oswa F9.\nPeze montan kliyan an bay la, epi Fini vant lan."],
+    ["ex.split.t", "A sale paid in two parts", "Une vente payée en deux fois", "Yon vant peye an de pati"],
+    ["ex.split.d", "Take part of a sale by card and the rest in cash.", "Prenez une partie d'une vente par carte et le reste en espèces.", "Pran yon pati nan yon vant ak kat epi rès la an kach."],
+    ["ex.split.how", "Add an item or two to the sale, and press Take payment.\nChoose Card, and type the first part in Amount.\nIf an approval code is asked, type any: nothing is charged. Then press Take this part, then the rest.\nTake the rest in cash, and Complete the sale.", "Ajoutez un ou deux articles à la vente, et appuyez sur Encaisser.\nChoisissez Carte, et tapez la première partie dans Montant.\nSi un code d'autorisation est demandé, tapez-en un quelconque : rien n'est encaissé. Puis appuyez sur Prendre cette partie, puis le reste.\nPrenez le reste en espèces, et Terminer la vente.", "Mete youn oswa de atik nan vant lan, epi peze Pran peman.\nChwazi Kat, epi tape premye pati a nan Montan.\nSi yo mande yon kòd apwobasyon, tape nenpòt: pa gen anyen ki chaje. Epi peze Pran pati sa a, epi rès la.\nPran rès la an kach, epi Fini vant lan."],
+    ["ex.card.t", "A card payment", "Un paiement par carte", "Yon peman ak kat"],
+    ["ex.card.d", "Charge a sale on the store's card machine and note its approval code.", "Encaissez une vente sur le terminal du magasin et notez son code d'autorisation.", "Chaje yon vant sou machin kat magazen an epi note kòd apwobasyon an."],
+    ["ex.card.how", "Add an item to the sale, and press Take payment.\nChoose Card.\nNothing is charged in an exercise. If an approval code is asked, type any, such as 123456.\nComplete the sale.", "Ajoutez un article à la vente, et appuyez sur Encaisser.\nChoisissez Carte.\nRien n'est encaissé dans un exercice. Si un code d'autorisation est demandé, tapez-en un quelconque, comme 123456.\nTerminer la vente.", "Mete yon atik nan vant lan, epi peze Pran peman.\nChwazi Kat.\nPa gen anyen ki chaje nan yon egzèsis. Si yo mande yon kòd apwobasyon, tape nenpòt, tankou 123456.\nFini vant lan."],
+    ["ex.receive.t", "A delivery", "Une livraison", "Yon livrezon"],
+    ["ex.receive.d", "Receive goods that arrive, so the stock goes up.", "Recevez la marchandise qui arrive, pour que le stock monte.", "Resevwa machandiz ki rive, pou stòk la monte."],
+    ["ex.receive.how", "Press Receive a delivery, then the item that came.\nType how many came.\nPress Receive.", "Appuyez sur Recevoir une livraison, puis sur l'article arrivé.\nTapez combien sont arrivés.\nAppuyez sur Recevoir.", "Peze Resevwa yon livrezon, epi atik ki rive a.\nTape konbyen ki rive.\nPeze Resevwa."],
+    ["ex.transfer.t", "A money transfer", "Un transfert d'argent", "Yon transfè lajan"],
+    ["ex.transfer.d", "Record money a customer sends through a provider, with its fee.", "Notez l'argent qu'un client envoie par un fournisseur, avec ses frais.", "Anrejistre lajan yon kliyan voye pa yon konpayi, ak frè a."],
+    ["ex.transfer.how", "Press Record a transfer or top-up.\nChoose the provider, then Transfer sent.\nType the amount, the fee and the provider's reference.\nPress Record.", "Appuyez sur Noter un transfert ou une recharge.\nChoisissez le fournisseur, puis Transfert envoyé.\nTapez le montant, les frais et la référence du fournisseur.\nAppuyez sur Noter.", "Peze Anrejistre yon transfè oswa yon rechaj.\nChwazi konpayi a, epi Transfè voye.\nTape montan an, frè a ak referans konpayi a.\nPeze Anrejistre."],
+    ["tr.kind.lesson", "Lesson", "Leçon", "Leson"],
+    ["tr.kind.exercise", "Exercise", "Exercice", "Egzèsis"],
+    ["tr.kind.task", "Store task", "Tâche du magasin", "Travay magazen an"],
+    ["tr.kinds.lesson", "Lessons", "Leçons", "Leson yo"],
+    ["tr.kinds.exercise", "Exercises", "Exercices", "Egzèsis yo"],
+    ["tr.kinds.task", "The store's tasks", "Les tâches du magasin", "Travay magazen an"],
+    ["tr.leadSigns", "a leader signs it", "un responsable la valide", "yon chèf siyen l"],
+    ["tr.doneOn", "Done {d}", "Fait le {d}", "Fèt {d}"],
+    ["tr.dueOn", "Due {d}", "Pour le {d}", "Pou {d}"],
+    ["tr.noDue", "No date", "Sans date", "San dat"],
+    ["tr.refreshSub", "Last done {d}. Due again {e}.", "Fait la dernière fois le {d}. À refaire le {e}.", "Dènye fwa: {d}. Pou refè {e}."],
+    ["tr.overdue", "Overdue", "En retard", "An reta"],
+    ["tr.today", "Today", "Aujourd'hui", "Jodi a"],
+    ["tr.markDone", "Mark it done", "Marquer comme fait", "Make l fini"],
+    ["tr.signTask", "Sign it off", "Valider", "Siyen l"],
+    ["tr.markQ", "Mark it done: {name}?", "Marquer comme fait : {name} ?", "Make l fini: {name}?"],
+    ["tr.signQ", "Sign off {name} for {who}?", "Valider {name} pour {who} ?", "Siyen {name} pou {who}?"],
+    ["tr.markP", "Mark it done once it is really done.", "Marquez-le comme fait une fois qu'il est vraiment fait.", "Make l fini lè l vrèman fini."],
+    ["tr.taskDone", "Done: {name}", "Fait : {name}", "Fini: {name}"],
+    ["tr.waitLead", "A leader signs this", "Un responsable valide ceci", "Yon chèf siyen sa a"],
+    ["tr.unassign", "Take this back", "Retirer", "Retire sa a"],
+    ["tr.unassigned", "Taken back.", "Retiré.", "Retire."],
+    ["tr.assignedH", "Assigned to you", "Ce qui vous est assigné", "Sa yo ba ou"],
+    ["tr.assignedTheirs", "Assigned", "Assigné", "Sa yo ba li"],
+    ["tr.refreshH", "Refreshers", "Remises à niveau", "Revizyon"],
+    ["tr.refreshP", "What the store asks to be done again, some months after it was last done.", "Ce que le magasin demande de refaire, quelques mois après la dernière fois.", "Sa magazen an mande pou refè, kèk mwa apre dènye fwa a."],
+    ["tr.nothing", "Nothing is waiting in your training. The lessons and exercises are open to you at any time.", "Rien n'attend dans votre formation. Les leçons et les exercices vous sont ouverts à tout moment.", "Pa gen anyen k ap tann nan fòmasyon ou. Leson ak egzèsis yo louvri pou ou nenpòt lè."],
+    ["tr.nothingTheirs", "Nothing is waiting in {name}'s training.", "Rien n'attend dans la formation de {name}.", "Pa gen anyen k ap tann nan fòmasyon {name}."],
+    ["tr.onbH", "Your onboarding", "Votre intégration", "Entegrasyon ou"],
+    ["tr.onbTheirs", "{name}'s onboarding", "L'intégration de {name}", "Entegrasyon {name}"],
+    ["tr.onbSub", "Started {d} by {who}. Day {n} of {m}.", "Commencée le {d} par {who}. Jour {n} sur {m}.", "{who} te kòmanse l {d}. Jou {n} sou {m}."],
+    ["tr.onbDone", "done", "faits", "fini"],
+    ["tr.day", "Day {n}", "Jour {n}", "Jou {n}"],
+    ["tr.dayLabel", "Day", "Jour", "Jou"],
+    ["tr.dayOf", "Day for {name}", "Jour pour {name}", "Jou pou {name}"],
+    ["tr.readyMine", "Everything is done. A leader will sign your onboarding off.", "Tout est fait. Un responsable validera votre intégration.", "Tout bagay fini. Yon chèf ap siyen entegrasyon ou."],
+    ["tr.readyLead", "Everything is done. It is ready to sign off.", "Tout est fait. Elle est prête à valider.", "Tout bagay fini. Li pare pou siyen."],
+    ["tr.signedOff", "Signed off {d} by {who}.", "Validée le {d} par {who}.", "{who} siyen l {d}."],
+    ["tr.signedOffNow", "{name}'s onboarding is signed off.", "L'intégration de {name} est validée.", "Entegrasyon {name} siyen."],
+    ["tr.signOff", "Sign off the onboarding", "Valider l'intégration", "Siyen entegrasyon an"],
+    ["tr.notDone", "Not everything is done yet.", "Tout n'est pas encore fait.", "Poko tout bagay fini."],
+    ["tr.signed", "Signed off", "Validée", "Siyen"],
+    ["tr.ready", "Ready", "Prête", "Pare"],
+    ["tr.noOnb", "None", "Aucune", "Pa genyen"],
+    ["tr.noOnbP", "{name} has no onboarding. It sets their first days: lessons, exercises and the store's tasks, each on its day.", "{name} n'a pas d'intégration. Elle fixe ses premiers jours : leçons, exercices et tâches du magasin, chacun à son jour.", "{name} pa gen entegrasyon. Li fikse premye jou li yo: leson, egzèsis ak travay magazen an, chak nan jou pa l."],
+    ["tr.startOnb", "Start the onboarding", "Commencer l'intégration", "Kòmanse entegrasyon an"],
+    ["tr.onbStartH", "Onboarding for {name}", "Intégration de {name}", "Entegrasyon pou {name}"],
+    ["tr.onbStartP", "{n} lessons, exercises and tasks from the store's plan, each due on its day. Only what this person's access opens.", "{n} leçons, exercices et tâches du programme du magasin, chacun prévu pour son jour. Seulement ce que les accès de cette personne ouvrent.", "{n} leson, egzèsis ak travay nan plan magazen an, chak pou jou pa l. Sèlman sa aksè moun sa a louvri."],
+    ["tr.onbFrom", "The first day", "Le premier jour", "Premye jou a"],
+    ["tr.onbStartHint", "The plan itself is changed under Plans.", "Le programme lui-même se change dans Programmes.", "Plan an li menm chanje nan Plan yo."],
+    ["tr.onbStarted", "{name}'s onboarding has started.", "L'intégration de {name} a commencé.", "Entegrasyon {name} kòmanse."],
+    ["tr.onbAlready", "This person's onboarding is already under way.", "L'intégration de cette personne est déjà en cours.", "Entegrasyon moun sa a deja ap fèt."],
+    ["tr.personH", "{name}'s training", "La formation de {name}", "Fòmasyon {name}"],
+    ["tr.details", "Details", "Détails", "Detay"],
+    ["tr.teamH", "The team's training", "La formation de l'équipe", "Fòmasyon ekip la"],
+    ["tr.teamP", "Each person's onboarding, what is left to do, and what is overdue. Press Details to sign off or to assign.", "L'intégration de chacun, ce qui reste à faire, et ce qui est en retard. Appuyez sur Détails pour valider ou pour assigner.", "Entegrasyon chak moun, sa ki rete pou fè, ak sa ki an reta. Peze Detay pou siyen oswa pou bay fòmasyon."],
+    ["tr.colOnb", "Onboarding", "Intégration", "Entegrasyon"],
+    ["tr.colToDo", "To do", "À faire", "Pou fè"],
+    ["tr.colLate", "Overdue", "En retard", "An reta"],
+    ["tr.assign", "Assign training", "Assigner une formation", "Bay fòmasyon"],
+    ["tr.assignH", "Assign training", "Assigner une formation", "Bay fòmasyon"],
+    ["tr.assignP", "Choose who, what, and by when. Each person gets only what their access opens.", "Choisissez qui, quoi, et pour quand. Chacun ne reçoit que ce que ses accès ouvrent.", "Chwazi ki moun, kisa, ak pou ki lè. Chak moun resevwa sèlman sa aksè li louvri."],
+    ["tr.who", "Who", "Qui", "Ki moun"],
+    ["tr.what", "What", "Quoi", "Kisa"],
+    ["tr.due", "Due by", "Pour le", "Pou"],
+    ["tr.needWho", "Choose at least one person.", "Choisissez au moins une personne.", "Chwazi omwen yon moun."],
+    ["tr.needWhat", "Choose at least one lesson, exercise or task.", "Choisissez au moins une leçon, un exercice ou une tâche.", "Chwazi omwen yon leson, yon egzèsis oswa yon travay."],
+    ["tr.noStaff", "No one to assign yet. Add people in Team.", "Personne à qui assigner pour l'instant. Ajoutez des personnes dans Équipe.", "Poko gen moun pou bay. Ajoute moun nan Ekip."],
+    ["tr.assigned", "Training assigned: {n}.", "Formation assignée : {n}.", "Fòmasyon bay: {n}."],
+    ["tr.assignedNone", "Nothing new: each one already has it, or their access does not open it.", "Rien de nouveau : chacun l'a déjà, ou ses accès ne l'ouvrent pas.", "Anyen nouvo: chak moun deja genyen l, oswa aksè yo pa louvri l."],
+    ["tr.home", "Your training: {n} to do", "Votre formation : {n} à faire", "Fòmasyon ou: {n} pou fè"],
+    ["tr.home1", "Your training: 1 to do", "Votre formation : 1 à faire", "Fòmasyon ou: 1 pou fè"],
+    ["tr.homeLate", "{n} overdue", "{n} en retard", "{n} an reta"],
+    ["tr.homeSub", "Lessons, exercises and tasks given to you.", "Leçons, exercices et tâches qui vous sont donnés.", "Leson, egzèsis ak travay yo ba ou."],
+    ["tr.homeReady", "{n} onboardings ready to sign off", "{n} intégrations prêtes à valider", "{n} entegrasyon pare pou siyen"],
+    ["tr.homeReady1", "1 onboarding ready to sign off", "1 intégration prête à valider", "1 entegrasyon pare pou siyen"],
+    ["tr.homeTeamLate", "{n} people with overdue training", "{n} personnes avec une formation en retard", "{n} moun ki gen fòmasyon an reta"],
+    ["tr.homeTeamLate1", "1 person with overdue training", "1 personne avec une formation en retard", "1 moun ki gen fòmasyon an reta"],
+    ["tr.homeTeamSub", "The team's training, in Learning.", "La formation de l'équipe, dans Formation.", "Fòmasyon ekip la, nan Fòmasyon."],
+    ["tr.pathH", "The onboarding path", "Le parcours d'intégration", "Chemen entegrasyon an"],
+    ["tr.pathP", "What a new person does, day by day. Each person gets only what their access opens.", "Ce qu'une nouvelle personne fait, jour après jour. Chacun ne reçoit que ce que ses accès ouvrent.", "Sa yon nouvo moun fè, jou apre jou. Chak moun resevwa sèlman sa aksè li louvri."],
+    ["tr.pathAdd", "Add to the path", "Ajouter au parcours", "Ajoute nan chemen an"],
+    ["tr.pathRemove", "Take {name} out of the path", "Retirer {name} du parcours", "Retire {name} nan chemen an"],
+    ["tr.planSaved", "The plan is saved.", "Le programme est enregistré.", "Plan an anrejistre."],
+    ["tr.tasksH", "The store's own tasks", "Les tâches propres au magasin", "Pwòp travay magazen an"],
+    ["tr.tasksP", "What only your store asks: read the cash rules, work a first shift beside a leader. The person marks each one done, or a leader signs it.", "Ce que seul votre magasin demande : lire les règles de la caisse, faire un premier service aux côtés d'un responsable. La personne marque chacune comme faite, ou un responsable la valide.", "Sa se magazen ou sèlman ki mande: li règ kès la, fè yon premye jou travay bò kote yon chèf. Moun nan make chak fini, oswa yon chèf siyen l."],
+    ["tr.taskAdd", "Add a task", "Ajouter une tâche", "Ajoute yon travay"],
+    ["tr.taskEdit", "Change the task", "Modifier la tâche", "Chanje travay la"],
+    ["tr.taskRemove", "Remove {name}", "Retirer {name}", "Retire {name}"],
+    ["tr.taskRemoveQ", "Remove {name}?", "Retirer {name} ?", "Retire {name}?"],
+    ["tr.taskRemoveP", "It leaves the path and is no longer given. The marks already made stay in the ledger.", "Elle quitte le parcours et n'est plus donnée. Les marques déjà faites restent dans le registre.", "Li soti nan chemen an epi yo pa bay li ankò. Mak ki deja fèt yo rete nan rejis la."],
+    ["tr.noTasks", "No tasks yet.", "Pas encore de tâches.", "Poko gen travay."],
+    ["tr.taskTitle", "What to do", "Quoi faire", "Kisa pou fè"],
+    ["tr.taskTitlePh", "Read the cash drawer rules", "Lire les règles du tiroir-caisse", "Li règ tiwa kès la"],
+    ["tr.taskBody", "How, or why (if it helps)", "Comment, ou pourquoi (si cela aide)", "Kijan, oswa poukisa (si sa ede)"],
+    ["tr.taskBodyPh", "The rules are in the binder under the counter.", "Les règles sont dans le classeur sous le comptoir.", "Règ yo nan klasè anba kontwa a."],
+    ["tr.taskSign", "Who marks it done", "Qui la marque comme faite", "Ki moun ki make l fini"],
+    ["tr.signSelf", "The person", "La personne", "Moun nan"],
+    ["tr.signLead", "A leader signs it", "Un responsable la valide", "Yon chèf siyen l"],
+    ["tr.taskFor", "Who it is for", "Pour qui", "Pou ki moun"],
+    ["tr.forAll", "Everyone", "Tout le monde", "Tout moun"],
+    ["tr.forAccess", "Those with {a}", "Ceux qui ont {a}", "Moun ki gen {a}"],
+    ["tr.taskInPath", "Put it in the onboarding path, on", "La mettre dans le parcours d'intégration, au", "Mete l nan chemen entegrasyon an, nan"],
+    ["tr.taskNeedTitle", "Say what is to be done.", "Dites ce qu'il faut faire.", "Di sa ki pou fèt."],
+    ["tr.refreshersH", "Refreshers", "Remises à niveau", "Revizyon"],
+    ["tr.refreshersP", "How long after it was last done each one comes due again. It shows a week before.", "Combien de temps après la dernière fois chacun revient. Il apparaît une semaine avant.", "Konbyen tan apre dènye fwa a chak vin pou refè. Li parèt yon semèn anvan."],
+    ["tr.never", "Never", "Jamais", "Janm"],
+    ["tr.months", "{n} months", "{n} mois", "{n} mwa"],
+    ["tr.refreshOf", "How often for {name}", "Fréquence pour {name}", "Konbyen fwa pou {name}"],
+    ["practice.task1.t", "Read the cash drawer rules", "Lire les règles du tiroir-caisse", "Li règ tiwa kès la"],
+    ["practice.task1.b", "The count at the start and at the end of the day, and never leaving the drawer open.", "Le comptage au début et à la fin de la journée, et ne jamais laisser le tiroir ouvert.", "Konte lajan an nan kòmansman ak nan fen jounen an, epi pa janm kite tiwa a louvri."],
+    ["practice.task2.t", "Work a first shift beside a leader", "Faire un premier service aux côtés d'un responsable", "Fè yon premye jou travay bò kote yon chèf"],
+    ["practice.task2.b", "A leader stays beside the new person at the counter, then signs it off.", "Un responsable reste aux côtés de la nouvelle personne au comptoir, puis valide.", "Yon chèf rete bò kote nouvo moun nan nan kontwa a, epi li siyen l."],
+    ["guide.train.t", "Training, onboarding and refreshers", "Formation, intégration et remises à niveau", "Fòmasyon, entegrasyon ak revizyon"],
+    ["guide.train.b", "Learning has tabs. My training shows what is waiting for each person: their onboarding day by day, what a leader assigned, and the refreshers. Lessons and Exercises are open to everyone, each within their access.\nAn exercise asks for real work on Lakay's own screens: a sale, a payment in two parts, a delivery, a transfer, a break. While it runs, the books are set aside. Nothing done is kept, and a band at the top says so. Only the mark that it was done is written, once the books are back as they were.\nThose given Training see The team and Plans. They assign lessons, exercises and the store's own tasks, with a date. They start a new person's onboarding, and sign it off once everything is done. Plans holds the path a new person follows, the store's tasks, and how often each lesson or exercise comes due again.\nA manager can be given The people and Backups. They add people and give first passwords with their own password, but only with access they have themselves, and never The people itself. Settings and the Author Studio stay the owner's.", "Formation a des onglets. Ma formation montre ce qui attend chaque personne : son intégration jour après jour, ce qu'un responsable a assigné, et les remises à niveau. Leçons et Exercices sont ouverts à tous, chacun selon ses accès.\nUn exercice demande un vrai travail sur les écrans de Lakay : une vente, un paiement en deux fois, une livraison, un transfert, une pause. Pendant ce temps, les livres sont mis de côté. Rien n'est gardé, et un bandeau en haut le dit. Seule la marque que c'est fait est écrite, une fois les livres revenus comme avant.\nCeux qui ont Formation voient L'équipe et Programmes. Ils assignent des leçons, des exercices et les tâches propres au magasin, avec une date. Ils commencent l'intégration d'une nouvelle personne, et la valident une fois tout fait. Programmes contient le parcours d'une nouvelle personne, les tâches du magasin, et la fréquence de chaque remise à niveau.\nUn gérant peut recevoir Les personnes et Sauvegardes. Il ajoute des personnes et donne les premiers mots de passe avec son propre mot de passe, mais seulement avec les accès qu'il a lui-même, et jamais Les personnes. Les Réglages et le Studio d'auteur restent au propriétaire.", "Fòmasyon gen onglè. Fòmasyon mwen montre sa k ap tann chak moun: entegrasyon li jou apre jou, sa yon chèf ba li, ak revizyon yo. Leson ak Egzèsis louvri pou tout moun, chak dapre aksè li.\nYon egzèsis mande yon vrè travay sou ekran Lakay yo: yon vant, yon peman an de pati, yon livrezon, yon transfè, yon poz. Pandan l ap fèt, liv yo mete sou kote. Anyen pa rete, epi yon bann anwo a di sa. Se sèlman mak ki di l fèt la ki ekri, lè liv yo tounen jan yo te ye a.\nMoun ki gen Fòmasyon wè Ekip la ak Plan yo. Yo bay leson, egzèsis ak pwòp travay magazen an, ak yon dat. Yo kòmanse entegrasyon yon nouvo moun, epi yo siyen l lè tout bagay fini. Plan yo gen chemen yon nouvo moun swiv, travay magazen an, ak chak konbyen tan chak leson oswa egzèsis vin pou refè.\nYo ka bay yon jeran Moun yo ak Kopi sekirite. Li ajoute moun epi li bay premye modpas ak pwòp modpas li, men sèlman ak aksè li genyen li menm, epi pa janm Moun yo. Reglaj ak Estidyo otè a rete pou mèt la."],
+    ["guide.train.tip", "Try an exercise in the practice store first: Marie, the sample cashier, is two days into her onboarding.", "Essayez d'abord un exercice dans le magasin d'essai : Marie, la caissière d'exemple, en est à deux jours de son intégration.", "Eseye yon egzèsis nan magazen pou pratike a anvan: Marie, kesyè egzanp lan, gen de jou nan entegrasyon li."]
+  );
   E.t = function (key, vars) {
     var c = E.custom && E.custom.words && E.custom.words[E.lang], s = c && typeof c[key] === "string" && c[key] ? c[key] : DICT[E.lang][key];
     if (s === undefined) s = DICT.en[key];
@@ -4156,6 +4470,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   var ZERO = "0000000000000000000000000000000000000000000000000000000000000000";
 
   B.on = function (name, fn) { (listeners[name] = listeners[name] || []).push(fn); };
+  B.off = function (name, fn) { var l = listeners[name], i = l ? l.indexOf(fn) : -1; if (i >= 0) l.splice(i, 1); };
   function emit(name, data) { (listeners[name] || []).forEach(function (fn) { try { fn(data); } catch (e) { console.error(e); } }); }
 
   function aadEnv(id, which) { return "emporium|v1|" + id + "|" + which; }
@@ -4290,7 +4605,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   function load(vault, key, userId) {
     ID = vault.storeId;
     return D.entries("rec").then(function (entries) {
-      var st = { settings: null, users: {}, cats: {}, items: {}, sales: [], moves: [], shifts: [], services: [], train: {}, counters: {}, pad: {}, notes: {}, head: null, unreadable: [] };
+      var st = { settings: null, users: {}, cats: {}, items: {}, sales: [], moves: [], shifts: [], services: [], train: {}, plans: {}, course: null, counters: {}, pad: {}, notes: {}, head: null, unreadable: [] };
       /* each person's notes are their own: a sign-in opens only the notes of the one signing in (the practice store opens
          all of its sample people's, since it changes from one to another) */
       var mine = "notes:" + (userId || "owner"), practice = B.mode === "practice";
@@ -4334,12 +4649,15 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     else if (kind === "shift") { var q = st.shifts.findIndex(function (x) { return x.id === v.id; }); if (q >= 0) st.shifts[q] = v; else st.shifts.push(v); }
     else if (kind === "svc") { st.services = st.services || []; var z = st.services.findIndex(function (x) { return x.id === v.id; }); if (z >= 0) st.services[z] = v; else st.services.push(v); }
     else if (kind === "train") { st.train = st.train || {}; st.train[id] = v; }
+    else if (kind === "plan") { st.plans = st.plans || {}; st.plans[id] = v; }
+    else if (kind === "course") st.course = v;
     else if (kind === "counter") st.counters[id] = v;
     else if (kind === "pad") st.pad[id] = v;
     else if (kind === "notes") st.notes[id] = (v && Array.isArray(v.notes)) ? v.notes : [];
   }
 
   B.lock = function (why) {
+    if (drill) { state = drill.state; drill = null; }
     var flushed = writeNotes();
     KEY = null; state = null; B.isOpen = false; B.user = null; E.settings = null; ID = null;
     emit("lock", why || "hand");
@@ -4353,7 +4671,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
      it cannot be copied out of the browser; nothing in the practice store is real, and it never touches the store's
      own books, which stay sealed with the owner's password and the Master Key. */
   B.PRACTICE_DB = "emporium-practice";
-  function quietLock() { writeNotes(); KEY = null; state = null; B.isOpen = false; B.user = null; E.settings = null; ID = null; }
+  function quietLock() { if (drill) { state = drill.state; drill = null; } writeNotes(); KEY = null; state = null; B.isOpen = false; B.user = null; E.settings = null; ID = null; }
   B.useBooks = function (practice) {
     quietLock();
     D.use(practice ? B.PRACTICE_DB : "emporium");
@@ -4365,7 +4683,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       if (r.vault && r.vault.device) {
         return D.get("meta", "devkey").then(function (kek) {
           if (!kek) throw err("damaged");
-          return C.unwrap(r.vault.device, kek, aadEnv(r.vault.storeId, "device"), false).then(function (key) { return load(r.vault, key); });
+          return C.unwrap(r.vault.device, kek, aadEnv(r.vault.storeId, "device"), false).then(function (key) { return load(r.vault, key); }).then(upgradePractice);
         });
       }
       if (r.vault) throw err("damaged");
@@ -4413,6 +4731,18 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
         .then(function (key) { storeKey = null; return load(vault, key); })
         .then(function () { return seedPractice(start, progress); });
     });
+  }
+  /* A practice store made before Build 19 is given Build 19's samples once, as it opens: Jean, the sample manager, the
+     manager's new access, and the store its plan of training (sampleCourse). Nothing here touches a real store, and a
+     sample that cannot be made is let go: the practice store still opens. */
+  function upgradePractice(st) {
+    if (B.mode !== "practice" || !state || state.course) return st;
+    /* Jean as the practice store made him (the manager's access of Build 6 to Build 18); if the owner changed him, he is left as he is */
+    var jean = state.users[SAMPLE_PEOPLE[1][0]], c = Promise.resolve(), was = ["sell", "items", "receive", "adjust", "costs", "reports", "team"];
+    if (jean && jean.active !== false && JSON.stringify(jean.access || []) === JSON.stringify(was))
+      c = c.then(function () { return B.editPerson(jean.id, { access: B.PRESETS.manager.slice(), preset: "manager" }); });
+    return c.then(sampleCourse).then(function () { B._at = null; B.user = state.users.owner; return state; },
+      function (e) { console.warn(e); B._at = null; if (state) B.user = state.users.owner; return state; });
   }
   /* The practice store's sample people: [user id, staff number, name, level of access]. */
   var SAMPLE_PEOPLE = [["u_practice_marie", 1002, "Marie", "cashier"], ["u_practice_jean", 1003, "Jean", "manager"]];
@@ -4497,6 +4827,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     });
     chain = chain.then(function () { return sampleServices(); });
     chain = chain.then(function () { return sampleTraining(); });
+    chain = chain.then(function () { return sampleCourse(); });
     return chain.then(function () { B._at = null; B.user = state.users.owner; return state; }, function (e) { B._at = null; B.user = state && state.users.owner; throw e; });
   }
   /* The practice store's money transfers and top-ups: a few a day for two weeks, with made-up fees and references.
@@ -4535,6 +4866,28 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     });
     return c;
   }
+  /* the store's own training (Build 19): two tasks of the store's own, a path of six days, and three refreshers; Jean,
+     the manager, started Marie's onboarding two days ago, and Marie has done the first day of it; the owner gave Jean
+     the Reports lesson, due in three days */
+  function sampleCourse() {
+    var base = new Date(); base.setHours(9, 0, 0, 0);
+    function day(n, hh, mm) { var d = U.addDays(base, n); d.setHours(hh, mm, 0, 0); return d; }
+    function as(id, at, fn) { return function () { B._at = at.toISOString(); B.user = state.users[id] || state.users.owner; return fn().then(function () { B.user = state.users.owner; }); }; }
+    var course = B.defaultCourse(), marie = SAMPLE_PEOPLE[0][0], jean = SAMPLE_PEOPLE[1][0];
+    /* Jean starts Marie's onboarding if he may train; if not (an older practice store the owner changed), the owner does */
+    var lead = state.users[jean] && state.users[jean].active !== false && (state.users[jean].access || []).indexOf("train") >= 0 ? jean : "owner";
+    course.tasks = [{ id: "krulesone", title: E.t("practice.task1.t"), body: E.t("practice.task1.b"), sign: "self", need: null },
+      { id: "kshadowing", title: E.t("practice.task2.t"), body: E.t("practice.task2.b"), sign: "lead", need: "sell" }];
+    course.path.splice(2, 0, ["task", "krulesone", 1]);
+    course.path.splice(5, 0, ["task", "kshadowing", 2]);
+    course.refresh = { "lesson:sale": 365, "lesson:pay": 180, "exercise:split": 90 };
+    return Promise.resolve()
+      .then(as("owner", day(-3, 17, 0), function () { return B.saveCourse(course); }))
+      .then(as(lead, day(-2, 9, 0), function () { return B.startOnboarding(marie, U.dayKey(day(-2, 9, 0))); }))
+      .then(as(marie, day(-2, 11, 0), function () { return B.exerciseDone("break"); }))
+      .then(as(marie, day(-2, 11, 30), function () { return B.taskDone(marie, "krulesone"); }))
+      .then(as("owner", day(-1, 17, 0), function () { return B.assign([jean], [{ kind: "lesson", ref: "reports" }], U.dayKey(day(3, 9, 0))); }));
+  }
   /* the sample people's shifts for the days before today: Marie from a quarter to nine, Jean from a quarter to one,
      each with a half-hour break */
   function sampleShifts(today) {
@@ -4568,8 +4921,12 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
      to it as well as the screens. Only the owner adds people, sets what they may do, gives them a first password, and
      takes a key back. The names are kept plain at the door, as the owner's own name is, so the sign-in can find the
      right envelope. A person's key opens the same sealed books as the owner's: the limits are kept by Lakay itself. */
-  B.ACCESS = ["sell", "items", "receive", "adjust", "costs", "reports", "team"];
-  B.PRESETS = { cashier: ["sell"], stock: ["sell", "items", "receive", "adjust"], manager: B.ACCESS.slice() };
+  /* Build 19: three kinds of access to lead, which only the owner gives at first: "train" (training and onboarding),
+     "people" (adding the staff, their first passwords, taking a key back) and "backup" (saving a sealed backup). A
+     team leader trains and leads; a manager may also look after the people, within limits the books keep: a person with
+     "people" gives only what they have themselves, never "people", and manages no one who holds more, nor the owner. */
+  B.ACCESS = ["sell", "items", "receive", "adjust", "costs", "reports", "team", "train", "people", "backup"];
+  B.PRESETS = { cashier: ["sell"], stock: ["sell", "items", "receive", "adjust"], lead: ["sell", "items", "receive", "adjust", "team", "train"], manager: B.ACCESS.slice() };
   B.isOwner = function () { return !!(B.user && B.user.role === "owner"); };
   B.can = function (what) {
     var u = B.user; if (!u) return false;
@@ -4577,6 +4934,23 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     return what !== "owner" && (u.access || []).indexOf(what) >= 0;
   };
   function need(what) { if (!B.can(what)) throw err("denied"); }
+  /* what the person signed in may give others */
+  B.grantable = function () {
+    if (!B.user) return [];
+    if (B.isOwner()) return B.ACCESS.slice();
+    if (!B.can("people")) return [];
+    return B.ACCESS.filter(function (a) { return a !== "people" && (B.user.access || []).indexOf(a) >= 0; });
+  };
+  /* whether the person signed in may change this person, give them a first password or take their key back */
+  B.canManage = function (u) {
+    if (!u || u.role === "owner" || !B.user) return false;
+    if (B.isOwner()) return true;
+    if (!B.can("people") || u.id === B.user.id) return false;
+    var g = B.grantable();
+    return (u.access || []).every(function (a) { return g.indexOf(a) >= 0; });
+  };
+  function needManage(st, id) { var u = st.users[id]; if (!u || u.role === "owner") throw err("noperson"); if (!B.canManage(u)) throw err("denied"); return u; }
+  function needGrant(list) { var g = B.grantable(); if (!(list || []).every(function (a) { return g.indexOf(a) >= 0; })) throw err("denied"); }
   B.numberOf = function (u) { return u ? (u.no || (u.role === "owner" ? 1001 : 0)) : 0; };
   B.people = function (all) {
     var st = state; if (!st) return [];
@@ -4600,16 +4974,26 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   }
   function nextNo(st) { return Object.keys(st.users).reduce(function (m, k) { return Math.max(m, B.numberOf(st.users[k])); }, 1001) + 1; }
   function cleanAccess(list) { return B.ACCESS.filter(function (a) { return (list || []).indexOf(a) >= 0; }); }
+  /* a level's name is kept only when the access is that level's own (Build 19): no label says more than is given */
+  function presetFor(name, access) { var p = B.PRESETS[name]; return p && p.length === access.length && p.every(function (a) { return access.indexOf(a) >= 0; }) ? name : "custom"; }
   function iterations(v) { return (v && v.kdf && v.kdf.iterations) || C.ITERATIONS; }
-  /* The Store Key, in a form that can be sealed into a new envelope: the owner's password opens it (in the practice
-     store, the key this device keeps for it). */
-  function keyToShare(ownerPassword) {
+  /* The Store Key, in a form that can be sealed into a new envelope: the owner's password opens it, or, for a manager
+     who looks after the people, their own password and envelope (in the practice store, the key this device keeps). */
+  function keyToShare(password) {
     if (B.mode === "practice") {
       return Promise.all([D.get("meta", "vault"), D.get("meta", "devkey")]).then(function (r) {
         return C.unwrap(r[0].device, r[1], aadEnv(r[0].storeId, "device"), true).then(function (k) { return { vault: r[0], key: k }; });
       });
     }
-    return ownerKeyExtractable(ownerPassword);
+    if (B.isOwner()) return ownerKeyExtractable(password);
+    return personKeyExtractable(B.user.id, password);
+  }
+  function personKeyExtractable(id, password) {
+    return D.get("meta", "vault").then(function (v) {
+      var e = v.people && v.people[id]; if (!e) throw err("wrong");
+      return C.passwordKey(password || "", U.b64d(e.salt), iterations(v)).then(function (kek) { return C.unwrap(e, kek, aadEnv(v.storeId, "person:" + id), true); })
+        .then(function (k) { return { vault: v, key: k }; }, function () { throw err("wrong"); });
+    });
   }
   function personEnvelope(hk, id, password) {
     var salt = U.rnd(16);
@@ -4621,7 +5005,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   B.addPerson = function (f, ownerPassword) {
     var name = cleanName(f.name), id = U.uid("u"), access = cleanAccess(f.access);
     try {
-      need("owner");
+      need("people"); needGrant(access);
       if (!name) throw err("name");
       if (nameTaken(state, name)) throw err("nameTaken");
       checkPw(f.password);
@@ -4629,10 +5013,10 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     return keyToShare(ownerPassword).then(function (hk) {
       return personEnvelope(hk, id, f.password).then(function (env) {
         return B.change(function (st) {
-          need("owner");
+          need("people"); needGrant(access);
           if (nameTaken(st, name)) throw err("nameTaken");
           var now = clock().toISOString(), no = nextNo(st);
-          var u = { id: id, no: no, name: name, role: "staff", preset: B.PRESETS[f.preset] ? f.preset : "custom", access: access, active: true,
+          var u = { id: id, no: no, name: name, role: "staff", preset: presetFor(f.preset, access), access: access, active: true,
             mustChange: true, created: now, updated: now };
           var v = clone(hk.vault); v.people = v.people || {}; v.people[id] = env;
           var users = clone(st.users); users[id] = u;
@@ -4644,8 +5028,8 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   };
   B.editPerson = function (id, f) {
     return B.change(function (st) {
-      need("owner");
-      var u = clone(st.users[id]); if (!u || u.role === "owner") throw err("noperson");
+      need("people");
+      var u = clone(needManage(st, id));
       var diff = {};
       if (f.name !== undefined) {
         var n = cleanName(f.name); if (!n) throw err("name");
@@ -4653,8 +5037,8 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
         if (n !== u.name) { diff.name = [u.name, n]; u.name = n; }
       }
       if (f.access !== undefined) {
-        var a = cleanAccess(f.access), p = B.PRESETS[f.preset] ? f.preset : "custom";
-        if (JSON.stringify(a) !== JSON.stringify(u.access)) { diff.access = [u.access, a]; u.access = a; }
+        var a = cleanAccess(f.access), p = presetFor(f.preset, a);
+        if (JSON.stringify(a) !== JSON.stringify(u.access)) { needGrant(a); diff.access = [u.access, a]; u.access = a; }
         if (p !== u.preset) { diff.preset = [u.preset, p]; u.preset = p; }
       }
       if (!Object.keys(diff).length) return null;
@@ -4666,12 +5050,12 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   };
   /* A new first password for a person (they forgot theirs, or they come back): they choose their own at their next sign-in. */
   B.setPersonPassword = function (id, password, ownerPassword) {
-    try { need("owner"); checkPw(password); if (!state.users[id] || state.users[id].role === "owner") throw err("noperson"); } catch (e) { return Promise.reject(e); }
+    try { need("people"); checkPw(password); needManage(state, id); } catch (e) { return Promise.reject(e); }
     return keyToShare(ownerPassword).then(function (hk) {
       return personEnvelope(hk, id, password).then(function (env) {
         return B.change(function (st) {
-          need("owner");
-          var u = clone(st.users[id]); if (!u) throw err("noperson");
+          need("people");
+          var u = clone(needManage(st, id));
           var back = u.active === false;
           u.active = true; u.mustChange = true; u.updated = clock().toISOString();
           var v = clone(hk.vault); v.people = v.people || {}; v.people[id] = env;
@@ -4686,8 +5070,8 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   B.retirePerson = function (id) {
     return D.get("meta", "vault").then(function (vault) {
       return B.change(function (st) {
-        need("owner");
-        var u = clone(st.users[id]); if (!u || u.role === "owner") throw err("noperson");
+        need("people");
+        var u = clone(needManage(st, id));
         if (u.active === false) return null;
         var now = clock().toISOString(), recs = [];
         var open = B.openShift(id);
@@ -4705,11 +5089,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     if (B.isOwner()) return B.changePassword(current, next);
     var id = B.user && B.user.id;
     try { checkPw(next); } catch (e) { return Promise.reject(e); }
-    return D.get("meta", "vault").then(function (v) {
-      var e = v.people && v.people[id]; if (!e) throw err("wrong");
-      return C.passwordKey(current, U.b64d(e.salt), iterations(v)).then(function (kek) { return C.unwrap(e, kek, aadEnv(v.storeId, "person:" + id), true); })
-        .then(function (k) { return { vault: v, key: k }; }, function () { throw err("wrong"); });
-    }).then(function (hk) {
+    return personKeyExtractable(id, current).then(function (hk) {
       return personEnvelope(hk, id, next).then(function (env) {
         return B.change(function (st) {
           var u = clone(st.users[id]); u.mustChange = false; u.updated = clock().toISOString();
@@ -4858,11 +5238,43 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       if (!KEY || !state) throw err("locked");
       var c = fn(state);
       if (!c) return null;
+      if (drill) return drilled(c);
       return commit(c.type, c.data, c.recs || [], c.meta || []).then(function (line) { return c.result !== undefined ? c.result : line; });
     });
     queue = p.catch(function () { });
     return p;
   };
+  /* ---------- exercises (Build 19): Lakay's real screens, with the sealed books set aside ----------
+     While an exercise runs, the books that Lakay shows are a copy in memory. A sale, a delivery, a transfer or a break
+     made then changes the copy, never the sealed books, and nothing is written to the device. When the exercise ends
+     (or Lakay locks), the copy is let go and the books are exactly as they were. Only the counter's work can be done in
+     an exercise: anything else is refused. A person's own notes are not part of it, so they stay their own. */
+  var drill = null, DRILL_OK = ["sale.completed", "stock.received", "stock.adjusted", "service.recorded", "clock.in", "clock.out", "break.started", "break.ended"];
+  B.drilling = function () { return !!drill; };
+  B.drillStart = function (onLine) {
+    if (drill || !state || !KEY) return false;
+    var copy = clone(state);
+    copy.notes = state.notes; copy.pad = state.pad;
+    drill = { state: state, onLine: onLine || null };
+    state = copy; E.settings = state.settings;
+    emit("drill", true);
+    return true;
+  };
+  B.drillEnd = function () {
+    if (!drill) return false;
+    state = drill.state; drill = null; E.settings = state ? state.settings : null;
+    emit("drill", false);
+    return true;
+  };
+  function drilled(c) {
+    if (DRILL_OK.indexOf(c.type) < 0) throw err("drill");
+    var line = { seq: 0, at: clock().toISOString(), day: U.dayKey(clock()), by: B.user.id, type: c.type, data: clone(c.data), drill: true };
+    (c.recs || []).forEach(function (r) { put(state, r.kind + ":" + r.id, clone(r.value)); });
+    var d = drill;
+    emit("change", line);
+    if (d && d.onLine) setTimeout(function () { try { d.onLine(line); } catch (e) { console.error(e); } }, 0);
+    return c.result !== undefined ? c.result : line;
+  }
   function commit(type, data, recs, metaOps) {
     var now = clock(), seq = state.head.seq + 1;
     var line = { seq: seq, at: now.toISOString(), day: U.dayKey(now), by: B.user.id, dev: B.device.id, type: type, data: data,
@@ -5031,6 +5443,178 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       var me = B.user.id, rec = clone((st.train && st.train[me]) || { user: me, done: {} });
       rec.done[lesson] = { at: clock().toISOString(), score: score, of: of };
       return { type: "training.completed", data: { user: me, lesson: lesson, score: score, of: of }, recs: [{ kind: "train", id: me, value: rec }], result: rec };
+    });
+  };
+
+  /* ---------- the store's own training (Build 19): the onboarding path, the store's tasks, refreshers, assignments ----------
+     The course (one record) is the store's: the path a new person follows, day by day; the store's own tasks (read the
+     cash rules, work a first shift beside a leader...), each done by the person or signed off by a leader; and which
+     lessons and exercises come due again, some months after they were last done. Each person's plan (one record each)
+     holds their onboarding and what was assigned to them. The marks (lessons, exercises, tasks) are in their train
+     record. Those with the "train" access write the course and the plans; every change is a ledger line. */
+  B.LESSON_IDS = ["welcome", "clock", "sale", "pay", "svc", "stock", "reports", "safe"];
+  B.EX_IDS = ["break", "sale", "split", "card", "receive", "transfer"];
+  /* the access each lesson and exercise asks for (null: everyone; "owner": the owner only) */
+  B.TRAIN_NEED = { "lesson:welcome": null, "lesson:clock": null, "lesson:sale": "sell", "lesson:pay": "sell", "lesson:svc": "sell", "lesson:stock": "receive",
+    "lesson:reports": "reports", "lesson:safe": "owner", "exercise:break": null, "exercise:sale": "sell", "exercise:split": "sell", "exercise:card": "sell",
+    "exercise:receive": "receive", "exercise:transfer": "sell" };
+  var DEFAULT_PATH = [["lesson", "welcome", 1], ["lesson", "clock", 1], ["exercise", "break", 1], ["lesson", "sale", 2], ["exercise", "sale", 2], ["lesson", "pay", 3],
+    ["exercise", "split", 3], ["exercise", "card", 3], ["lesson", "stock", 4], ["exercise", "receive", 4], ["lesson", "svc", 5], ["exercise", "transfer", 5], ["lesson", "reports", 6]];
+  B.defaultCourse = function () { return { v: 1, tasks: [], path: clone(DEFAULT_PATH), refresh: {} }; };
+  B.course = function () { return clone((state && state.course) || B.defaultCourse()); };
+  function needOf(kind, ref, course) {
+    if (kind === "task") { var tk = ((course && course.tasks) || []).filter(function (x) { return x.id === ref; })[0]; return tk ? (tk.need || null) : undefined; }
+    var k = kind + ":" + ref; return Object.prototype.hasOwnProperty.call(B.TRAIN_NEED, k) ? B.TRAIN_NEED[k] : undefined;
+  }
+  /* whether this person can be given this lesson, exercise or task */
+  B.canTrain = function (u, kind, ref, course) {
+    course = course || (state && state.course) || B.defaultCourse();
+    var n = needOf(kind, ref, course);
+    if (n === undefined || !u) return false;
+    if (u.role === "owner") return true;
+    if (n === null) return true;
+    return n !== "owner" && (u.access || []).indexOf(n) >= 0;
+  };
+  function plain(x, n) { return String(x || "").replace(/[\u0000-\u001F\u007F]/g, " ").replace(/\s+/g, " ").trim().slice(0, n); }
+  /* only what a course can hold, within limits: anything else is left out */
+  B.cleanCourse = function (c) {
+    c = c || {};
+    var o = { v: 1, tasks: [], path: [], refresh: {} };
+    (Array.isArray(c.tasks) ? c.tasks : []).slice(0, 40).forEach(function (x) {
+      if (!x || typeof x !== "object") return;
+      var title = plain(x.title, 80); if (!title) return;
+      var id = /^k[a-z0-9]{6,12}$/.test(x.id) && !o.tasks.some(function (y) { return y.id === x.id; }) ? x.id : U.uid("k");
+      o.tasks.push({ id: id, title: title, body: plain(x.body, 400), sign: x.sign === "lead" ? "lead" : "self", need: B.ACCESS.indexOf(x.need) >= 0 ? x.need : null });
+    });
+    (Array.isArray(c.path) ? c.path : []).slice(0, 60).forEach(function (x) {
+      if (!Array.isArray(x)) return;
+      var kind = x[0], ref = x[1], day = Math.round(Number(x[2]));
+      if (["lesson", "exercise", "task"].indexOf(kind) < 0 || needOf(kind, ref, o) === undefined) return;
+      if (o.path.some(function (y) { return y[0] === kind && y[1] === ref; })) return;
+      o.path.push([kind, ref, day >= 1 && day <= 60 ? day : 1]);
+    });
+    Object.keys(c.refresh && typeof c.refresh === "object" ? c.refresh : {}).forEach(function (k) {
+      var i = k.indexOf(":"), kind = k.slice(0, i), ref = k.slice(i + 1), d = Math.round(Number(c.refresh[k]));
+      if ((kind === "lesson" || kind === "exercise") && needOf(kind, ref, o) !== undefined && d >= 30 && d <= 730) o.refresh[k] = d;
+    });
+    return o;
+  };
+  B.saveCourse = function (c) {
+    return B.change(function (st) {
+      need("train");
+      var next = B.cleanCourse(c), before = st.course || B.defaultCourse(), changed = [];
+      ["tasks", "path", "refresh"].forEach(function (k) { if (JSON.stringify(before[k]) !== JSON.stringify(next[k])) changed.push(k); });
+      if (!changed.length) return null;
+      return { type: "course.updated", data: { changed: changed, tasks: next.tasks.length, path: next.path.length, refresh: Object.keys(next.refresh).length },
+        recs: [{ kind: "course", id: "main", value: next }], result: next };
+    });
+  };
+  B.planOf = function (userId) { var p = state && state.plans && state.plans[userId]; return p ? clone(p) : { user: userId, onboarding: null, items: [] }; };
+  function planRec(st, userId) { return clone((st.plans && st.plans[userId]) || { user: userId, onboarding: null, items: [] }); }
+  function trainRec(st, userId) { return clone((st.train && st.train[userId]) || { user: userId, done: {} }); }
+  function markOf(st, userId, kind, ref) {
+    var r = st.train && st.train[userId]; if (!r) return null;
+    return (kind === "lesson" ? (r.done || {})[ref] : kind === "exercise" ? (r.ex || {})[ref] : kind === "task" ? (r.tasks || {})[ref] : null) || null;
+  }
+  /* an onboarding item counts what was done at any time; an item assigned (or a refresher) asks for it done again, from then on */
+  function itemDone(st, userId, it) { var m = markOf(st, userId, it.kind, it.ref); return !!m && (it.why === "onboarding" || m.at >= (it.at || "")); }
+  B.markOf = function (userId, kind, ref) { return state ? clone(markOf(state, userId, kind, ref)) : null; };
+  B.itemDone = function (userId, it) { return !!state && itemDone(state, userId, it); };
+  function dueDay(d) { return /^\d{4}-\d{2}-\d{2}$/.test(d || "") ? d : null; }
+  /* lessons, exercises and the store's tasks given to people, each with the day it is due */
+  B.assign = function (userIds, items, due) {
+    return B.change(function (st) {
+      need("train");
+      var course = st.course || B.defaultCourse(), now = clock().toISOString(), recs = [], given = [];
+      userIds = (userIds || []).filter(function (id, i, a) { return a.indexOf(id) === i; });
+      items = (items || []).filter(function (x) { return x && needOf(x.kind, x.ref, course) !== undefined; });
+      if (!userIds.length || !items.length) throw err("assign");
+      userIds.forEach(function (id) {
+        var u = st.users[id]; if (!u || u.active === false) throw err("noperson");
+        var plan = planRec(st, id), added = 0;
+        items.forEach(function (x) {
+          if (!B.canTrain(u, x.kind, x.ref, course)) return;
+          if (plan.items.some(function (y) { return y.kind === x.kind && y.ref === x.ref && !itemDone(st, id, y); })) return;
+          plan.items.push({ id: U.uid("a"), kind: x.kind, ref: x.ref, due: dueDay(due), by: B.user.id, at: now, why: "assigned" }); added++;
+        });
+        if (added) { recs.push({ kind: "plan", id: id, value: plan }); given.push({ user: id, n: added }); }
+      });
+      if (!recs.length) return null;
+      return { type: "training.assigned", data: { given: given, items: items.map(function (x) { return x.kind + ":" + x.ref; }), due: dueDay(due) }, recs: recs, result: given };
+    });
+  };
+  B.unassign = function (userId, itemId) {
+    return B.change(function (st) {
+      need("train");
+      var plan = planRec(st, userId), it = plan.items.filter(function (x) { return x.id === itemId; })[0];
+      if (!it) return null;
+      plan.items = plan.items.filter(function (x) { return x.id !== itemId; });
+      return { type: "training.unassigned", data: { user: userId, item: it.kind + ":" + it.ref }, recs: [{ kind: "plan", id: userId, value: plan }], result: plan };
+    });
+  };
+  /* a new person's first days: the course's path, kept to what their access opens, each item due on its day */
+  B.startOnboarding = function (userId, startDay) {
+    return B.change(function (st) {
+      need("train");
+      var u = st.users[userId]; if (!u || u.active === false || u.role === "owner") throw err("noperson");
+      var plan = planRec(st, userId);
+      if (plan.onboarding && !plan.onboarding.done) throw err("already");
+      var course = st.course || B.defaultCourse(), now = clock(), start = dueDay(startDay) || U.dayKey(now), n = 0;
+      plan.items = plan.items.filter(function (x) { return x.why !== "onboarding"; });
+      course.path.forEach(function (x) {
+        if (!B.canTrain(u, x[0], x[1], course)) return;
+        plan.items.push({ id: U.uid("a"), kind: x[0], ref: x[1], due: U.dayKey(U.addDays(U.fromDayKey(start), x[2] - 1)), day: x[2], by: B.user.id, at: now.toISOString(), why: "onboarding" }); n++;
+      });
+      plan.onboarding = { start: start, started: now.toISOString(), by: B.user.id, done: null };
+      return { type: "onboarding.started", data: { user: userId, start: start, items: n }, recs: [{ kind: "plan", id: userId, value: plan }], result: plan };
+    });
+  };
+  /* a leader signs the onboarding off once every item of it is done (never their own, unless they are the owner) */
+  B.signOff = function (userId) {
+    return B.change(function (st) {
+      need("train");
+      if (userId === B.user.id && !B.isOwner()) throw err("denied");
+      var plan = planRec(st, userId);
+      if (!plan.onboarding || plan.onboarding.done) throw err("noonboarding");
+      if (plan.items.some(function (x) { return x.why === "onboarding" && !itemDone(st, userId, x); })) throw err("notDone");
+      plan.onboarding.done = { at: clock().toISOString(), by: B.user.id };
+      return { type: "onboarding.signedoff", data: { user: userId }, recs: [{ kind: "plan", id: userId, value: plan }], result: plan };
+    });
+  };
+  /* refreshers: what the course asks to be taken again, some days after it was last done (shown a week before) */
+  B.refreshersOf = function (userId) {
+    var st = state; if (!st) return [];
+    var u = st.users[userId], course = st.course || B.defaultCourse(), out = [], now = clock().getTime();
+    Object.keys(course.refresh || {}).forEach(function (k) {
+      var i = k.indexOf(":"), kind = k.slice(0, i), ref = k.slice(i + 1), days = course.refresh[k];
+      if (!B.canTrain(u, kind, ref, course)) return;
+      var m = markOf(st, userId, kind, ref); if (!m) return;
+      var due = Date.parse(m.at) + days * 86400000;
+      if (due <= now + 7 * 86400000) out.push({ kind: kind, ref: ref, last: m.at, due: U.dayKey(new Date(due)), every: days, overdue: due <= now, why: "refresh" });
+    });
+    return out;
+  };
+  B.exerciseDone = function (exId) {
+    return B.change(function (st) {
+      if (!B.user) throw err("locked");
+      if (B.EX_IDS.indexOf(exId) < 0) throw err("exercise");
+      var me = B.user.id, rec = trainRec(st, me); rec.ex = rec.ex || {};
+      rec.ex[exId] = { at: clock().toISOString() };
+      return { type: "training.exercise", data: { user: me, exercise: exId }, recs: [{ kind: "train", id: me, value: rec }], result: rec };
+    });
+  };
+  /* one of the store's tasks, done: by the person (a task they mark themselves) or signed off by a leader */
+  B.taskDone = function (userId, taskId) {
+    return B.change(function (st) {
+      if (!B.user) throw err("locked");
+      var course = st.course || B.defaultCourse(), tk = (course.tasks || []).filter(function (x) { return x.id === taskId; })[0];
+      if (!tk) throw err("task");
+      if (!st.users[userId]) throw err("noperson");
+      if (tk.sign === "lead") { need("train"); if (userId === B.user.id && !B.isOwner()) throw err("denied"); }
+      else if (userId !== B.user.id) need("train");
+      var rec = trainRec(st, userId); rec.tasks = rec.tasks || {};
+      rec.tasks[taskId] = { at: clock().toISOString(), by: B.user.id };
+      return { type: "training.task", data: { user: userId, task: taskId, by: B.user.id }, recs: [{ kind: "train", id: userId, value: rec }], result: rec };
     });
   };
 
@@ -5291,16 +5875,19 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
           delete svcs[v.id];
         });
         Object.keys(svcs).forEach(function (k) { res.problems.push({ svc: k, what: "extra" }); });
-        /* each person's lessons (Build 17): the marks kept are the ones the ledger wrote last */
+        /* each person's marks (Build 17 lessons; Build 19 exercises and the store's tasks): the ones the ledger wrote last */
         Object.keys(st.train || {}).forEach(function (u) {
-          var done = (st.train[u] && st.train[u].done) || {}, want = train[u] || {};
-          Object.keys(done).forEach(function (l) {
-            var w = want[l];
-            if (!w) res.problems.push({ train: u, lesson: l, what: "missing" });
-            else if (w.score !== done[l].score || w.of !== done[l].of) res.problems.push({ train: u, lesson: l, what: "differs" });
-            delete want[l];
+          var r = st.train[u] || {}, have = {}, want = train[u] || {};
+          Object.keys(r.done || {}).forEach(function (l) { have["l:" + l] = { score: r.done[l].score, of: r.done[l].of }; });
+          Object.keys(r.ex || {}).forEach(function (x) { have["x:" + x] = {}; });
+          Object.keys(r.tasks || {}).forEach(function (x) { have["t:" + x] = { by: r.tasks[x].by }; });
+          Object.keys(have).forEach(function (k) {
+            var w = want[k];
+            if (!w) res.problems.push({ train: u, lesson: k, what: "missing" });
+            else if (JSON.stringify(w) !== JSON.stringify(have[k])) res.problems.push({ train: u, lesson: k, what: "differs" });
+            delete want[k];
           });
-          Object.keys(want).forEach(function (l) { res.problems.push({ train: u, lesson: l, what: "extra" }); });
+          Object.keys(want).forEach(function (k) { res.problems.push({ train: u, lesson: k, what: "extra" }); });
           delete train[u];
         });
         Object.keys(train).forEach(function (u) { res.problems.push({ train: u, what: "extra" }); });
@@ -5313,7 +5900,9 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   function replay(items, line, res, svcs, train) {
     var d = line.data || {};
     switch (line.type) {
-      case "training.completed": if (train && d.user && d.lesson) { train[d.user] = train[d.user] || {}; train[d.user][d.lesson] = { score: d.score, of: d.of }; } break;
+      case "training.completed": if (train && d.user && d.lesson) { train[d.user] = train[d.user] || {}; train[d.user]["l:" + d.lesson] = { score: d.score, of: d.of }; } break;
+      case "training.exercise": if (train && d.user && d.exercise) { train[d.user] = train[d.user] || {}; train[d.user]["x:" + d.exercise] = {}; } break;
+      case "training.task": if (train && d.user && d.task) { train[d.user] = train[d.user] || {}; train[d.user]["t:" + d.task] = { by: d.by }; } break;
       case "service.recorded": if (d.svc) svcs[d.svc.id] = clone(d.svc); break;
       case "service.voided": if (svcs[d.id]) svcs[d.id].status = "void"; else res.problems.push({ seq: line.seq, what: "void" }); break;
       case "item.created": items[d.item.id] = clone(d.item); break;
@@ -5373,7 +5962,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
 
   /* ---------- backups: the sealed books as they are, in one file ---------- */
   B.makeBackup = function () {
-    if (B.user && !B.can("owner")) return Promise.reject(err("denied"));
+    if (B.user && !B.can("backup")) return Promise.reject(err("denied"));
     return Promise.all([D.get("meta", "vault"), D.get("meta", "door"), D.entries("rec"), D.entries("journal"), D.get("meta", "custom")]).then(function (r) {
       var body = { format: "emporium-backup", v: 1, build: E.BUILD.number, at: new Date().toISOString(), door: r[1], vault: r[0], custom: r[4] || null,
         rec: r[2].map(function (e) { return [e[0], U.b64e(e[1].iv), U.b64e(e[1].ct)]; }),
@@ -6149,7 +6738,8 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
           h("span.muted", null, B.onBreak(x) ? t("clock.break") : t("clock.since", { t: E.fmtTime(new Date(x.in)) }))]);
       })) : h("p.muted#onClockList", null, t("clock.nobody")));
     }
-    if (practice) {
+    /* the practice store's people, to see the store as each sees it (not while an exercise runs: Build 19) */
+    if (practice && !(B.drilling && B.drilling())) {
       var people = B.people();
       rows.push(h("h3.status-h", null, t("practice.asH")));
       rows.push(h("div.as-keys", null, people.map(function (u) {
@@ -6168,7 +6758,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
                        : { label: t("clock.breakStart"), emoji: "☕", id: "breakKey", onClick: clockAct(B.breakStart, function () { return t("clock.breakAt", { t: E.fmtTime(new Date()) }); }) });
       actions.push({ label: t("clock.out"), emoji: "🕔", id: "clockOutKey", onClick: clockAct(function () { return B.clockOut(); }, function (x) { return t("clock.outAt", { t: E.fmtTime(new Date(x.out)), h: ui.dur(B.shiftMs(x)) }); }) });
     }
-    if (practice && B.isOwner()) {
+    if (practice && B.isOwner() && !(B.drilling && B.drilling())) {
       actions.push({ label: t("practice.reset"), onClick: function (close) { close(); ui.confirm(t("practice.resetQ"), t("practice.resetP"), t("practice.reset")).then(function (yes) {
         if (!yes) return; B.resetPractice().then(function () { return B.openPractice(); }).then(function () { E.app.opened(); ui.toast(t("practice.done"), "good"); });
       }); } });
@@ -6958,15 +7548,23 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       list.push(need("🔔", x.text, t("home.attnRem", { t: ui.time(x.at) }), Date.parse(x.at) <= Date.now() ? "warn" : null,
         [t("home.open"), function () { ui.alertsPanel(); }]));
     });
-    /* a person's lessons still to take (Build 17) */
-    if (staff && E.learn) {
+    /* a person's training (Build 19): what was assigned, the onboarding and the refreshers; for leaders, the team's */
+    var trained = false;
+    if (E.train && B.user) {
+      E.train.homeRows(need).forEach(function (x) { list.push(x); });
+      var mine = E.train.statusOf(B.user);
+      trained = mine.items.length > 0 || mine.refresh.length > 0;
+    }
+    /* a person's lessons still to take (Build 17), when nothing has been assigned to them */
+    if (staff && E.learn && !trained) {
       var left = E.learn.leftFor(B.user).length;
       if (left) list.push(need("🎓", t(left === 1 ? "learn.homeLeft1" : "learn.homeLeft", { n: left }), t("learn.homeLeftSub"), null, [t("home.open"), function () { ui.go("learn"); }]));
     }
-    if (!staff && !practice) {
+    /* the backup: the owner's, from Settings; a manager given Backups saves it from here (Build 19) */
+    if (!practice && (!staff || B.can("backup"))) {
       var lastB = U.prefGet("lastBackup", ""), days = lastB ? Math.floor((Date.now() - Date.parse(lastB)) / 86400000) : null;
       if (days === null || days >= 7) list.push(need("💾", days === null ? t("home.attnBackupNone") : t("home.attnBackupOld", { n: days }), t("home.attnBackupSub"), days === null ? "warn" : null,
-        [t("home.backupKey"), function () { ui.go("settings"); }]));
+        [t("home.backupKey"), staff ? function () { E.saveBackup(); } : function () { ui.go("settings"); }]));
     }
     return h("section.hm-needs", { "aria-label": t("home.attnH") }, [
       h("div.hx-sech", null, [h("h2", null, [ui.emo("📌"), t("home.attnH")]), h("p", null, t("home.attnP"))]),
@@ -8247,8 +8845,8 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   }
 
   /* ---------- the Guidebook ---------- */
-  var ARTICLES = ["start", "learn", "door", "team", "clock", "master", "sale", "pay", "items", "receive", "correct", "depts", "svc", "reports", "notes", "backup", "sealed", "verify", "display", "studio", "build", "limits"];
-  var ART_EMO = { start: "🌟", learn: "🎓", door: "🚪", team: "👥", clock: "🕘", master: "🗝️", sale: "🛒", pay: "💳", items: "🏷️", receive: "🚚", correct: "✏️", depts: "🗂️", svc: "💱", reports: "📊", notes: "🗒️", backup: "💾", sealed: "🔐", verify: "🛡️", display: "🎨", studio: "⚒️", build: "🔢", limits: "🧭" };
+  var ARTICLES = ["start", "learn", "train", "door", "team", "clock", "master", "sale", "pay", "items", "receive", "correct", "depts", "svc", "reports", "notes", "backup", "sealed", "verify", "display", "studio", "build", "limits"];
+  var ART_EMO = { start: "🌟", learn: "🎓", train: "📋", door: "🚪", team: "👥", clock: "🕘", master: "🗝️", sale: "🛒", pay: "💳", items: "🏷️", receive: "🚚", correct: "✏️", depts: "🗂️", svc: "💱", reports: "📊", notes: "🗒️", backup: "💾", sealed: "🔐", verify: "🛡️", display: "🎨", studio: "⚒️", build: "🔢", limits: "🧭" };
   E.guideCount = function () { return ARTICLES.length; };
   ui.rooms.guide = function (main) {
     var q = ui.input({ id: "guideSearch", type: "search", placeholder: t("guide.searchPh"), "aria-label": t("guide.search") });
@@ -9397,7 +9995,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
 (function () {
   var U = E.util, h = U.h, t = E.t, B = E.books, ui = E.ui;
   var T = E.team = { week: 0 };
-  var LEVELS = ["cashier", "stock", "manager", "custom"];
+  var LEVELS = ["cashier", "stock", "lead", "manager", "custom"];
 
   /* the week shown: this week (0) or one before it (-1, -2 ...), starting on the store's first day of the week */
   function weekRange(offset) {
@@ -9431,7 +10029,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
 
   ui.rooms.team = function (main) {
     var st = B.state(), me = B.user, w = weekRange(T.week), wk = inWeek(w);
-    main.appendChild(ui.roomHead("room.team", "tip.team", B.can("owner") ? [h("button.key.primary#addPerson", { type: "button", onclick: function () { T.person(null); } }, [ui.emo("➕"), t("people.add")])] : null));
+    main.appendChild(ui.roomHead("room.team", "tip.team", B.can("people") ? [h("button.key.primary#addPerson", { type: "button", onclick: function () { T.person(null); } }, [ui.emo("➕"), t("people.add")])] : null));
     var weekSeg = ui.seg([["0", t("team.thisWeek")], ["-1", t("team.lastWeek")], ["-2", t("team.weekBefore")]], String(T.week), function (v) { T.week = +v; ui.refresh(); }, t("team.week"));
     var weekLine = h("p.muted", null, t("team.weekOf", { a: E.fmtDate(w.start, "short"), b: E.fmtDate(w.last, "short") }));
 
@@ -9470,8 +10068,16 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
         h("tbody", null, rows)])), h("span.muted", null, t("team.weekOf", { a: E.fmtDate(w.start, "short"), b: E.fmtDate(w.last, "short") }))));
     }
 
-    /* the people, for the owner */
-    if (B.can("owner")) {
+    /* a sealed backup, for a manager given that access (the owner keeps theirs in Settings) */
+    if (B.can("backup") && !B.isOwner() && B.mode !== "practice") {
+      var lastB = U.prefGet("lastBackup", "");
+      main.appendChild(section("teamBackup", "💾", "people.backupH", [h("p.hint", null, t("people.backupP")),
+        h("p.muted#teamBackupLast", null, lastB ? t("km.backup", { d: E.fmtDate(new Date(lastB), "short") }) : t("km.noBackup")),
+        h("button.key.primary#teamBackupKey", { type: "button", onclick: function () { E.saveBackup(); } }, [ui.emo("💾"), t("set.saveBackup")])]));
+    }
+
+    /* the people, for the owner and those who look after them (Build 19: within what they have themselves) */
+    if (B.can("people")) {
       var list = B.people(true);
       main.appendChild(section("teamPeople", "👥", "people.h", [h("p.hint", null, t("people.p")),
         h("div.table-wrap", null, h("table.grid#peopleList", null, [
@@ -9479,12 +10085,13 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
           h("tbody", null, list.map(function (u) {
             var owner = u.role === "owner", gone = u.active === false;
             return h("tr", { "data-person": u.id, class: gone ? "retired" : "" }, [
-              h("td", null, owner ? h("span", null, [ui.emo("👑"), u.name]) : h("button.row-key", { type: "button", onclick: function () { T.person(u.id); } }, [ui.emo("🙂"), h("span", null, u.name)])),
+              h("td", null, owner ? h("span", null, [ui.emo("👑"), u.name]) : B.canManage(u) ? h("button.row-key", { type: "button", onclick: function () { T.person(u.id); } }, [ui.emo("🙂"), h("span", null, u.name)])
+                : h("span.row-fixed", { title: t("people.notYours") }, [ui.emo("🙂"), h("span", null, u.name)])),
               h("td", null, String(B.numberOf(u))), h("td", null, ui.levelName(u)),
               h("td.access-cell", null, owner ? t("people.everything") : (u.access || []).map(function (a) { return t("access." + a + ".s"); }).join(" · ") || "—"),
               h("td", null, gone ? h("span.badge", null, t("people.retired")) : u.mustChange ? h("span.badge.warn", null, t("people.firstPw")) : h("span.badge.ok", null, t("people.active")))]);
           }))])),
-        h("p.hint", null, t("people.ownerOnly"))]));
+        h("p.hint", null, t(B.isOwner() ? "people.ownerOnly" : "people.limitP"))]));
     }
   };
 
@@ -9498,10 +10105,11 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
 
   /* ---------- adding a person, or changing one (the owner only) ---------- */
   function accessBoxes(chosen, onChange) {
-    var boxes = {};
+    var boxes = {}, can = B.grantable();
     var wrap = h("div.access-list", { role: "group", "aria-label": t("people.access") }, B.ACCESS.map(function (a) {
       var cb = h("input", { type: "checkbox", id: "acc-" + a, "data-access": a });
       cb.checked = chosen.indexOf(a) >= 0; boxes[a] = cb;
+      if (can.indexOf(a) < 0) { cb.disabled = true; cb.title = t("people.notGiven"); }
       cb.addEventListener("change", function () { if (onChange) onChange(); });
       return h("label.access-row", { for: "acc-" + a }, [cb, h("span", null, [h("b", null, t("access." + a + ".s")), h("small", null, t("access." + a + ".d"))])]);
     }));
@@ -9509,7 +10117,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       set: function (list) { B.ACCESS.forEach(function (a) { boxes[a].checked = list.indexOf(a) >= 0; }); } };
   }
   function levelOf(list) {
-    for (var i = 0; i < 3; i++) { var p = B.PRESETS[LEVELS[i]]; if (p.length === list.length && p.every(function (a) { return list.indexOf(a) >= 0; })) return LEVELS[i]; }
+    for (var i = 0; i < 4; i++) { var p = B.PRESETS[LEVELS[i]]; if (p.length === list.length && p.every(function (a) { return list.indexOf(a) >= 0; })) return LEVELS[i]; }
     return "custom";
   }
   var ERR = { name: "people.err.name", nameTaken: "people.err.taken", wrong: "people.err.ownerPw", denied: "people.denied" };
@@ -9519,9 +10127,16 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     var acc = accessBoxes(u ? (u.access || []) : B.PRESETS.cashier, function () { level.querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-checked", String(b.getAttribute("data-v") === levelOf(acc.value()))); }); });
     var level = ui.seg(LEVELS.map(function (l) { return [l, t("level." + l)]; }), u ? levelOf(u.access || []) : "cashier", function (v) { if (B.PRESETS[v]) acc.set(B.PRESETS[v]); }, t("people.level"));
     level.id = "pLevel";
+    /* a level that holds more than the one adding may give is shown, but closed */
+    var can = B.grantable();
+    Array.prototype.forEach.call(level.querySelectorAll("button[data-v]"), function (b) {
+      var p = B.PRESETS[b.getAttribute("data-v")];
+      if (p && !p.every(function (a) { return can.indexOf(a) >= 0; })) { b.disabled = true; b.setAttribute("aria-disabled", "true"); b.title = t("people.notGiven"); }
+    });
+    var onboard = null;
     var body = [ui.field("people.name", name, { required: true, hint: t("people.nameHint") }),
       h("div.field", null, [h("div.label-row", null, h("span.lbl", null, t("people.level"))), level]),
-      acc.node, h("p.hint", null, t("people.ownerOnly"))];
+      acc.node, h("p.hint", null, t(B.isOwner() ? "people.ownerOnly" : "people.limitHint"))];
     var pw = null, pw2 = null, own = null, meter = null;
     if (!u) {
       pw = ui.input({ type: "password", id: "pPw", autocomplete: "new-password" }); pw2 = ui.input({ type: "password", id: "pPw2", autocomplete: "new-password" });
@@ -9529,6 +10144,11 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       pw.addEventListener("input", function () { meter.textContent = pw.value ? t(E.crypto.passwordAdvice(pw.value).key) : ""; });
       body.push(h("h3.status-h", null, t("people.keyH")), h("p.hint", null, t("people.keyP")), ui.field("people.firstPw", pw, { required: true }), meter, ui.field("own.again", pw2, { required: true }));
       if (!practice) { own = ui.input({ type: "password", id: "pOwnerPw", autocomplete: "current-password" }); body.push(ui.field("people.ownerPw", own, { required: true, hint: t("people.ownerPwHint") })); }
+      /* Build 19: a new person's onboarding can start the day they are added */
+      if (B.can("train")) {
+        onboard = h("input", { type: "checkbox", id: "pOnboard" }); onboard.checked = true;
+        body.push(h("label.access-row.onb-row", { for: "pOnboard" }, [onboard, h("span", null, [h("b", null, t("people.onboard")), h("small", null, t("people.onboardD"))])]));
+      }
     } else {
       body.unshift(h("p.muted", null, ui.personTag(u) + (u.active === false ? " · " + t("people.retired") : "")));
     }
@@ -9558,10 +10178,15 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       if (pw.value !== pw2.value) { ui.fieldError(pw2, t("setup.noMatch")); return false; }
       if (own && !own.value) { ui.fieldError(own, t("door.needPassword")); return false; }
       btn.disabled = true; btn.textContent = t("people.making");
+      var start = onboard && onboard.checked;
       B.addPerson({ name: name.value, access: access, preset: preset, password: pw.value }, own ? own.value : null).then(function (p) {
-        close(); ui.refresh();
-        ui.dialog({ title: t("people.addedH", { name: p.name }), emoji: "✅", body: [h("p", null, t("people.addedP", { name: p.name, n: p.no })),
-          h("p.big-id#newPersonId", null, t("people.id", { n: p.no })), h("p.hint", null, t("people.addedHint"))], actions: [{ label: t("gotIt"), kind: "primary" }] });
+        close();
+        return (start && E.train ? E.train.onboard(p.id, true).then(function () { return true; }, function (e) { console.error(e); return false; }) : Promise.resolve(false)).then(function (started) {
+          ui.refresh();
+          ui.dialog({ title: t("people.addedH", { name: p.name }), emoji: "✅", body: [h("p", null, t("people.addedP", { name: p.name, n: p.no })),
+            h("p.big-id#newPersonId", null, t("people.id", { n: p.no })), h("p.hint", null, t("people.addedHint")), started ? h("p.hint#newPersonOnb", null, t("people.onboarded", { name: p.name })) : null],
+            actions: [{ label: t("gotIt"), kind: "primary" }] });
+        });
       }, function (e) {
         btn.disabled = false; btn.textContent = t("people.add");
         var c = e && e.code;
@@ -10498,6 +11123,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
 
   /* ---------- running a tour ---------- */
   T.start = function (id, opt) {
+    if (B.drilling && B.drilling()) { ui.toast(t("ex.busy"), "warn"); return false; }
     if (run) T.stop(false, true);
     var l = lesson(id);
     if (!TOURS[id] || !l || !B.isOpen || !canTake(B.user, l)) return false;
@@ -10664,6 +11290,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   /* ---------- the questions ---------- */
   L.quiz = function (id) {
     var l = lesson(id); if (!l || !B.isOpen) return null;
+    if (B.drilling && B.drilling()) { ui.toast(t("ex.busy"), "warn"); return null; }
     var qs = questions(id), i = 0, right = 0, missed = false, solved = false, d;
     var body = h("div.quiz#quiz");
     function step() {
@@ -10719,22 +11346,24 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       ui.readAloud(t("guide." + id + ".t") + ". " + paras.join(" "))], actions: [{ label: t("gotIt"), kind: "primary" }] });
   };
 
-  /* ---------- the Learning room ---------- */
-  ui.rooms.learn = function (main) {
+  /* ---------- the Learning room's parts (the room itself, with its tabs, is in 25-train.js since Build 19) ---------- */
+  /* the person's own lessons: how many are done, and the next one */
+  L.mineCard = function () {
     var me = B.user, mine = L.lessonsFor(me), done = L.doneOf(me), practice = B.mode === "practice";
     var n = mine.filter(function (l) { return done[l.id]; }).length, next = mine.filter(function (l) { return !done[l.id]; })[0];
-    main.appendChild(ui.roomHead("room.learn", "tip.learn", [h("button.key.primary#learnTour", { type: "button", onclick: function () { T.start("welcome"); } }, [U.icon("play"), t("learn.tour")])]));
-
     var fill = h("span.learn-fill"); fill.style.width = (mine.length ? Math.round(100 * n / mine.length) : 0) + "%";
-    main.appendChild(h("section.card.learn-mine#learnMine", { "aria-labelledby": "learnMineH" }, [
+    return h("section.card.learn-mine#learnMine", { "aria-labelledby": "learnMineH" }, [
       h("div.learn-mine-head", null, [h("span.learn-cap", { "aria-hidden": "true" }, U.icon("cap")),
         h("div.learn-mine-t", null, [h("h2#learnMineH", null, t("learn.mineH")), h("p#learnCount", null, n === mine.length ? t("learn.allDone") : t("learn.progress", { n: n, m: mine.length }))]),
         next ? h("div.learn-next", null, [h("small", null, t("learn.next", { name: t("learn." + next.id + ".t") })),
           h("button.key.primary#learnNext", { type: "button", "data-lesson": next.id, onclick: function () { T.start(next.id); } }, [U.icon("play"), t("learn.start")])]) : null]),
       h("div.learn-bar", { role: "progressbar", "aria-valuemin": "0", "aria-valuemax": String(mine.length), "aria-valuenow": String(n), "aria-label": t("learn.mineH") }, fill),
-      h("p.hint.learn-note", null, [ui.emo(practice ? "🧪" : "🛡️"), t(practice ? "learn.practiceNote" : "learn.realNote")])]));
-
-    main.appendChild(h("div.learn-grid#learnList", null, mine.map(function (l) {
+      h("p.hint.learn-note", null, [ui.emo(practice ? "🧪" : "🛡️"), t(practice ? "learn.practiceNote" : "learn.realNote")])]);
+  };
+  /* every lesson the person may take, each with Show me, Read and Questions */
+  L.lessonsGrid = function () {
+    var me = B.user, mine = L.lessonsFor(me), done = L.doneOf(me);
+    return h("div.learn-grid#learnList", null, mine.map(function (l) {
       var x = done[l.id];
       return h("article.lesson" + (x ? ".done" : ""), { "data-lesson": l.id, "aria-labelledby": "ls-" + l.id }, [
         h("div.lesson-head", null, [h("span.lesson-emo", { "aria-hidden": "true" }, l.emo), h("h3.lesson-t#ls-" + l.id, null, t("learn." + l.id + ".t")),
@@ -10745,35 +11374,28 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
           h("button.key.sm.primary", { type: "button", "data-act": "tour", onclick: function () { T.start(l.id); } }, [U.icon("play"), t("learn.showMe")]),
           h("button.key.sm", { type: "button", "data-act": "read", onclick: function () { L.read(l.guide); } }, [U.icon("book"), t("learn.read")]),
           h("button.key.sm", { type: "button", "data-act": "quiz", onclick: function () { L.quiz(l.id); } }, [U.icon("edit"), t("learn.quiz")])])]);
-    })));
-
-    /* the team's lessons, for the owner and those with the team access */
-    if (B.can("team")) {
-      var people = B.people().filter(function (u) { return u.active !== false; });
-      main.appendChild(h("section.card.learn-team#learnTeam", { "aria-labelledby": "learnTeamH" }, [
-        h("div.card-head", null, h("h2#learnTeamH", null, [ui.emo("👥"), t("learn.teamH")])), h("p.hint", null, t("learn.teamP")),
-        h("div.table-wrap", null, h("table.grid#learnPeople", null, [
-          h("thead", null, h("tr", null, [h("th", null, t("people.name")), h("th.num", null, t("learn.colDone")), h("th", null, t("learn.colLast")), h("th", null, t("learn.colMarks"))])),
-          h("tbody", null, people.map(function (u) {
-            var theirs = L.lessonsFor(u), d = L.doneOf(u), k = theirs.filter(function (l) { return d[l.id]; }).length, lastAt = null;
-            theirs.forEach(function (l) { if (d[l.id] && (!lastAt || d[l.id].at > lastAt)) lastAt = d[l.id].at; });
-            return h("tr", { "data-person": u.id }, [h("td", null, ui.personTag(u)), h("td.num", null, h("span.badge" + (k === theirs.length ? ".ok" : ""), null, k + " / " + theirs.length)),
-              h("td.muted", null, lastAt ? E.fmtDate(new Date(lastAt), "short") : t("learn.never")),
-              h("td", null, h("span.learn-marks", null, theirs.map(function (l) {
-                var on = !!d[l.id], label = t(on ? "learn.markDone" : "learn.markTodo", { name: t("learn." + l.id + ".t") }) + (on ? " (" + d[l.id].score + "/" + d[l.id].of + ")" : "");
-                return h("span.learn-mark" + (on ? ".on" : ""), { role: "img", "aria-label": label, title: label }, l.emo);
-              })))]);
-          }))]))]));
-    }
-
-    /* every tip, room by room */
-    main.appendChild(h("section.card.learn-tips#learnTips", { "aria-labelledby": "learnTipsH" }, [
+    }));
+  };
+  /* a person's lessons, for the team's table: how many are done, the last one, and a mark for each */
+  L.lessonCells = function (u) {
+    var theirs = L.lessonsFor(u), d = L.doneOf(u), k = theirs.filter(function (l) { return d[l.id]; }).length, lastAt = null;
+    theirs.forEach(function (l) { if (d[l.id] && (!lastAt || d[l.id].at > lastAt)) lastAt = d[l.id].at; });
+    return [h("td.num", null, h("span.badge" + (k === theirs.length ? ".ok" : ""), null, k + " / " + theirs.length)),
+      h("td.muted", null, lastAt ? E.fmtDate(new Date(lastAt), "short") : t("learn.never")),
+      h("td", null, h("span.learn-marks", null, theirs.map(function (l) {
+        var on = !!d[l.id], label = t(on ? "learn.markDone" : "learn.markTodo", { name: t("learn." + l.id + ".t") }) + (on ? " (" + d[l.id].score + "/" + d[l.id].of + ")" : "");
+        return h("span.learn-mark" + (on ? ".on" : ""), { role: "img", "aria-label": label, title: label }, l.emo);
+      })))];
+  };
+  /* every tip, room by room */
+  L.tipsCard = function () {
+    return h("section.card.learn-tips#learnTips", { "aria-labelledby": "learnTipsH" }, [
       h("div.card-head", null, h("h2#learnTipsH", null, [ui.emo("💡"), t("learn.allTipsH")])),
       h("div.learn-tip-rooms", null, Object.keys(TIPS).filter(function (r) { return r === "learn" || ui.allowed(r); }).map(function (r) {
         var list = [];
         for (var k = 1; k <= TIPS[r]; k++) list.push(h("li", null, t("tips." + r + "." + k)));
         return h("details.learn-tip-room", null, [h("summary", null, [ui.emo(ui.ROOM_EMO[r] || "💡"), t("room." + r)]), h("ul", null, list)]);
-      }))]));
+      }))]);
   };
 
   /* ---------- tips at the foot of each room ---------- */
@@ -10806,6 +11428,470 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     var id = { register: "sale", inventory: B.can("receive") ? "stock" : "svc", reports: "reports", team: "clock", settings: "safe" }[room];
     if (!id || !canTake(B.user, lesson(id))) return null;
     return h("button.key.tour-key#showMe", { type: "button", "data-tour": id, title: t("learn.showMeTip"), onclick: function () { T.start(id); } }, [U.icon("play"), t("learn.showMe")]);
+  };
+})();
+
+/* LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt.
+   Training (Build 19): a new person's first days, what leaders assign, refreshers, and exercises done on Lakay's real
+   screens with the books set aside. The Learning room gathers it in tabs: My training (what is waiting, the onboarding
+   day by day), Lessons, Exercises, the Team (each person's progress; assigning, signing off) and the Plans (the store's
+   onboarding path, its own tasks, and the refreshers).
+   An exercise asks for real work (a sale in two parts, a delivery, a transfer, a break) and watches for it. While it
+   runs, the books Lakay shows are a copy in memory (B.drillStart in 04-books.js): what is done changes the copy, never
+   the sealed books, and the copy is let go when the exercise ends. Only the mark that the exercise was done is written,
+   after the copy is gone. A band at the top says that nothing is kept, with a key to end the exercise. */
+"use strict";
+(function () {
+  var U = E.util, h = U.h, t = E.t, B = E.books, ui = E.ui, L = E.learn, T = E.tour;
+  var TR = E.train = { tab: null };
+
+  /* ---------- the exercises ---------- */
+  function distinct(lines) { var seen = {}; (lines || []).forEach(function (l) { seen[l.itemId] = 1; }); return Object.keys(seen).length; }
+  var EXERCISES = [
+    { id: "break", emo: "☕", room: "team", goal: function (l, s) { if (l.type === "break.started") s.started = true; return l.type === "break.ended" && !!s.started; } },
+    { id: "sale", emo: "🛒", room: "register", goal: function (l) {
+      if (l.type !== "sale.completed") return false; var sa = l.data.sale; return distinct(sa.lines) >= 2 && sa.pay.every(function (p) { return p.method === "cash"; }); } },
+    { id: "split", emo: "🔀", room: "register", goal: function (l) { return l.type === "sale.completed" && l.data.sale.pay.length >= 2; } },
+    { id: "card", emo: "💳", room: "register", open: function () { return B.payPrefs().methods.indexOf("card") >= 0; },
+      goal: function (l) { var code = B.payPrefs().askCode !== "no"; return l.type === "sale.completed" && l.data.sale.pay.some(function (p) { return p.method === "card" && (!!p.ref || !code); }); } },
+    { id: "receive", emo: "🚚", room: "inventory", goal: function (l) { return l.type === "stock.received"; } },
+    { id: "transfer", emo: "💱", room: "inventory", prep: function () { if (E.inventory) E.inventory.show("services"); },
+      goal: function (l) { return l.type === "service.recorded" && !!l.data.svc && l.data.svc.kind === "send" && l.data.svc.fee > 0; } }];
+  TR.EXERCISES = EXERCISES;
+  function exOf(id) { return EXERCISES.filter(function (x) { return x.id === id; })[0] || null; }
+  /* an exercise this person can do here (the card one, only where the store takes cards) */
+  TR.canDo = function (u, id) { var x = exOf(id); return !!x && B.canTrain(u, "exercise", id) && (!x.open || x.open()); };
+
+  var drill = null;
+  TR.active = function () { return !!drill; };
+  /* the brief: what to do, and that nothing is kept */
+  TR.exercise = function (id) {
+    var x = exOf(id); if (!x || !B.isOpen || !TR.canDo(B.user, id)) return false;
+    if (T && T.active && T.active()) T.stop(false, true);
+    if (drill) end(false, true);
+    var steps = t("ex." + id + ".how").split("\n");
+    ui.dialog({ title: t("ex." + id + ".t"), emoji: x.emo, body: [h("p.ex-what", null, t("ex." + id + ".d")), h("ol.ex-steps", null, steps.map(function (s) { return h("li", null, s); })),
+      h("p.ex-safe", null, [U.icon("lock"), h("span", null, t("ex.safe"))])],
+      actions: [{ label: t("cancel") }, { label: t("ex.begin"), kind: "primary", emoji: "▶️", id: "exBegin", onClick: function (close) { close(); begin(x); } }] });
+    return true;
+  };
+  function begin(x) {
+    var memo = {}, ticket = E.register && E.register.ticket ? E.register.ticket.lines.map(function (l) { return { itemId: l.itemId, qty: l.qty }; }) : null;
+    var ok = B.drillStart(function (line) {
+      if (!drill || drill.x !== x || drill.done) return;
+      var hit = false; try { hit = x.goal(line, memo); } catch (e) { console.error(e); }
+      if (hit) { drill.done = true; setTimeout(finish, ui.still() ? 300 : 1100); }
+    });
+    if (!ok) return;
+    drill = { x: x, ticket: ticket, room: ui.current, layers: Array.prototype.slice.call(document.querySelectorAll(".layer")), done: false };
+    if (E.register && E.register.setLines) E.register.setLines([]);
+    document.documentElement.classList.add("drilling");
+    band();
+    ui.refreshTop();
+    ui.go(x.room);
+    if (x.prep) x.prep();
+    if (E.sound) E.sound.play("soft");
+  }
+  /* the band across the top while an exercise runs */
+  function band() {
+    var old = document.getElementById("drillBar"); if (old) old.remove();
+    var x = drill.x;
+    var hint = h("button.key.sm#drillHow", { type: "button", onclick: function () {
+      ui.dialog({ title: t("ex." + x.id + ".t"), emoji: x.emo, body: [h("ol.ex-steps", null, t("ex." + x.id + ".how").split("\n").map(function (s) { return h("li", null, s); })), h("p.ex-safe", null, [U.icon("lock"), h("span", null, t("ex.safe"))])],
+        actions: [{ label: t("gotIt"), kind: "primary" }] });
+    } }, [U.icon("info"), h("span.drill-key-t", null, t("ex.how"))]);
+    document.body.appendChild(h("div.drill-bar#drillBar", { role: "status" }, [h("span.drill-emo", { "aria-hidden": "true" }, "🧪"),
+      h("span.drill-t", null, [h("b", null, t("ex.now", { name: t("ex." + x.id + ".t") })), h("small", null, t("ex.nothingKept"))]),
+      hint, h("button.key.sm.primary#drillEnd", { type: "button", onclick: function () { end(false); } }, [U.icon("x"), t("ex.end")])]));
+    measure();
+  }
+  /* the band's height, so the page, the top keys and the windows sit below it */
+  function measure() {
+    var b = document.getElementById("drillBar");
+    if (b) document.documentElement.style.setProperty("--drill-h", b.offsetHeight + "px"); else document.documentElement.style.removeProperty("--drill-h");
+  }
+  window.addEventListener("resize", function () { if (drill) measure(); });
+  function closeLayers(keep) {
+    Array.prototype.slice.call(document.querySelectorAll(".layer")).reverse().forEach(function (l) {
+      if (keep && keep.indexOf(l) >= 0) return;
+      var x = l.querySelector(".dialog-head .icon-key"); if (x) x.click(); else l.remove();
+    });
+  }
+  function end(done, quiet) {
+    if (!drill) return;
+    var r = drill; drill = null;
+    B.drillEnd();
+    document.documentElement.classList.remove("drilling");
+    var b = document.getElementById("drillBar"); if (b) b.remove();
+    measure();
+    closeLayers(r.layers);
+    if (r.ticket && E.register && E.register.setLines) E.register.setLines(r.ticket);
+    if (E.find && E.find.reset) E.find.reset();
+    if (!B.isOpen) return;
+    ui.refreshTop();
+    if (!quiet) ui.go(done ? "learn" : (ui.allowed(r.room) ? r.room : ui.current), true);
+    if (!done && !quiet) ui.toast(t("ex.ended"));
+  }
+  TR.end = function () { end(false); };
+  function finish() {
+    if (!drill) return;
+    var x = drill.x;
+    end(true);
+    B.exerciseDone(x.id).then(function () {
+      if (E.sound) E.sound.play("sale");
+      ui.celebrate && ui.celebrate();
+      ui.dialog({ title: t("ex.doneT"), emoji: "🎉", body: [h("p", null, t("ex.doneP", { name: t("ex." + x.id + ".t") })), h("p.ex-safe", null, [U.icon("lock"), h("span", null, t("ex.doneKept"))])],
+        actions: [{ label: t("close"), kind: "primary", id: "exDoneOk" }] });
+      if (ui.current === "learn") ui.refresh();
+    }, ui.failed);
+  }
+  B.on("lock", function () { if (drill) { drill = null; document.documentElement.classList.remove("drilling"); var b = document.getElementById("drillBar"); if (b) b.remove(); measure(); } });
+
+  /* ---------- where each person stands ---------- */
+  function today() { return U.dayKey(); }
+  function titleOf(kind, ref, course) {
+    if (kind === "lesson") return E.has("learn." + ref + ".t") ? t("learn." + ref + ".t") : null;
+    if (kind === "exercise") return E.has("ex." + ref + ".t") ? t("ex." + ref + ".t") : null;
+    var tk = (course.tasks || []).filter(function (x) { return x.id === ref; })[0];
+    return tk ? tk.title : null;
+  }
+  function emoOf(kind, ref) {
+    if (kind === "lesson") { var l = L.lesson(ref); return l ? l.emo : "📘"; }
+    if (kind === "exercise") { var x = exOf(ref); return x ? x.emo : "🧪"; }
+    return "📌";
+  }
+  function info(u, it, course, day) {
+    var mark = B.markOf(u.id, it.kind, it.ref), done = B.itemDone(u.id, it);
+    var tk = it.kind === "task" ? (course.tasks || []).filter(function (x) { return x.id === it.ref; })[0] : null;
+    return { it: it, kind: it.kind, ref: it.ref, title: titleOf(it.kind, it.ref, course), emo: emoOf(it.kind, it.ref), due: it.due || null, done: done, mark: mark,
+      overdue: !done && !!it.due && it.due < day, today: !done && it.due === day, lead: !!tk && tk.sign === "lead", body: tk ? tk.body : "" };
+  }
+  TR.statusOf = function (u) {
+    var course = B.course(), plan = B.planOf(u.id), day = today();
+    var items = plan.items.map(function (it) { return info(u, it, course, day); }).filter(function (x) { return x.title; });
+    var refresh = B.refreshersOf(u.id).map(function (r) { var x = info(u, { kind: r.kind, ref: r.ref, due: r.due, why: "refresh", at: new Date().toISOString() }, course, day); x.every = r.every; x.last = r.last; return x; })
+      .filter(function (x) { return x.title && !items.some(function (y) { return !y.done && y.kind === x.kind && y.ref === x.ref; }); });
+    var open = items.filter(function (x) { return !x.done; }), ob = items.filter(function (x) { return x.it.why === "onboarding"; }), obDone = ob.filter(function (x) { return x.done; }).length;
+    var onb = plan.onboarding;
+    return { plan: plan, items: items, open: open, overdue: open.filter(function (x) { return x.overdue; }).length + refresh.filter(function (x) { return x.it.due < day; }).length,
+      refresh: refresh, onboarding: onb, ob: ob, obDone: obDone, ready: !!onb && !onb.done && ob.length > 0 && obDone === ob.length, toDo: open.length + refresh.length };
+  };
+
+  /* one line of training: its sign, its name, when it is due or was done, and what can be done with it */
+  function row(u, x, leader) {
+    var me = B.user, mine = u.id === me.id, sub;
+    if (x.done) sub = t("tr.doneOn", { d: E.fmtDate(new Date(x.mark.at), "short") });
+    else if (x.it.why === "refresh") sub = t("tr.refreshSub", { d: x.last ? E.fmtDate(new Date(x.last), "short") : "", e: E.fmtDate(U.fromDayKey(x.due), "short") });
+    else sub = x.due ? t("tr.dueOn", { d: E.fmtDate(U.fromDayKey(x.due), "short") }) : t("tr.noDue");
+    var kindWord = t("tr.kind." + x.kind) + (x.lead ? " · " + t("tr.leadSigns") : "");
+    var keys = [];
+    if (!x.done && mine) {
+      if (x.kind === "lesson") keys.push(h("button.key.sm.primary", { type: "button", "data-act": "start", onclick: function () { T.start(x.ref); } }, [U.icon("play"), t("learn.start")]),
+        h("button.key.sm", { type: "button", "data-act": "quiz", onclick: function () { L.quiz(x.ref); } }, [U.icon("edit"), t("learn.quiz")]));
+      else if (x.kind === "exercise") keys.push(h("button.key.sm.primary", { type: "button", "data-act": "exercise", onclick: function () { TR.exercise(x.ref); } }, [U.icon("play"), t("ex.begin")]));
+      else if (!x.lead) keys.push(h("button.key.sm.primary", { type: "button", "data-act": "task", onclick: function () { markTask(u, x); } }, [U.icon("check"), t("tr.markDone")]));
+    }
+    if (!x.done && leader && x.kind === "task" && x.lead && (!mine || B.isOwner())) keys.push(h("button.key.sm.primary", { type: "button", "data-act": "signTask", onclick: function () { markTask(u, x); } }, [U.icon("check"), t("tr.signTask")]));
+    if (leader && x.it.id && x.it.why === "assigned" && !x.done) keys.push(h("button.icon-key", { type: "button", "data-act": "unassign", "aria-label": t("tr.unassign"), title: t("tr.unassign"), onclick: function () {
+      B.unassign(u.id, x.it.id).then(function () { ui.toast(t("tr.unassigned")); redraw(); }, ui.failed);
+    } }, U.icon("x")));
+    var state = x.done ? h("span.badge.ok", null, [U.icon("check"), t("learn.done")]) : x.overdue ? h("span.badge.bad", null, t("tr.overdue")) : x.today ? h("span.badge.warn", null, t("tr.today")) : null;
+    return h("li.tr-row" + (x.done ? ".done" : "") + (x.overdue ? ".late" : ""), { "data-kind": x.kind, "data-ref": x.ref }, [
+      h("span.tr-emo", { "aria-hidden": "true" }, x.emo),
+      h("span.tr-t", null, [h("b", null, x.title), h("small", null, kindWord + " · " + sub), x.body && !x.done ? h("small.tr-body", null, x.body) : null]),
+      state, keys.length ? h("span.tr-keys", null, keys) : (!x.done && mine && x.kind === "task" && x.lead ? h("small.tr-wait", null, t("tr.waitLead")) : null)]);
+  }
+  function markTask(u, x) {
+    var mine = u.id === B.user.id;
+    ui.confirm(t(mine ? "tr.markQ" : "tr.signQ", { name: x.title, who: u.name }), x.body || t("tr.markP"), t(mine ? "tr.markDone" : "tr.signTask")).then(function (yes) {
+      if (yes) B.taskDone(u.id, x.ref).then(function () { ui.toast(t("tr.taskDone", { name: x.title }), "good"); redraw(); }, ui.failed);
+    });
+  }
+  /* the room redraws; a person's window open over it redraws itself on the books' change */
+  function redraw() { if (ui.current === "learn") ui.refresh(); }
+
+  /* ---------- the Learning room, with its tabs ---------- */
+  var TABS = [["mine", "cap"], ["lessons", "book"], ["exercises", "play"], ["team", "people"], ["plans", "list"]];
+  function tabsFor() { return TABS.filter(function (x) { return x[0] === "team" ? (B.can("team") || B.can("train")) : x[0] === "plans" ? B.can("train") : true; }); }
+  var PANES = {};
+  ui.rooms.learn = function (main) {
+    var list = tabsFor(), me = TR.statusOf(B.user), team = (B.can("team") || B.can("train")) ? teamCounts() : null;
+    /* the room opens on the person's own training when something in it is waiting, and on the lessons otherwise */
+    if (!TR.tab || !list.some(function (x) { return x[0] === TR.tab; })) TR.tab = me.toDo ? "mine" : "lessons";
+    main.appendChild(ui.roomHead("room.learn", "tip.learn", [h("button.key.primary#learnTour", { type: "button", onclick: function () { T.start("welcome"); } }, [U.icon("play"), t("learn.tour")])]));
+    var tabs = h("div.inv-tabs", { role: "tablist", "aria-label": t("room.learn") });
+    list.forEach(function (x) {
+      var n = x[0] === "mine" ? me.toDo : x[0] === "team" && team ? team.late : 0;
+      tabs.appendChild(h("button.inv-tab#lrnTab-" + x[0], { type: "button", role: "tab", "aria-selected": String(TR.tab === x[0]), tabindex: TR.tab === x[0] ? "0" : "-1", "aria-controls": "learnPane", "data-tab": x[0],
+        onclick: function () { TR.tab = x[0]; ui.refresh(); var b = document.getElementById("lrnTab-" + x[0]); if (b) try { b.focus({ preventScroll: true }); } catch (e) { } } },
+        [h("span.dept-jewel.sm", { "aria-hidden": "true" }, U.icon(x[1])), h("span.inv-tab-name", null, t("lrn.tab." + x[0])), n ? h("span.inv-tab-n" + (x[0] === "team" ? ".late" : ""), null, String(n)) : null]));
+    });
+    tabs.addEventListener("keydown", function (e) {
+      var ids = list.map(function (x) { return x[0]; }), i = ids.indexOf(TR.tab), to = null;
+      if (e.key === "ArrowRight") to = ids[(i + 1) % ids.length]; else if (e.key === "ArrowLeft") to = ids[(i - 1 + ids.length) % ids.length];
+      if (to) { e.preventDefault(); TR.tab = to; ui.refresh(); var b = document.getElementById("lrnTab-" + to); if (b) try { b.focus({ preventScroll: true }); } catch (x2) { } }
+    });
+    main.appendChild(h("div.inv-tabs-wrap.lrn-tabs", null, tabs));
+    var pane = h("div.lrn-pane#learnPane", { role: "tabpanel", "aria-labelledby": "lrnTab-" + TR.tab });
+    main.appendChild(pane);
+    PANES[TR.tab](pane, me);
+  };
+
+  /* a new person signed in (or another sample person in the practice store): the room opens on their own tab */
+  B.on("user", function () { TR.tab = null; });
+  B.on("lock", function () { TR.tab = null; });
+  /* My training: the onboarding day by day, what was assigned, the refreshers; and the person's lessons */
+  PANES.mine = function (pane, s) {
+    var u = B.user;
+    if (s.onboarding) pane.appendChild(onboardingCard(u, s, false));
+    var assigned = s.items.filter(function (x) { return x.it.why === "assigned"; }).sort(byDue);
+    if (assigned.length) pane.appendChild(h("section.card.tr-sec#trAssigned", { "aria-labelledby": "trAssignedH" }, [h("div.card-head", null, h("h2#trAssignedH", null, [ui.emo("📋"), t("tr.assignedH")])),
+      h("ul.tr-list", null, assigned.map(function (x) { return row(u, x, false); }))]));
+    if (s.refresh.length) pane.appendChild(h("section.card.tr-sec#trRefresh", { "aria-labelledby": "trRefreshH" }, [h("div.card-head", null, h("h2#trRefreshH", null, [ui.emo("🔁"), t("tr.refreshH")])),
+      h("p.hint", null, t("tr.refreshP")), h("ul.tr-list", null, s.refresh.map(function (x) { return row(u, x, false); }))]));
+    if (!s.onboarding && !assigned.length && !s.refresh.length) { pane.appendChild(h("div.tr-calm#trCalm", null, [h("span.tr-calm-emo", { "aria-hidden": "true" }, "🌤️"), h("p", null, t("tr.nothing"))])); pane.appendChild(L.mineCard()); }
+  };
+  function byDue(a, b) { return (a.done - b.done) || ((a.due || "9999") < (b.due || "9999") ? -1 : (a.due || "9999") > (b.due || "9999") ? 1 : 0); }
+  /* the onboarding: how far along, and each day's items */
+  function onboardingCard(u, s, leader) {
+    var onb = s.onboarding, total = s.ob.length, n = s.obDone, start = U.fromDayKey(onb.start), dayN = Math.max(1, Math.floor((Date.now() - start.getTime()) / 86400000) + 1);
+    var lastDay = s.ob.reduce(function (m, x) { return Math.max(m, x.it.day || 1); }, 1);
+    var fill = h("span.learn-fill"); fill.style.width = (total ? Math.round(100 * n / total) : 0) + "%";
+    var byDay = {};
+    s.ob.forEach(function (x) { var d = x.it.day || 1; (byDay[d] = byDay[d] || []).push(x); });
+    var who = B.state().users[onb.by];
+    var status = onb.done ? h("p.tr-signed#trSigned", null, [U.icon("check"), h("span", null, t("tr.signedOff", { d: E.fmtDate(new Date(onb.done.at), "short"), who: ui.userName ? ui.userName(onb.done.by) : onb.done.by }))])
+      : s.ready ? h("p.tr-ready", null, [U.icon("check"), h("span", null, t(leader ? "tr.readyLead" : "tr.readyMine"))]) : null;
+    return h("section.card.tr-onb#trOnboarding", { "aria-labelledby": "trOnbH" }, [
+      h("div.tr-onb-head", null, [h("span.learn-cap", { "aria-hidden": "true" }, U.icon(leader ? "people" : "cap")),
+        h("div.tr-onb-t", null, [h("h2#trOnbH", null, t(leader ? "tr.onbTheirs" : "tr.onbH", { name: u.name })),
+          h("p", null, t("tr.onbSub", { d: E.fmtDate(start, "short"), who: who ? who.name : "", n: Math.min(dayN, lastDay), m: lastDay }))]),
+        h("div.tr-onb-n", null, [h("b#trOnbCount", null, n + " / " + total), h("small", null, t("tr.onbDone"))])]),
+      h("div.learn-bar", { role: "progressbar", "aria-valuemin": "0", "aria-valuemax": String(total), "aria-valuenow": String(n), "aria-label": t("tr.onbH", { name: u.name }) }, fill),
+      status,
+      h("div.tr-days", null, Object.keys(byDay).map(Number).sort(function (a, b) { return a - b; }).map(function (d) {
+        var all = byDay[d], doneAll = all.every(function (x) { return x.done; });
+        return h("div.tr-day" + (doneAll ? ".done" : ""), null, [h("p.tr-day-h", null, [h("b", null, t("tr.day", { n: d })), h("small", null, E.fmtDate(U.addDays(start, d - 1), "short"))]),
+          h("ul.tr-list", null, all.map(function (x) { return row(u, x, leader); }))]);
+      }))]);
+  }
+
+  PANES.lessons = function (pane) { pane.appendChild(L.mineCard()); pane.appendChild(L.lessonsGrid()); pane.appendChild(L.tipsCard()); };
+
+  PANES.exercises = function (pane) {
+    var me = B.user;
+    pane.appendChild(h("p.tr-intro", null, [U.icon("lock"), h("span", null, t("ex.intro"))]));
+    pane.appendChild(h("div.learn-grid#exList", null, EXERCISES.filter(function (x) { return TR.canDo(me, x.id); }).map(function (x) {
+      var m = B.markOf(me.id, "exercise", x.id);
+      return h("article.lesson" + (m ? ".done" : ""), { "data-ex": x.id, "aria-labelledby": "ex-" + x.id }, [
+        h("div.lesson-head", null, [h("span.lesson-emo", { "aria-hidden": "true" }, x.emo), h("h3.lesson-t#ex-" + x.id, null, t("ex." + x.id + ".t")),
+          m ? h("span.badge.ok.lesson-state", null, [U.icon("check"), t("learn.done")]) : h("span.badge.lesson-state.todo", null, t("learn.todo"))]),
+        h("p.lesson-d", null, t("ex." + x.id + ".d")),
+        h("p.lesson-meta.muted", null, m ? t("tr.doneOn", { d: E.fmtDate(new Date(m.at), "short") }) : t("ex.where." + x.room)),
+        h("div.lesson-keys", null, [h("button.key.sm.primary", { type: "button", "data-act": "exercise", onclick: function () { TR.exercise(x.id); } }, [U.icon("play"), t(m ? "ex.again" : "ex.begin")])])]);
+    })));
+  };
+
+  /* the team: each person's onboarding and training, for leaders */
+  function staff() { return B.people().filter(function (u) { return u.active !== false && u.role !== "owner"; }); }
+  function teamCounts() { var late = 0, ready = 0; staff().forEach(function (u) { var s = TR.statusOf(u); late += s.overdue ? 1 : 0; ready += s.ready ? 1 : 0; }); return { late: late, ready: ready }; }
+  TR.teamCounts = teamCounts;
+  PANES.team = function (pane) {
+    var train = B.can("train"), people = B.people().filter(function (u) { return u.active !== false; });
+    pane.appendChild(h("section.card.learn-team#learnTeam", { "aria-labelledby": "learnTeamH" }, [
+      h("div.card-head", null, [h("h2#learnTeamH", null, [ui.emo("👥"), t("tr.teamH")]),
+        train ? h("button.key.primary#trAssign", { type: "button", onclick: function () { TR.assign([]); } }, [U.icon("plus"), t("tr.assign")]) : null]),
+      h("p.hint", null, t("tr.teamP")),
+      h("div.table-wrap", null, h("table.grid#learnPeople", null, [
+        h("thead", null, h("tr", null, [h("th", null, t("people.name")), h("th", null, t("tr.colOnb")), h("th.num", null, t("tr.colToDo")), h("th.num", null, t("tr.colLate")),
+          h("th.num", null, t("learn.colDone")), h("th", null, t("learn.colLast")), h("th", null, t("learn.colMarks")), h("th", null, h("span.sr-only", null, t("tr.details")))])),
+        h("tbody", null, people.map(function (u) {
+          var s = TR.statusOf(u), onb = s.onboarding, cell;
+          if (!onb) cell = u.role === "owner" ? null : train ? h("button.key.sm", { type: "button", "data-act": "onboard", onclick: function () { TR.onboard(u.id); } }, [U.icon("play"), t("tr.startOnb")]) : h("span.muted", null, t("tr.noOnb"));
+          else if (onb.done) cell = h("span.badge.ok", null, [U.icon("check"), t("tr.signed")]);
+          else cell = h("span.tr-mini", null, [h("span.tr-mini-bar", null, (function () { var f = h("i"); f.style.width = (s.ob.length ? Math.round(100 * s.obDone / s.ob.length) : 0) + "%"; return f; })()),
+            h("small", null, s.obDone + " / " + s.ob.length), s.ready ? h("span.badge.warn", null, t("tr.ready")) : null]);
+          return h("tr", { "data-person": u.id }, [h("td", null, ui.personTag(u)), h("td", null, cell), h("td.num", null, String(s.toDo)),
+            h("td.num", null, s.overdue ? h("span.badge.bad", null, String(s.overdue)) : "0")].concat(L.lessonCells(u), [
+            h("td", null, h("button.key.sm", { type: "button", "data-act": "details", onclick: function () { TR.person(u.id); } }, t("tr.details")))]));
+        }))]))]));
+  };
+
+  /* one person's training, for leaders: their onboarding, what was assigned, refreshers; signing off */
+  TR.person = function (id) {
+    var u = B.state().users[id]; if (!u) return;
+    var train = B.can("train"), body = h("div#trPerson"), d;
+    function draw() {
+      U.clear(body);
+      var s = TR.statusOf(u);
+      body.appendChild(h("p.muted", null, ui.personTag(u) + " · " + ui.levelName(u)));
+      if (s.onboarding) body.appendChild(onboardingCard(u, s, train));
+      else if (train && u.role !== "owner") body.appendChild(h("div.tr-calm", null, [h("p", null, t("tr.noOnbP", { name: u.name })),
+        h("button.key.primary#trStartOnb", { type: "button", onclick: function () { d.close(); TR.onboard(u.id); } }, [U.icon("play"), t("tr.startOnb")])]));
+      var assigned = s.items.filter(function (x) { return x.it.why === "assigned"; }).sort(byDue);
+      if (assigned.length) body.appendChild(h("section.tr-sec", null, [h("h3", null, t("tr.assignedTheirs")), h("ul.tr-list", null, assigned.map(function (x) { return row(u, x, train); }))]));
+      if (s.refresh.length) body.appendChild(h("section.tr-sec", null, [h("h3", null, t("tr.refreshH")), h("ul.tr-list", null, s.refresh.map(function (x) { return row(u, x, train); }))]));
+      if (!s.onboarding && !assigned.length && !s.refresh.length && !train) body.appendChild(h("p.muted", null, t("tr.nothingTheirs", { name: u.name })));
+      var sign = document.getElementById("trSignOff"); if (sign) sign.hidden = !(train && s.ready && (u.id !== B.user.id || B.isOwner()));
+    }
+    var actions = [{ label: t("close") }];
+    if (train) actions.push({ label: t("tr.assign"), id: "trAssignOne", onClick: function (close) { close(); TR.assign([u.id]); } });
+    if (train) actions.push({ label: t("tr.signOff"), kind: "primary", id: "trSignOff", onClick: function (close, btn) {
+      btn.disabled = true;
+      B.signOff(u.id).then(function () { ui.toast(t("tr.signedOffNow", { name: u.name }), "good"); if (E.sound) E.sound.play("sale"); close(); if (ui.current === "learn") ui.refresh(); },
+        function (e) { btn.disabled = false; ui.toast(t(e && e.code === "notDone" ? "tr.notDone" : "door.problem"), "bad"); });
+      return false;
+    } });
+    d = ui.dialog({ title: t("tr.personH", { name: u.name }), emoji: "🎓", wide: true, body: body, actions: actions,
+      onClose: function () { B.off && B.off("change", onChange); if (ui.current === "learn") ui.refresh(); } });
+    function onChange() { if (document.body.contains(body)) draw(); }
+    B.on("change", onChange);
+    draw();
+  };
+
+  /* starting a person's onboarding: the day it starts */
+  TR.onboard = function (id, quiet) {
+    var u = B.state().users[id]; if (!u || !B.can("train")) return Promise.resolve(null);
+    if (quiet) return B.startOnboarding(id);
+    var day = h("input#trOnbDay", { type: "date", value: U.dayKey() });
+    var course = B.course(), n = course.path.filter(function (x) { return B.canTrain(u, x[0], x[1], course); }).length;
+    ui.dialog({ title: t("tr.onbStartH", { name: u.name }), emoji: "🎓", body: [h("p", null, t("tr.onbStartP", { n: n })), ui.field("tr.onbFrom", day), h("p.hint", null, t("tr.onbStartHint"))],
+      actions: [{ label: t("cancel") }, { label: t("tr.startOnb"), kind: "primary", id: "trOnbGo", onClick: function (close, btn) {
+        btn.disabled = true;
+        B.startOnboarding(id, day.value).then(function () { close(); ui.toast(t("tr.onbStarted", { name: u.name }), "good"); if (ui.current === "learn") ui.refresh(); }, function (e) {
+          btn.disabled = false; ui.toast(t(e && e.code === "already" ? "tr.onbAlready" : "door.problem"), "bad");
+        });
+        return false;
+      } }] });
+    return Promise.resolve(null);
+  };
+
+  /* assigning: to whom, what, and by when */
+  TR.assign = function (ids) {
+    if (!B.can("train")) return;
+    var course = B.course(), people = staff();
+    var who = h("div.tr-pick#trWho", { role: "group", "aria-label": t("tr.who") }, people.map(function (u) {
+      var cb = h("input", { type: "checkbox", id: "trw-" + u.id, "data-person": u.id }); cb.checked = ids.indexOf(u.id) >= 0;
+      return h("label.tr-check", { for: "trw-" + u.id }, [cb, h("span", null, [h("b", null, u.name), h("small", null, ui.levelName(u))])]);
+    }));
+    function group(titleKey, list) {
+      if (!list.length) return null;
+      return h("fieldset.tr-group", null, [h("legend", null, t(titleKey)), h("div.tr-pick", null, list.map(function (x) {
+        var key = x[0] + ":" + x[1], cb = h("input", { type: "checkbox", id: "tri-" + key.replace(/[^a-z0-9]/gi, "-"), "data-item": key });
+        return h("label.tr-check", { for: cb.id }, [cb, h("span", null, [h("b", null, [x[2] + " ", x[3]])])]);
+      }))]);
+    }
+    var lessons = B.LESSON_IDS.filter(function (r) { return B.TRAIN_NEED["lesson:" + r] !== "owner"; }).map(function (r) { return ["lesson", r, emoOf("lesson", r), titleOf("lesson", r, course)]; });
+    var exs = EXERCISES.filter(function (x) { return !x.open || x.open(); }).map(function (x) { return ["exercise", x.id, x.emo, t("ex." + x.id + ".t")]; });
+    var tasks = (course.tasks || []).map(function (x) { return ["task", x.id, "📌", x.title]; });
+    var what = h("div#trWhat", null, [group("tr.kinds.lesson", lessons), group("tr.kinds.exercise", exs), group("tr.kinds.task", tasks)]);
+    var due = h("input#trDue", { type: "date", value: U.dayKey(U.addDays(new Date(), 7)) });
+    var warn = h("p.err.tr-err#trAssignWarn", { role: "alert" });
+    ui.dialog({ title: t("tr.assignH"), emoji: "📋", wide: true, body: [h("p.hint", null, t("tr.assignP")), h("h3.tr-h3", null, t("tr.who")), people.length ? who : h("p.muted", null, t("tr.noStaff")),
+      h("h3.tr-h3", null, t("tr.what")), what, ui.field("tr.due", due), warn],
+      actions: [{ label: t("cancel") }, { label: t("tr.assign"), kind: "primary", id: "trAssignGo", onClick: function (close, btn) {
+        var users = Array.prototype.map.call(who.querySelectorAll("input:checked"), function (c) { return c.getAttribute("data-person"); });
+        var items = Array.prototype.map.call(what.querySelectorAll("input:checked"), function (c) { var k = c.getAttribute("data-item"), i = k.indexOf(":"); return { kind: k.slice(0, i), ref: k.slice(i + 1) }; });
+        if (!users.length) { warn.textContent = t("tr.needWho"); return false; }
+        if (!items.length) { warn.textContent = t("tr.needWhat"); return false; }
+        btn.disabled = true;
+        B.assign(users, items, due.value).then(function (given) {
+          close();
+          var n = (given || []).reduce(function (a, g) { return a + g.n; }, 0);
+          ui.toast(n ? t("tr.assigned", { n: n, p: (given || []).length }) : t("tr.assignedNone"), n ? "good" : null);
+          if (ui.current === "learn") ui.refresh();
+        }, function (e) { btn.disabled = false; ui.failed(e); });
+        return false;
+      } }] });
+  };
+
+  /* ---------- the plans: the store's onboarding path, its own tasks, and the refreshers ---------- */
+  PANES.plans = function (pane) {
+    var c = B.course();
+    function save(next, msg) { return B.saveCourse(next).then(function (r) { if (r) ui.toast(t(msg || "tr.planSaved"), "good"); ui.refresh(); }, ui.failed); }
+    function titled(kind, ref) { return [emoOf(kind, ref), titleOf(kind, ref, c) || ref]; }
+    /* the path, day by day */
+    var prevDay = 0;
+    var rows = c.path.slice().sort(function (a, b) { return a[2] - b[2]; }).map(function (x) {
+      var startsDay = prevDay && x[2] !== prevDay; prevDay = x[2];
+      var nt = titled(x[0], x[1]);
+      var daySel = h("select.tr-day-sel", { "aria-label": t("tr.dayOf", { name: nt[1] }), "data-item": x[0] + ":" + x[1] });
+      for (var d = 1; d <= 14; d++) { var o = h("option", { value: String(d) }, t("tr.day", { n: d })); if (d === x[2]) o.selected = true; daySel.appendChild(o); }
+      daySel.addEventListener("change", function () { var next = B.course(); next.path.forEach(function (y) { if (y[0] === x[0] && y[1] === x[1]) y[2] = +daySel.value; }); save(next); });
+      return h("li.tr-path-row" + (startsDay ? ".day-start" : ""), { "data-item": x[0] + ":" + x[1] }, [daySel, h("span.tr-emo", { "aria-hidden": "true" }, nt[0]), h("span.tr-t", null, [h("b", null, nt[1]), h("small", null, t("tr.kind." + x[0]))]),
+        h("button.icon-key", { type: "button", "aria-label": t("tr.pathRemove", { name: nt[1] }), title: t("tr.pathRemove", { name: nt[1] }), onclick: function () {
+          var next = B.course(); next.path = next.path.filter(function (y) { return !(y[0] === x[0] && y[1] === x[1]); }); save(next);
+        } }, U.icon("x"))]);
+    });
+    var missing = [].concat(B.LESSON_IDS.filter(function (r) { return B.TRAIN_NEED["lesson:" + r] !== "owner"; }).map(function (r) { return ["lesson", r]; }),
+      B.EX_IDS.map(function (r) { return ["exercise", r]; }), (c.tasks || []).map(function (x) { return ["task", x.id]; }))
+      .filter(function (x) { return !c.path.some(function (y) { return y[0] === x[0] && y[1] === x[1]; }); });
+    var addSel = h("select#trPathAdd", { "aria-label": t("tr.pathAdd") }, missing.map(function (x) { var nt = titled(x[0], x[1]); return h("option", { value: x[0] + ":" + x[1] }, nt[0] + " " + nt[1]); }));
+    var addDay = h("select#trPathAddDay", { "aria-label": t("tr.dayLabel") });
+    for (var d = 1; d <= 14; d++) addDay.appendChild(h("option", { value: String(d) }, t("tr.day", { n: d })));
+    pane.appendChild(h("section.card.tr-sec#trPath", { "aria-labelledby": "trPathH" }, [h("div.card-head", null, h("h2#trPathH", null, [ui.emo("🗺️"), t("tr.pathH")])),
+      h("p.hint", null, t("tr.pathP")), h("ol.tr-list.tr-path", null, rows),
+      missing.length ? h("div.tr-path-add", null, [addSel, addDay, h("button.key#trPathAddKey", { type: "button", onclick: function () {
+        var v = addSel.value, i = v.indexOf(":"), next = B.course(); next.path.push([v.slice(0, i), v.slice(i + 1), +addDay.value]); save(next);
+      } }, [U.icon("plus"), t("tr.pathAdd")])]) : null]));
+    /* the store's own tasks */
+    pane.appendChild(h("section.card.tr-sec#trTasks", { "aria-labelledby": "trTasksH" }, [h("div.card-head", null, [h("h2#trTasksH", null, [ui.emo("📌"), t("tr.tasksH")]),
+      h("button.key.primary#trTaskAdd", { type: "button", onclick: function () { taskForm(null); } }, [U.icon("plus"), t("tr.taskAdd")])]),
+      h("p.hint", null, t("tr.tasksP")),
+      (c.tasks || []).length ? h("ul.tr-list", null, c.tasks.map(function (x) {
+        return h("li.tr-row", { "data-task": x.id }, [h("span.tr-emo", { "aria-hidden": "true" }, "📌"), h("span.tr-t", null, [h("b", null, x.title),
+          h("small", null, t(x.sign === "lead" ? "tr.signLead" : "tr.signSelf") + (x.need ? " · " + t("access." + x.need + ".s") : "")), x.body ? h("small.tr-body", null, x.body) : null]),
+          h("span.tr-keys", null, [h("button.key.sm", { type: "button", onclick: function () { taskForm(x); } }, [U.icon("edit"), t("edit")]),
+            h("button.icon-key", { type: "button", "aria-label": t("tr.taskRemove", { name: x.title }), title: t("tr.taskRemove", { name: x.title }), onclick: function () {
+              ui.confirm(t("tr.taskRemoveQ", { name: x.title }), t("tr.taskRemoveP"), t("remove"), "danger").then(function (yes) {
+                if (!yes) return; var next = B.course(); next.tasks = next.tasks.filter(function (y) { return y.id !== x.id; }); save(next);
+              });
+            } }, U.icon("x"))])]);
+      })) : h("p.muted#trNoTasks", null, t("tr.noTasks"))]));
+    /* the refreshers */
+    var every = [["0", t("tr.never")], ["90", t("tr.months", { n: 3 })], ["180", t("tr.months", { n: 6 })], ["365", t("tr.months", { n: 12 })]];
+    var items = B.LESSON_IDS.map(function (r) { return ["lesson", r]; }).concat(B.EX_IDS.map(function (r) { return ["exercise", r]; }));
+    pane.appendChild(h("section.card.tr-sec#trRefreshers", { "aria-labelledby": "trRefH" }, [h("div.card-head", null, h("h2#trRefH", null, [ui.emo("🔁"), t("tr.refreshersH")])),
+      h("p.hint", null, t("tr.refreshersP")),
+      h("ul.tr-list.tr-ref", null, items.map(function (x) {
+        var key = x[0] + ":" + x[1], nt = titled(x[0], x[1]), cur = String(c.refresh[key] || 0);
+        if (["0", "90", "180", "365"].indexOf(cur) < 0) cur = "180";
+        var seg = ui.seg(every, cur, function (v) { var next = B.course(); if (v === "0") delete next.refresh[key]; else next.refresh[key] = +v; save(next); }, t("tr.refreshOf", { name: nt[1] }));
+        seg.setAttribute("data-item", key);
+        return h("li.tr-row", { "data-item": key }, [h("span.tr-emo", { "aria-hidden": "true" }, nt[0]), h("span.tr-t", null, [h("b", null, nt[1]), h("small", null, t("tr.kind." + x[0]))]), seg]);
+      }))]));
+    function taskForm(x) {
+      var title = ui.input({ id: "tkTitle", maxlength: "80", value: x ? x.title : "", placeholder: t("tr.taskTitlePh") });
+      var body = h("textarea#tkBody", { rows: "3", maxlength: "400", placeholder: t("tr.taskBodyPh") }); body.value = x ? x.body : "";
+      var sign = ui.seg([["self", t("tr.signSelf")], ["lead", t("tr.signLead")]], x ? x.sign : "self", function () { }, t("tr.taskSign")); sign.id = "tkSign";
+      var need = ui.select([["", t("tr.forAll")]].concat(B.ACCESS.map(function (a) { return [a, t("tr.forAccess", { a: t("access." + a + ".s") })]; })), x && x.need ? x.need : "", { id: "tkNeed" });
+      var inPath = h("input", { type: "checkbox", id: "tkPath" }); inPath.checked = !x;
+      var pday = h("select#tkDay", { "aria-label": t("tr.dayLabel") }); for (var d2 = 1; d2 <= 14; d2++) pday.appendChild(h("option", { value: String(d2) }, t("tr.day", { n: d2 })));
+      ui.dialog({ title: t(x ? "tr.taskEdit" : "tr.taskAdd"), emoji: "📌", wide: true, focus: "#tkTitle", body: [ui.field("tr.taskTitle", title, { required: true }), ui.field("tr.taskBody", body),
+        h("div.field", null, [h("div.label-row", null, h("span.lbl", null, t("tr.taskSign"))), sign]), ui.field("tr.taskFor", need),
+        x ? null : h("label.tr-check", { for: "tkPath" }, [inPath, h("span", null, [h("b", null, t("tr.taskInPath")), pday])])],
+        actions: [{ label: t("cancel") }, { label: t("save"), kind: "primary", id: "tkSave", onClick: function (close) {
+          if (!title.value.trim()) { ui.fieldError(title, t("tr.taskNeedTitle")); return false; }
+          var next = B.course(), v = { id: x ? x.id : U.uid("k"), title: title.value, body: body.value, sign: sign.querySelector('[aria-checked="true"]').getAttribute("data-v"), need: need.value || null };
+          if (x) next.tasks = next.tasks.map(function (y) { return y.id === x.id ? v : y; }); else { next.tasks.push(v); if (inPath.checked) next.path.push(["task", v.id, +pday.value]); }
+          close(); save(next);
+          return false;
+        } }] });
+    }
+  };
+
+  /* ---------- the Home: what is waiting ---------- */
+  TR.homeRows = function (need) {
+    var out = [], u = B.user; if (!u) return out;
+    var s = TR.statusOf(u);
+    if (s.toDo) out.push(need("🎓", t(s.toDo === 1 ? "tr.home1" : "tr.home", { n: s.toDo }), s.overdue ? t("tr.homeLate", { n: s.overdue }) : t("tr.homeSub"), s.overdue ? "warn" : null,
+      [t("home.open"), function () { TR.tab = "mine"; ui.go("learn"); }]));
+    if (B.can("train")) {
+      var c = teamCounts();
+      if (c.ready || c.late) out.push(need("👥", c.ready ? t(c.ready === 1 ? "tr.homeReady1" : "tr.homeReady", { n: c.ready }) : t(c.late === 1 ? "tr.homeTeamLate1" : "tr.homeTeamLate", { n: c.late }),
+        t("tr.homeTeamSub"), c.late ? "warn" : null, [t("home.open"), function () { TR.tab = "team"; ui.go("learn"); }]));
+    }
+    return out;
   };
 })();
 

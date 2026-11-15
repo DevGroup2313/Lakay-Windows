@@ -9,6 +9,7 @@
   var ZERO = "0000000000000000000000000000000000000000000000000000000000000000";
 
   B.on = function (name, fn) { (listeners[name] = listeners[name] || []).push(fn); };
+  B.off = function (name, fn) { var l = listeners[name], i = l ? l.indexOf(fn) : -1; if (i >= 0) l.splice(i, 1); };
   function emit(name, data) { (listeners[name] || []).forEach(function (fn) { try { fn(data); } catch (e) { console.error(e); } }); }
 
   function aadEnv(id, which) { return "emporium|v1|" + id + "|" + which; }
@@ -143,7 +144,7 @@
   function load(vault, key, userId) {
     ID = vault.storeId;
     return D.entries("rec").then(function (entries) {
-      var st = { settings: null, users: {}, cats: {}, items: {}, sales: [], moves: [], shifts: [], services: [], train: {}, counters: {}, pad: {}, notes: {}, head: null, unreadable: [] };
+      var st = { settings: null, users: {}, cats: {}, items: {}, sales: [], moves: [], shifts: [], services: [], train: {}, plans: {}, course: null, counters: {}, pad: {}, notes: {}, head: null, unreadable: [] };
       /* each person's notes are their own: a sign-in opens only the notes of the one signing in (the practice store opens
          all of its sample people's, since it changes from one to another) */
       var mine = "notes:" + (userId || "owner"), practice = B.mode === "practice";
@@ -187,12 +188,15 @@
     else if (kind === "shift") { var q = st.shifts.findIndex(function (x) { return x.id === v.id; }); if (q >= 0) st.shifts[q] = v; else st.shifts.push(v); }
     else if (kind === "svc") { st.services = st.services || []; var z = st.services.findIndex(function (x) { return x.id === v.id; }); if (z >= 0) st.services[z] = v; else st.services.push(v); }
     else if (kind === "train") { st.train = st.train || {}; st.train[id] = v; }
+    else if (kind === "plan") { st.plans = st.plans || {}; st.plans[id] = v; }
+    else if (kind === "course") st.course = v;
     else if (kind === "counter") st.counters[id] = v;
     else if (kind === "pad") st.pad[id] = v;
     else if (kind === "notes") st.notes[id] = (v && Array.isArray(v.notes)) ? v.notes : [];
   }
 
   B.lock = function (why) {
+    if (drill) { state = drill.state; drill = null; }
     var flushed = writeNotes();
     KEY = null; state = null; B.isOpen = false; B.user = null; E.settings = null; ID = null;
     emit("lock", why || "hand");
@@ -206,7 +210,7 @@
      it cannot be copied out of the browser; nothing in the practice store is real, and it never touches the store's
      own books, which stay sealed with the owner's password and the Master Key. */
   B.PRACTICE_DB = "emporium-practice";
-  function quietLock() { writeNotes(); KEY = null; state = null; B.isOpen = false; B.user = null; E.settings = null; ID = null; }
+  function quietLock() { if (drill) { state = drill.state; drill = null; } writeNotes(); KEY = null; state = null; B.isOpen = false; B.user = null; E.settings = null; ID = null; }
   B.useBooks = function (practice) {
     quietLock();
     D.use(practice ? B.PRACTICE_DB : "emporium");
@@ -218,7 +222,7 @@
       if (r.vault && r.vault.device) {
         return D.get("meta", "devkey").then(function (kek) {
           if (!kek) throw err("damaged");
-          return C.unwrap(r.vault.device, kek, aadEnv(r.vault.storeId, "device"), false).then(function (key) { return load(r.vault, key); });
+          return C.unwrap(r.vault.device, kek, aadEnv(r.vault.storeId, "device"), false).then(function (key) { return load(r.vault, key); }).then(upgradePractice);
         });
       }
       if (r.vault) throw err("damaged");
@@ -266,6 +270,18 @@
         .then(function (key) { storeKey = null; return load(vault, key); })
         .then(function () { return seedPractice(start, progress); });
     });
+  }
+  /* A practice store made before Build 19 is given Build 19's samples once, as it opens: Jean, the sample manager, the
+     manager's new access, and the store its plan of training (sampleCourse). Nothing here touches a real store, and a
+     sample that cannot be made is let go: the practice store still opens. */
+  function upgradePractice(st) {
+    if (B.mode !== "practice" || !state || state.course) return st;
+    /* Jean as the practice store made him (the manager's access of Build 6 to Build 18); if the owner changed him, he is left as he is */
+    var jean = state.users[SAMPLE_PEOPLE[1][0]], c = Promise.resolve(), was = ["sell", "items", "receive", "adjust", "costs", "reports", "team"];
+    if (jean && jean.active !== false && JSON.stringify(jean.access || []) === JSON.stringify(was))
+      c = c.then(function () { return B.editPerson(jean.id, { access: B.PRESETS.manager.slice(), preset: "manager" }); });
+    return c.then(sampleCourse).then(function () { B._at = null; B.user = state.users.owner; return state; },
+      function (e) { console.warn(e); B._at = null; if (state) B.user = state.users.owner; return state; });
   }
   /* The practice store's sample people: [user id, staff number, name, level of access]. */
   var SAMPLE_PEOPLE = [["u_practice_marie", 1002, "Marie", "cashier"], ["u_practice_jean", 1003, "Jean", "manager"]];
@@ -350,6 +366,7 @@
     });
     chain = chain.then(function () { return sampleServices(); });
     chain = chain.then(function () { return sampleTraining(); });
+    chain = chain.then(function () { return sampleCourse(); });
     return chain.then(function () { B._at = null; B.user = state.users.owner; return state; }, function (e) { B._at = null; B.user = state && state.users.owner; throw e; });
   }
   /* The practice store's money transfers and top-ups: a few a day for two weeks, with made-up fees and references.
@@ -388,6 +405,28 @@
     });
     return c;
   }
+  /* the store's own training (Build 19): two tasks of the store's own, a path of six days, and three refreshers; Jean,
+     the manager, started Marie's onboarding two days ago, and Marie has done the first day of it; the owner gave Jean
+     the Reports lesson, due in three days */
+  function sampleCourse() {
+    var base = new Date(); base.setHours(9, 0, 0, 0);
+    function day(n, hh, mm) { var d = U.addDays(base, n); d.setHours(hh, mm, 0, 0); return d; }
+    function as(id, at, fn) { return function () { B._at = at.toISOString(); B.user = state.users[id] || state.users.owner; return fn().then(function () { B.user = state.users.owner; }); }; }
+    var course = B.defaultCourse(), marie = SAMPLE_PEOPLE[0][0], jean = SAMPLE_PEOPLE[1][0];
+    /* Jean starts Marie's onboarding if he may train; if not (an older practice store the owner changed), the owner does */
+    var lead = state.users[jean] && state.users[jean].active !== false && (state.users[jean].access || []).indexOf("train") >= 0 ? jean : "owner";
+    course.tasks = [{ id: "krulesone", title: E.t("practice.task1.t"), body: E.t("practice.task1.b"), sign: "self", need: null },
+      { id: "kshadowing", title: E.t("practice.task2.t"), body: E.t("practice.task2.b"), sign: "lead", need: "sell" }];
+    course.path.splice(2, 0, ["task", "krulesone", 1]);
+    course.path.splice(5, 0, ["task", "kshadowing", 2]);
+    course.refresh = { "lesson:sale": 365, "lesson:pay": 180, "exercise:split": 90 };
+    return Promise.resolve()
+      .then(as("owner", day(-3, 17, 0), function () { return B.saveCourse(course); }))
+      .then(as(lead, day(-2, 9, 0), function () { return B.startOnboarding(marie, U.dayKey(day(-2, 9, 0))); }))
+      .then(as(marie, day(-2, 11, 0), function () { return B.exerciseDone("break"); }))
+      .then(as(marie, day(-2, 11, 30), function () { return B.taskDone(marie, "krulesone"); }))
+      .then(as("owner", day(-1, 17, 0), function () { return B.assign([jean], [{ kind: "lesson", ref: "reports" }], U.dayKey(day(3, 9, 0))); }));
+  }
   /* the sample people's shifts for the days before today: Marie from a quarter to nine, Jean from a quarter to one,
      each with a half-hour break */
   function sampleShifts(today) {
@@ -421,8 +460,12 @@
      to it as well as the screens. Only the owner adds people, sets what they may do, gives them a first password, and
      takes a key back. The names are kept plain at the door, as the owner's own name is, so the sign-in can find the
      right envelope. A person's key opens the same sealed books as the owner's: the limits are kept by Lakay itself. */
-  B.ACCESS = ["sell", "items", "receive", "adjust", "costs", "reports", "team"];
-  B.PRESETS = { cashier: ["sell"], stock: ["sell", "items", "receive", "adjust"], manager: B.ACCESS.slice() };
+  /* Build 19: three kinds of access to lead, which only the owner gives at first: "train" (training and onboarding),
+     "people" (adding the staff, their first passwords, taking a key back) and "backup" (saving a sealed backup). A
+     team leader trains and leads; a manager may also look after the people, within limits the books keep: a person with
+     "people" gives only what they have themselves, never "people", and manages no one who holds more, nor the owner. */
+  B.ACCESS = ["sell", "items", "receive", "adjust", "costs", "reports", "team", "train", "people", "backup"];
+  B.PRESETS = { cashier: ["sell"], stock: ["sell", "items", "receive", "adjust"], lead: ["sell", "items", "receive", "adjust", "team", "train"], manager: B.ACCESS.slice() };
   B.isOwner = function () { return !!(B.user && B.user.role === "owner"); };
   B.can = function (what) {
     var u = B.user; if (!u) return false;
@@ -430,6 +473,23 @@
     return what !== "owner" && (u.access || []).indexOf(what) >= 0;
   };
   function need(what) { if (!B.can(what)) throw err("denied"); }
+  /* what the person signed in may give others */
+  B.grantable = function () {
+    if (!B.user) return [];
+    if (B.isOwner()) return B.ACCESS.slice();
+    if (!B.can("people")) return [];
+    return B.ACCESS.filter(function (a) { return a !== "people" && (B.user.access || []).indexOf(a) >= 0; });
+  };
+  /* whether the person signed in may change this person, give them a first password or take their key back */
+  B.canManage = function (u) {
+    if (!u || u.role === "owner" || !B.user) return false;
+    if (B.isOwner()) return true;
+    if (!B.can("people") || u.id === B.user.id) return false;
+    var g = B.grantable();
+    return (u.access || []).every(function (a) { return g.indexOf(a) >= 0; });
+  };
+  function needManage(st, id) { var u = st.users[id]; if (!u || u.role === "owner") throw err("noperson"); if (!B.canManage(u)) throw err("denied"); return u; }
+  function needGrant(list) { var g = B.grantable(); if (!(list || []).every(function (a) { return g.indexOf(a) >= 0; })) throw err("denied"); }
   B.numberOf = function (u) { return u ? (u.no || (u.role === "owner" ? 1001 : 0)) : 0; };
   B.people = function (all) {
     var st = state; if (!st) return [];
@@ -453,16 +513,26 @@
   }
   function nextNo(st) { return Object.keys(st.users).reduce(function (m, k) { return Math.max(m, B.numberOf(st.users[k])); }, 1001) + 1; }
   function cleanAccess(list) { return B.ACCESS.filter(function (a) { return (list || []).indexOf(a) >= 0; }); }
+  /* a level's name is kept only when the access is that level's own (Build 19): no label says more than is given */
+  function presetFor(name, access) { var p = B.PRESETS[name]; return p && p.length === access.length && p.every(function (a) { return access.indexOf(a) >= 0; }) ? name : "custom"; }
   function iterations(v) { return (v && v.kdf && v.kdf.iterations) || C.ITERATIONS; }
-  /* The Store Key, in a form that can be sealed into a new envelope: the owner's password opens it (in the practice
-     store, the key this device keeps for it). */
-  function keyToShare(ownerPassword) {
+  /* The Store Key, in a form that can be sealed into a new envelope: the owner's password opens it, or, for a manager
+     who looks after the people, their own password and envelope (in the practice store, the key this device keeps). */
+  function keyToShare(password) {
     if (B.mode === "practice") {
       return Promise.all([D.get("meta", "vault"), D.get("meta", "devkey")]).then(function (r) {
         return C.unwrap(r[0].device, r[1], aadEnv(r[0].storeId, "device"), true).then(function (k) { return { vault: r[0], key: k }; });
       });
     }
-    return ownerKeyExtractable(ownerPassword);
+    if (B.isOwner()) return ownerKeyExtractable(password);
+    return personKeyExtractable(B.user.id, password);
+  }
+  function personKeyExtractable(id, password) {
+    return D.get("meta", "vault").then(function (v) {
+      var e = v.people && v.people[id]; if (!e) throw err("wrong");
+      return C.passwordKey(password || "", U.b64d(e.salt), iterations(v)).then(function (kek) { return C.unwrap(e, kek, aadEnv(v.storeId, "person:" + id), true); })
+        .then(function (k) { return { vault: v, key: k }; }, function () { throw err("wrong"); });
+    });
   }
   function personEnvelope(hk, id, password) {
     var salt = U.rnd(16);
@@ -474,7 +544,7 @@
   B.addPerson = function (f, ownerPassword) {
     var name = cleanName(f.name), id = U.uid("u"), access = cleanAccess(f.access);
     try {
-      need("owner");
+      need("people"); needGrant(access);
       if (!name) throw err("name");
       if (nameTaken(state, name)) throw err("nameTaken");
       checkPw(f.password);
@@ -482,10 +552,10 @@
     return keyToShare(ownerPassword).then(function (hk) {
       return personEnvelope(hk, id, f.password).then(function (env) {
         return B.change(function (st) {
-          need("owner");
+          need("people"); needGrant(access);
           if (nameTaken(st, name)) throw err("nameTaken");
           var now = clock().toISOString(), no = nextNo(st);
-          var u = { id: id, no: no, name: name, role: "staff", preset: B.PRESETS[f.preset] ? f.preset : "custom", access: access, active: true,
+          var u = { id: id, no: no, name: name, role: "staff", preset: presetFor(f.preset, access), access: access, active: true,
             mustChange: true, created: now, updated: now };
           var v = clone(hk.vault); v.people = v.people || {}; v.people[id] = env;
           var users = clone(st.users); users[id] = u;
@@ -497,8 +567,8 @@
   };
   B.editPerson = function (id, f) {
     return B.change(function (st) {
-      need("owner");
-      var u = clone(st.users[id]); if (!u || u.role === "owner") throw err("noperson");
+      need("people");
+      var u = clone(needManage(st, id));
       var diff = {};
       if (f.name !== undefined) {
         var n = cleanName(f.name); if (!n) throw err("name");
@@ -506,8 +576,8 @@
         if (n !== u.name) { diff.name = [u.name, n]; u.name = n; }
       }
       if (f.access !== undefined) {
-        var a = cleanAccess(f.access), p = B.PRESETS[f.preset] ? f.preset : "custom";
-        if (JSON.stringify(a) !== JSON.stringify(u.access)) { diff.access = [u.access, a]; u.access = a; }
+        var a = cleanAccess(f.access), p = presetFor(f.preset, a);
+        if (JSON.stringify(a) !== JSON.stringify(u.access)) { needGrant(a); diff.access = [u.access, a]; u.access = a; }
         if (p !== u.preset) { diff.preset = [u.preset, p]; u.preset = p; }
       }
       if (!Object.keys(diff).length) return null;
@@ -519,12 +589,12 @@
   };
   /* A new first password for a person (they forgot theirs, or they come back): they choose their own at their next sign-in. */
   B.setPersonPassword = function (id, password, ownerPassword) {
-    try { need("owner"); checkPw(password); if (!state.users[id] || state.users[id].role === "owner") throw err("noperson"); } catch (e) { return Promise.reject(e); }
+    try { need("people"); checkPw(password); needManage(state, id); } catch (e) { return Promise.reject(e); }
     return keyToShare(ownerPassword).then(function (hk) {
       return personEnvelope(hk, id, password).then(function (env) {
         return B.change(function (st) {
-          need("owner");
-          var u = clone(st.users[id]); if (!u) throw err("noperson");
+          need("people");
+          var u = clone(needManage(st, id));
           var back = u.active === false;
           u.active = true; u.mustChange = true; u.updated = clock().toISOString();
           var v = clone(hk.vault); v.people = v.people || {}; v.people[id] = env;
@@ -539,8 +609,8 @@
   B.retirePerson = function (id) {
     return D.get("meta", "vault").then(function (vault) {
       return B.change(function (st) {
-        need("owner");
-        var u = clone(st.users[id]); if (!u || u.role === "owner") throw err("noperson");
+        need("people");
+        var u = clone(needManage(st, id));
         if (u.active === false) return null;
         var now = clock().toISOString(), recs = [];
         var open = B.openShift(id);
@@ -558,11 +628,7 @@
     if (B.isOwner()) return B.changePassword(current, next);
     var id = B.user && B.user.id;
     try { checkPw(next); } catch (e) { return Promise.reject(e); }
-    return D.get("meta", "vault").then(function (v) {
-      var e = v.people && v.people[id]; if (!e) throw err("wrong");
-      return C.passwordKey(current, U.b64d(e.salt), iterations(v)).then(function (kek) { return C.unwrap(e, kek, aadEnv(v.storeId, "person:" + id), true); })
-        .then(function (k) { return { vault: v, key: k }; }, function () { throw err("wrong"); });
-    }).then(function (hk) {
+    return personKeyExtractable(id, current).then(function (hk) {
       return personEnvelope(hk, id, next).then(function (env) {
         return B.change(function (st) {
           var u = clone(st.users[id]); u.mustChange = false; u.updated = clock().toISOString();
@@ -711,11 +777,43 @@
       if (!KEY || !state) throw err("locked");
       var c = fn(state);
       if (!c) return null;
+      if (drill) return drilled(c);
       return commit(c.type, c.data, c.recs || [], c.meta || []).then(function (line) { return c.result !== undefined ? c.result : line; });
     });
     queue = p.catch(function () { });
     return p;
   };
+  /* ---------- exercises (Build 19): Lakay's real screens, with the sealed books set aside ----------
+     While an exercise runs, the books that Lakay shows are a copy in memory. A sale, a delivery, a transfer or a break
+     made then changes the copy, never the sealed books, and nothing is written to the device. When the exercise ends
+     (or Lakay locks), the copy is let go and the books are exactly as they were. Only the counter's work can be done in
+     an exercise: anything else is refused. A person's own notes are not part of it, so they stay their own. */
+  var drill = null, DRILL_OK = ["sale.completed", "stock.received", "stock.adjusted", "service.recorded", "clock.in", "clock.out", "break.started", "break.ended"];
+  B.drilling = function () { return !!drill; };
+  B.drillStart = function (onLine) {
+    if (drill || !state || !KEY) return false;
+    var copy = clone(state);
+    copy.notes = state.notes; copy.pad = state.pad;
+    drill = { state: state, onLine: onLine || null };
+    state = copy; E.settings = state.settings;
+    emit("drill", true);
+    return true;
+  };
+  B.drillEnd = function () {
+    if (!drill) return false;
+    state = drill.state; drill = null; E.settings = state ? state.settings : null;
+    emit("drill", false);
+    return true;
+  };
+  function drilled(c) {
+    if (DRILL_OK.indexOf(c.type) < 0) throw err("drill");
+    var line = { seq: 0, at: clock().toISOString(), day: U.dayKey(clock()), by: B.user.id, type: c.type, data: clone(c.data), drill: true };
+    (c.recs || []).forEach(function (r) { put(state, r.kind + ":" + r.id, clone(r.value)); });
+    var d = drill;
+    emit("change", line);
+    if (d && d.onLine) setTimeout(function () { try { d.onLine(line); } catch (e) { console.error(e); } }, 0);
+    return c.result !== undefined ? c.result : line;
+  }
   function commit(type, data, recs, metaOps) {
     var now = clock(), seq = state.head.seq + 1;
     var line = { seq: seq, at: now.toISOString(), day: U.dayKey(now), by: B.user.id, dev: B.device.id, type: type, data: data,
@@ -884,6 +982,178 @@
       var me = B.user.id, rec = clone((st.train && st.train[me]) || { user: me, done: {} });
       rec.done[lesson] = { at: clock().toISOString(), score: score, of: of };
       return { type: "training.completed", data: { user: me, lesson: lesson, score: score, of: of }, recs: [{ kind: "train", id: me, value: rec }], result: rec };
+    });
+  };
+
+  /* ---------- the store's own training (Build 19): the onboarding path, the store's tasks, refreshers, assignments ----------
+     The course (one record) is the store's: the path a new person follows, day by day; the store's own tasks (read the
+     cash rules, work a first shift beside a leader...), each done by the person or signed off by a leader; and which
+     lessons and exercises come due again, some months after they were last done. Each person's plan (one record each)
+     holds their onboarding and what was assigned to them. The marks (lessons, exercises, tasks) are in their train
+     record. Those with the "train" access write the course and the plans; every change is a ledger line. */
+  B.LESSON_IDS = ["welcome", "clock", "sale", "pay", "svc", "stock", "reports", "safe"];
+  B.EX_IDS = ["break", "sale", "split", "card", "receive", "transfer"];
+  /* the access each lesson and exercise asks for (null: everyone; "owner": the owner only) */
+  B.TRAIN_NEED = { "lesson:welcome": null, "lesson:clock": null, "lesson:sale": "sell", "lesson:pay": "sell", "lesson:svc": "sell", "lesson:stock": "receive",
+    "lesson:reports": "reports", "lesson:safe": "owner", "exercise:break": null, "exercise:sale": "sell", "exercise:split": "sell", "exercise:card": "sell",
+    "exercise:receive": "receive", "exercise:transfer": "sell" };
+  var DEFAULT_PATH = [["lesson", "welcome", 1], ["lesson", "clock", 1], ["exercise", "break", 1], ["lesson", "sale", 2], ["exercise", "sale", 2], ["lesson", "pay", 3],
+    ["exercise", "split", 3], ["exercise", "card", 3], ["lesson", "stock", 4], ["exercise", "receive", 4], ["lesson", "svc", 5], ["exercise", "transfer", 5], ["lesson", "reports", 6]];
+  B.defaultCourse = function () { return { v: 1, tasks: [], path: clone(DEFAULT_PATH), refresh: {} }; };
+  B.course = function () { return clone((state && state.course) || B.defaultCourse()); };
+  function needOf(kind, ref, course) {
+    if (kind === "task") { var tk = ((course && course.tasks) || []).filter(function (x) { return x.id === ref; })[0]; return tk ? (tk.need || null) : undefined; }
+    var k = kind + ":" + ref; return Object.prototype.hasOwnProperty.call(B.TRAIN_NEED, k) ? B.TRAIN_NEED[k] : undefined;
+  }
+  /* whether this person can be given this lesson, exercise or task */
+  B.canTrain = function (u, kind, ref, course) {
+    course = course || (state && state.course) || B.defaultCourse();
+    var n = needOf(kind, ref, course);
+    if (n === undefined || !u) return false;
+    if (u.role === "owner") return true;
+    if (n === null) return true;
+    return n !== "owner" && (u.access || []).indexOf(n) >= 0;
+  };
+  function plain(x, n) { return String(x || "").replace(/[\u0000-\u001F\u007F]/g, " ").replace(/\s+/g, " ").trim().slice(0, n); }
+  /* only what a course can hold, within limits: anything else is left out */
+  B.cleanCourse = function (c) {
+    c = c || {};
+    var o = { v: 1, tasks: [], path: [], refresh: {} };
+    (Array.isArray(c.tasks) ? c.tasks : []).slice(0, 40).forEach(function (x) {
+      if (!x || typeof x !== "object") return;
+      var title = plain(x.title, 80); if (!title) return;
+      var id = /^k[a-z0-9]{6,12}$/.test(x.id) && !o.tasks.some(function (y) { return y.id === x.id; }) ? x.id : U.uid("k");
+      o.tasks.push({ id: id, title: title, body: plain(x.body, 400), sign: x.sign === "lead" ? "lead" : "self", need: B.ACCESS.indexOf(x.need) >= 0 ? x.need : null });
+    });
+    (Array.isArray(c.path) ? c.path : []).slice(0, 60).forEach(function (x) {
+      if (!Array.isArray(x)) return;
+      var kind = x[0], ref = x[1], day = Math.round(Number(x[2]));
+      if (["lesson", "exercise", "task"].indexOf(kind) < 0 || needOf(kind, ref, o) === undefined) return;
+      if (o.path.some(function (y) { return y[0] === kind && y[1] === ref; })) return;
+      o.path.push([kind, ref, day >= 1 && day <= 60 ? day : 1]);
+    });
+    Object.keys(c.refresh && typeof c.refresh === "object" ? c.refresh : {}).forEach(function (k) {
+      var i = k.indexOf(":"), kind = k.slice(0, i), ref = k.slice(i + 1), d = Math.round(Number(c.refresh[k]));
+      if ((kind === "lesson" || kind === "exercise") && needOf(kind, ref, o) !== undefined && d >= 30 && d <= 730) o.refresh[k] = d;
+    });
+    return o;
+  };
+  B.saveCourse = function (c) {
+    return B.change(function (st) {
+      need("train");
+      var next = B.cleanCourse(c), before = st.course || B.defaultCourse(), changed = [];
+      ["tasks", "path", "refresh"].forEach(function (k) { if (JSON.stringify(before[k]) !== JSON.stringify(next[k])) changed.push(k); });
+      if (!changed.length) return null;
+      return { type: "course.updated", data: { changed: changed, tasks: next.tasks.length, path: next.path.length, refresh: Object.keys(next.refresh).length },
+        recs: [{ kind: "course", id: "main", value: next }], result: next };
+    });
+  };
+  B.planOf = function (userId) { var p = state && state.plans && state.plans[userId]; return p ? clone(p) : { user: userId, onboarding: null, items: [] }; };
+  function planRec(st, userId) { return clone((st.plans && st.plans[userId]) || { user: userId, onboarding: null, items: [] }); }
+  function trainRec(st, userId) { return clone((st.train && st.train[userId]) || { user: userId, done: {} }); }
+  function markOf(st, userId, kind, ref) {
+    var r = st.train && st.train[userId]; if (!r) return null;
+    return (kind === "lesson" ? (r.done || {})[ref] : kind === "exercise" ? (r.ex || {})[ref] : kind === "task" ? (r.tasks || {})[ref] : null) || null;
+  }
+  /* an onboarding item counts what was done at any time; an item assigned (or a refresher) asks for it done again, from then on */
+  function itemDone(st, userId, it) { var m = markOf(st, userId, it.kind, it.ref); return !!m && (it.why === "onboarding" || m.at >= (it.at || "")); }
+  B.markOf = function (userId, kind, ref) { return state ? clone(markOf(state, userId, kind, ref)) : null; };
+  B.itemDone = function (userId, it) { return !!state && itemDone(state, userId, it); };
+  function dueDay(d) { return /^\d{4}-\d{2}-\d{2}$/.test(d || "") ? d : null; }
+  /* lessons, exercises and the store's tasks given to people, each with the day it is due */
+  B.assign = function (userIds, items, due) {
+    return B.change(function (st) {
+      need("train");
+      var course = st.course || B.defaultCourse(), now = clock().toISOString(), recs = [], given = [];
+      userIds = (userIds || []).filter(function (id, i, a) { return a.indexOf(id) === i; });
+      items = (items || []).filter(function (x) { return x && needOf(x.kind, x.ref, course) !== undefined; });
+      if (!userIds.length || !items.length) throw err("assign");
+      userIds.forEach(function (id) {
+        var u = st.users[id]; if (!u || u.active === false) throw err("noperson");
+        var plan = planRec(st, id), added = 0;
+        items.forEach(function (x) {
+          if (!B.canTrain(u, x.kind, x.ref, course)) return;
+          if (plan.items.some(function (y) { return y.kind === x.kind && y.ref === x.ref && !itemDone(st, id, y); })) return;
+          plan.items.push({ id: U.uid("a"), kind: x.kind, ref: x.ref, due: dueDay(due), by: B.user.id, at: now, why: "assigned" }); added++;
+        });
+        if (added) { recs.push({ kind: "plan", id: id, value: plan }); given.push({ user: id, n: added }); }
+      });
+      if (!recs.length) return null;
+      return { type: "training.assigned", data: { given: given, items: items.map(function (x) { return x.kind + ":" + x.ref; }), due: dueDay(due) }, recs: recs, result: given };
+    });
+  };
+  B.unassign = function (userId, itemId) {
+    return B.change(function (st) {
+      need("train");
+      var plan = planRec(st, userId), it = plan.items.filter(function (x) { return x.id === itemId; })[0];
+      if (!it) return null;
+      plan.items = plan.items.filter(function (x) { return x.id !== itemId; });
+      return { type: "training.unassigned", data: { user: userId, item: it.kind + ":" + it.ref }, recs: [{ kind: "plan", id: userId, value: plan }], result: plan };
+    });
+  };
+  /* a new person's first days: the course's path, kept to what their access opens, each item due on its day */
+  B.startOnboarding = function (userId, startDay) {
+    return B.change(function (st) {
+      need("train");
+      var u = st.users[userId]; if (!u || u.active === false || u.role === "owner") throw err("noperson");
+      var plan = planRec(st, userId);
+      if (plan.onboarding && !plan.onboarding.done) throw err("already");
+      var course = st.course || B.defaultCourse(), now = clock(), start = dueDay(startDay) || U.dayKey(now), n = 0;
+      plan.items = plan.items.filter(function (x) { return x.why !== "onboarding"; });
+      course.path.forEach(function (x) {
+        if (!B.canTrain(u, x[0], x[1], course)) return;
+        plan.items.push({ id: U.uid("a"), kind: x[0], ref: x[1], due: U.dayKey(U.addDays(U.fromDayKey(start), x[2] - 1)), day: x[2], by: B.user.id, at: now.toISOString(), why: "onboarding" }); n++;
+      });
+      plan.onboarding = { start: start, started: now.toISOString(), by: B.user.id, done: null };
+      return { type: "onboarding.started", data: { user: userId, start: start, items: n }, recs: [{ kind: "plan", id: userId, value: plan }], result: plan };
+    });
+  };
+  /* a leader signs the onboarding off once every item of it is done (never their own, unless they are the owner) */
+  B.signOff = function (userId) {
+    return B.change(function (st) {
+      need("train");
+      if (userId === B.user.id && !B.isOwner()) throw err("denied");
+      var plan = planRec(st, userId);
+      if (!plan.onboarding || plan.onboarding.done) throw err("noonboarding");
+      if (plan.items.some(function (x) { return x.why === "onboarding" && !itemDone(st, userId, x); })) throw err("notDone");
+      plan.onboarding.done = { at: clock().toISOString(), by: B.user.id };
+      return { type: "onboarding.signedoff", data: { user: userId }, recs: [{ kind: "plan", id: userId, value: plan }], result: plan };
+    });
+  };
+  /* refreshers: what the course asks to be taken again, some days after it was last done (shown a week before) */
+  B.refreshersOf = function (userId) {
+    var st = state; if (!st) return [];
+    var u = st.users[userId], course = st.course || B.defaultCourse(), out = [], now = clock().getTime();
+    Object.keys(course.refresh || {}).forEach(function (k) {
+      var i = k.indexOf(":"), kind = k.slice(0, i), ref = k.slice(i + 1), days = course.refresh[k];
+      if (!B.canTrain(u, kind, ref, course)) return;
+      var m = markOf(st, userId, kind, ref); if (!m) return;
+      var due = Date.parse(m.at) + days * 86400000;
+      if (due <= now + 7 * 86400000) out.push({ kind: kind, ref: ref, last: m.at, due: U.dayKey(new Date(due)), every: days, overdue: due <= now, why: "refresh" });
+    });
+    return out;
+  };
+  B.exerciseDone = function (exId) {
+    return B.change(function (st) {
+      if (!B.user) throw err("locked");
+      if (B.EX_IDS.indexOf(exId) < 0) throw err("exercise");
+      var me = B.user.id, rec = trainRec(st, me); rec.ex = rec.ex || {};
+      rec.ex[exId] = { at: clock().toISOString() };
+      return { type: "training.exercise", data: { user: me, exercise: exId }, recs: [{ kind: "train", id: me, value: rec }], result: rec };
+    });
+  };
+  /* one of the store's tasks, done: by the person (a task they mark themselves) or signed off by a leader */
+  B.taskDone = function (userId, taskId) {
+    return B.change(function (st) {
+      if (!B.user) throw err("locked");
+      var course = st.course || B.defaultCourse(), tk = (course.tasks || []).filter(function (x) { return x.id === taskId; })[0];
+      if (!tk) throw err("task");
+      if (!st.users[userId]) throw err("noperson");
+      if (tk.sign === "lead") { need("train"); if (userId === B.user.id && !B.isOwner()) throw err("denied"); }
+      else if (userId !== B.user.id) need("train");
+      var rec = trainRec(st, userId); rec.tasks = rec.tasks || {};
+      rec.tasks[taskId] = { at: clock().toISOString(), by: B.user.id };
+      return { type: "training.task", data: { user: userId, task: taskId, by: B.user.id }, recs: [{ kind: "train", id: userId, value: rec }], result: rec };
     });
   };
 
@@ -1144,16 +1414,19 @@
           delete svcs[v.id];
         });
         Object.keys(svcs).forEach(function (k) { res.problems.push({ svc: k, what: "extra" }); });
-        /* each person's lessons (Build 17): the marks kept are the ones the ledger wrote last */
+        /* each person's marks (Build 17 lessons; Build 19 exercises and the store's tasks): the ones the ledger wrote last */
         Object.keys(st.train || {}).forEach(function (u) {
-          var done = (st.train[u] && st.train[u].done) || {}, want = train[u] || {};
-          Object.keys(done).forEach(function (l) {
-            var w = want[l];
-            if (!w) res.problems.push({ train: u, lesson: l, what: "missing" });
-            else if (w.score !== done[l].score || w.of !== done[l].of) res.problems.push({ train: u, lesson: l, what: "differs" });
-            delete want[l];
+          var r = st.train[u] || {}, have = {}, want = train[u] || {};
+          Object.keys(r.done || {}).forEach(function (l) { have["l:" + l] = { score: r.done[l].score, of: r.done[l].of }; });
+          Object.keys(r.ex || {}).forEach(function (x) { have["x:" + x] = {}; });
+          Object.keys(r.tasks || {}).forEach(function (x) { have["t:" + x] = { by: r.tasks[x].by }; });
+          Object.keys(have).forEach(function (k) {
+            var w = want[k];
+            if (!w) res.problems.push({ train: u, lesson: k, what: "missing" });
+            else if (JSON.stringify(w) !== JSON.stringify(have[k])) res.problems.push({ train: u, lesson: k, what: "differs" });
+            delete want[k];
           });
-          Object.keys(want).forEach(function (l) { res.problems.push({ train: u, lesson: l, what: "extra" }); });
+          Object.keys(want).forEach(function (k) { res.problems.push({ train: u, lesson: k, what: "extra" }); });
           delete train[u];
         });
         Object.keys(train).forEach(function (u) { res.problems.push({ train: u, what: "extra" }); });
@@ -1166,7 +1439,9 @@
   function replay(items, line, res, svcs, train) {
     var d = line.data || {};
     switch (line.type) {
-      case "training.completed": if (train && d.user && d.lesson) { train[d.user] = train[d.user] || {}; train[d.user][d.lesson] = { score: d.score, of: d.of }; } break;
+      case "training.completed": if (train && d.user && d.lesson) { train[d.user] = train[d.user] || {}; train[d.user]["l:" + d.lesson] = { score: d.score, of: d.of }; } break;
+      case "training.exercise": if (train && d.user && d.exercise) { train[d.user] = train[d.user] || {}; train[d.user]["x:" + d.exercise] = {}; } break;
+      case "training.task": if (train && d.user && d.task) { train[d.user] = train[d.user] || {}; train[d.user]["t:" + d.task] = { by: d.by }; } break;
       case "service.recorded": if (d.svc) svcs[d.svc.id] = clone(d.svc); break;
       case "service.voided": if (svcs[d.id]) svcs[d.id].status = "void"; else res.problems.push({ seq: line.seq, what: "void" }); break;
       case "item.created": items[d.item.id] = clone(d.item); break;
@@ -1226,7 +1501,7 @@
 
   /* ---------- backups: the sealed books as they are, in one file ---------- */
   B.makeBackup = function () {
-    if (B.user && !B.can("owner")) return Promise.reject(err("denied"));
+    if (B.user && !B.can("backup")) return Promise.reject(err("denied"));
     return Promise.all([D.get("meta", "vault"), D.get("meta", "door"), D.entries("rec"), D.entries("journal"), D.get("meta", "custom")]).then(function (r) {
       var body = { format: "emporium-backup", v: 1, build: E.BUILD.number, at: new Date().toISOString(), door: r[1], vault: r[0], custom: r[4] || null,
         rec: r[2].map(function (e) { return [e[0], U.b64e(e[1].iv), U.b64e(e[1].ct)]; }),

@@ -78,7 +78,26 @@ owner's (at least 10 characters), and their own envelope of the Store Key:
 - What each person may do (sell, items and prices, deliveries, stock corrections, costs and profit, reports, the team's
   hours) is kept in their sealed record. Lakay keeps to it in two places: the screens (rooms, keys and figures are not
   shown) and the books (a change a person may not make is refused). Settings, backups, the Author Studio and the people
-  are the owner's alone.
+  are the owner's alone. (Build 19 lets the owner give some of this to leaders: see the next part.)
+
+### Leaders and managers (Build 19)
+
+The owner asked to give team leaders and managers some limited administrative access. Three kinds of access were added:
+Training, The people and Backups. Only the owner gives them at first. The limits are kept by the books, in
+`04-books.js`, and not only by the screens:
+
+- **What a person may give** (`B.grantable`): the owner, everything; a person with The people, only the access they hold
+  themselves, and never The people itself. So no one can make a person with more than they have, and no chain of
+  managers can grow the access the owner gave.
+- **Whom a person may change** (`B.canManage`): never the owner, never themselves, and no one who holds access they could
+  not give. Adding, changing, giving a first password and taking a key back each check this inside the change itself.
+- **A manager's own password.** To seal an envelope for a new person, Lakay needs the Store Key in a form it can seal
+  again. The owner's password opens it from the owner's envelope. A manager's password opens it from the manager's own
+  envelope, the same way their own sign-in does (and as changing their own password already did). No envelope is
+  weakened, and nothing new is kept: the key is used in memory and let go.
+- **Backups.** A sealed backup holds the same sealed records and envelopes as the device. Saving one gives a manager
+  nothing they could not already open on that device. Restoring a backup, Settings and the Author Studio stay the
+  owner's alone.
 
 ### Each person's notes (Build 8)
 
@@ -152,6 +171,23 @@ store and checks that the ledger did not move. A lesson's mark is the only thing
 like every other record (record kind `train`, one per person) and replayed by Verify. Learning keeps nothing about
 customers, and it reaches no network.
 
+**Exercises (Build 19).** An exercise asks a person to do real work on Lakay's own screens. While it runs, the state
+Lakay shows is a copy held in memory (`B.drillStart`). A change of the counter's kind (a sale, a delivery, a stock
+correction, a transfer or top-up, clocking in and out, a break) is applied to that copy only: nothing is sealed,
+nothing is written to the device, and no ledger line is made. Any other change is refused. When the exercise ends,
+or Lakay locks, the copy is let go (`B.drillEnd`) and the books are exactly as they were. Only then is the mark that
+the exercise was done written, as one ledger line, `training.exercise`. The person's own notes are not part of the
+copy, so they stay theirs. The test `tests/t_build19.js` checks that a sale, a delivery, a transfer and a break done
+in an exercise leave the ledger, the sales, the stock and the shifts unchanged.
+
+**Plans, onboarding and sign-off (Build 19).** The store's course (its onboarding path, its own tasks and its
+refreshers) is one sealed record, `course`; each person's plan (their onboarding and what was assigned to them) is
+one sealed record, `plan`. Only those with Training may change them. Every change is a ledger line
+(`course.updated`, `training.assigned`, `training.unassigned`, `onboarding.started`, `onboarding.signedoff`,
+`training.task`). A task a leader signs cannot be signed by the person it is for, and no one signs off their own
+onboarding (the owner aside). The course holds only what it may: a task's title is at most 80 characters and its
+note at most 400, with control characters taken out; steps that do not exist are left out.
+
 ## 7. Protection against attacks and malware
 
 - **No code from outside.** The app's page carries all its own code. A Content Security Policy forbids scripts and
@@ -216,6 +252,8 @@ Encryption protects data at rest and in transit. It cannot protect against every
 - **No program is proof against every attack.** Before Emporium is relied upon under audit, I recommend an independent
   security review by a professional, and that your accountant review the reports' arithmetic and tax rules.
 - Emporium does not file taxes, move money or replace the provider systems of RIA, CAM, Unitransfer or Boss Revolution.
+- **A leader's limits are kept by Lakay, like every person's.** The books refuse what a leader may not do, but anyone
+  who holds a key holds the Store Key. Give The people and Backups only to someone you would trust with the store.
 - **Notes are kept apart by Lakay, not by a key of each person's own.** Every person who can open the books holds the
   Store Key, so someone who signs in and uses a browser's developer tools could, with effort, read another person's
   sealed notes on that device. Lakay never opens or shows them, but the seal itself is shared by everyone with a key.

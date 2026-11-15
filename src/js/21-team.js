@@ -6,7 +6,7 @@
 (function () {
   var U = E.util, h = U.h, t = E.t, B = E.books, ui = E.ui;
   var T = E.team = { week: 0 };
-  var LEVELS = ["cashier", "stock", "manager", "custom"];
+  var LEVELS = ["cashier", "stock", "lead", "manager", "custom"];
 
   /* the week shown: this week (0) or one before it (-1, -2 ...), starting on the store's first day of the week */
   function weekRange(offset) {
@@ -40,7 +40,7 @@
 
   ui.rooms.team = function (main) {
     var st = B.state(), me = B.user, w = weekRange(T.week), wk = inWeek(w);
-    main.appendChild(ui.roomHead("room.team", "tip.team", B.can("owner") ? [h("button.key.primary#addPerson", { type: "button", onclick: function () { T.person(null); } }, [ui.emo("➕"), t("people.add")])] : null));
+    main.appendChild(ui.roomHead("room.team", "tip.team", B.can("people") ? [h("button.key.primary#addPerson", { type: "button", onclick: function () { T.person(null); } }, [ui.emo("➕"), t("people.add")])] : null));
     var weekSeg = ui.seg([["0", t("team.thisWeek")], ["-1", t("team.lastWeek")], ["-2", t("team.weekBefore")]], String(T.week), function (v) { T.week = +v; ui.refresh(); }, t("team.week"));
     var weekLine = h("p.muted", null, t("team.weekOf", { a: E.fmtDate(w.start, "short"), b: E.fmtDate(w.last, "short") }));
 
@@ -79,8 +79,16 @@
         h("tbody", null, rows)])), h("span.muted", null, t("team.weekOf", { a: E.fmtDate(w.start, "short"), b: E.fmtDate(w.last, "short") }))));
     }
 
-    /* the people, for the owner */
-    if (B.can("owner")) {
+    /* a sealed backup, for a manager given that access (the owner keeps theirs in Settings) */
+    if (B.can("backup") && !B.isOwner() && B.mode !== "practice") {
+      var lastB = U.prefGet("lastBackup", "");
+      main.appendChild(section("teamBackup", "💾", "people.backupH", [h("p.hint", null, t("people.backupP")),
+        h("p.muted#teamBackupLast", null, lastB ? t("km.backup", { d: E.fmtDate(new Date(lastB), "short") }) : t("km.noBackup")),
+        h("button.key.primary#teamBackupKey", { type: "button", onclick: function () { E.saveBackup(); } }, [ui.emo("💾"), t("set.saveBackup")])]));
+    }
+
+    /* the people, for the owner and those who look after them (Build 19: within what they have themselves) */
+    if (B.can("people")) {
       var list = B.people(true);
       main.appendChild(section("teamPeople", "👥", "people.h", [h("p.hint", null, t("people.p")),
         h("div.table-wrap", null, h("table.grid#peopleList", null, [
@@ -88,12 +96,13 @@
           h("tbody", null, list.map(function (u) {
             var owner = u.role === "owner", gone = u.active === false;
             return h("tr", { "data-person": u.id, class: gone ? "retired" : "" }, [
-              h("td", null, owner ? h("span", null, [ui.emo("👑"), u.name]) : h("button.row-key", { type: "button", onclick: function () { T.person(u.id); } }, [ui.emo("🙂"), h("span", null, u.name)])),
+              h("td", null, owner ? h("span", null, [ui.emo("👑"), u.name]) : B.canManage(u) ? h("button.row-key", { type: "button", onclick: function () { T.person(u.id); } }, [ui.emo("🙂"), h("span", null, u.name)])
+                : h("span.row-fixed", { title: t("people.notYours") }, [ui.emo("🙂"), h("span", null, u.name)])),
               h("td", null, String(B.numberOf(u))), h("td", null, ui.levelName(u)),
               h("td.access-cell", null, owner ? t("people.everything") : (u.access || []).map(function (a) { return t("access." + a + ".s"); }).join(" · ") || "—"),
               h("td", null, gone ? h("span.badge", null, t("people.retired")) : u.mustChange ? h("span.badge.warn", null, t("people.firstPw")) : h("span.badge.ok", null, t("people.active")))]);
           }))])),
-        h("p.hint", null, t("people.ownerOnly"))]));
+        h("p.hint", null, t(B.isOwner() ? "people.ownerOnly" : "people.limitP"))]));
     }
   };
 
@@ -107,10 +116,11 @@
 
   /* ---------- adding a person, or changing one (the owner only) ---------- */
   function accessBoxes(chosen, onChange) {
-    var boxes = {};
+    var boxes = {}, can = B.grantable();
     var wrap = h("div.access-list", { role: "group", "aria-label": t("people.access") }, B.ACCESS.map(function (a) {
       var cb = h("input", { type: "checkbox", id: "acc-" + a, "data-access": a });
       cb.checked = chosen.indexOf(a) >= 0; boxes[a] = cb;
+      if (can.indexOf(a) < 0) { cb.disabled = true; cb.title = t("people.notGiven"); }
       cb.addEventListener("change", function () { if (onChange) onChange(); });
       return h("label.access-row", { for: "acc-" + a }, [cb, h("span", null, [h("b", null, t("access." + a + ".s")), h("small", null, t("access." + a + ".d"))])]);
     }));
@@ -118,7 +128,7 @@
       set: function (list) { B.ACCESS.forEach(function (a) { boxes[a].checked = list.indexOf(a) >= 0; }); } };
   }
   function levelOf(list) {
-    for (var i = 0; i < 3; i++) { var p = B.PRESETS[LEVELS[i]]; if (p.length === list.length && p.every(function (a) { return list.indexOf(a) >= 0; })) return LEVELS[i]; }
+    for (var i = 0; i < 4; i++) { var p = B.PRESETS[LEVELS[i]]; if (p.length === list.length && p.every(function (a) { return list.indexOf(a) >= 0; })) return LEVELS[i]; }
     return "custom";
   }
   var ERR = { name: "people.err.name", nameTaken: "people.err.taken", wrong: "people.err.ownerPw", denied: "people.denied" };
@@ -128,9 +138,16 @@
     var acc = accessBoxes(u ? (u.access || []) : B.PRESETS.cashier, function () { level.querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-checked", String(b.getAttribute("data-v") === levelOf(acc.value()))); }); });
     var level = ui.seg(LEVELS.map(function (l) { return [l, t("level." + l)]; }), u ? levelOf(u.access || []) : "cashier", function (v) { if (B.PRESETS[v]) acc.set(B.PRESETS[v]); }, t("people.level"));
     level.id = "pLevel";
+    /* a level that holds more than the one adding may give is shown, but closed */
+    var can = B.grantable();
+    Array.prototype.forEach.call(level.querySelectorAll("button[data-v]"), function (b) {
+      var p = B.PRESETS[b.getAttribute("data-v")];
+      if (p && !p.every(function (a) { return can.indexOf(a) >= 0; })) { b.disabled = true; b.setAttribute("aria-disabled", "true"); b.title = t("people.notGiven"); }
+    });
+    var onboard = null;
     var body = [ui.field("people.name", name, { required: true, hint: t("people.nameHint") }),
       h("div.field", null, [h("div.label-row", null, h("span.lbl", null, t("people.level"))), level]),
-      acc.node, h("p.hint", null, t("people.ownerOnly"))];
+      acc.node, h("p.hint", null, t(B.isOwner() ? "people.ownerOnly" : "people.limitHint"))];
     var pw = null, pw2 = null, own = null, meter = null;
     if (!u) {
       pw = ui.input({ type: "password", id: "pPw", autocomplete: "new-password" }); pw2 = ui.input({ type: "password", id: "pPw2", autocomplete: "new-password" });
@@ -138,6 +155,11 @@
       pw.addEventListener("input", function () { meter.textContent = pw.value ? t(E.crypto.passwordAdvice(pw.value).key) : ""; });
       body.push(h("h3.status-h", null, t("people.keyH")), h("p.hint", null, t("people.keyP")), ui.field("people.firstPw", pw, { required: true }), meter, ui.field("own.again", pw2, { required: true }));
       if (!practice) { own = ui.input({ type: "password", id: "pOwnerPw", autocomplete: "current-password" }); body.push(ui.field("people.ownerPw", own, { required: true, hint: t("people.ownerPwHint") })); }
+      /* Build 19: a new person's onboarding can start the day they are added */
+      if (B.can("train")) {
+        onboard = h("input", { type: "checkbox", id: "pOnboard" }); onboard.checked = true;
+        body.push(h("label.access-row.onb-row", { for: "pOnboard" }, [onboard, h("span", null, [h("b", null, t("people.onboard")), h("small", null, t("people.onboardD"))])]));
+      }
     } else {
       body.unshift(h("p.muted", null, ui.personTag(u) + (u.active === false ? " · " + t("people.retired") : "")));
     }
@@ -167,10 +189,15 @@
       if (pw.value !== pw2.value) { ui.fieldError(pw2, t("setup.noMatch")); return false; }
       if (own && !own.value) { ui.fieldError(own, t("door.needPassword")); return false; }
       btn.disabled = true; btn.textContent = t("people.making");
+      var start = onboard && onboard.checked;
       B.addPerson({ name: name.value, access: access, preset: preset, password: pw.value }, own ? own.value : null).then(function (p) {
-        close(); ui.refresh();
-        ui.dialog({ title: t("people.addedH", { name: p.name }), emoji: "✅", body: [h("p", null, t("people.addedP", { name: p.name, n: p.no })),
-          h("p.big-id#newPersonId", null, t("people.id", { n: p.no })), h("p.hint", null, t("people.addedHint"))], actions: [{ label: t("gotIt"), kind: "primary" }] });
+        close();
+        return (start && E.train ? E.train.onboard(p.id, true).then(function () { return true; }, function (e) { console.error(e); return false; }) : Promise.resolve(false)).then(function (started) {
+          ui.refresh();
+          ui.dialog({ title: t("people.addedH", { name: p.name }), emoji: "✅", body: [h("p", null, t("people.addedP", { name: p.name, n: p.no })),
+            h("p.big-id#newPersonId", null, t("people.id", { n: p.no })), h("p.hint", null, t("people.addedHint")), started ? h("p.hint#newPersonOnb", null, t("people.onboarded", { name: p.name })) : null],
+            actions: [{ label: t("gotIt"), kind: "primary" }] });
+        });
       }, function (e) {
         btn.disabled = false; btn.textContent = t("people.add");
         var c = e && e.code;

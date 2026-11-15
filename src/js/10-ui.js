@@ -434,7 +434,8 @@
           h("span.muted", null, B.onBreak(x) ? t("clock.break") : t("clock.since", { t: E.fmtTime(new Date(x.in)) }))]);
       })) : h("p.muted#onClockList", null, t("clock.nobody")));
     }
-    if (practice) {
+    /* the practice store's people, to see the store as each sees it (not while an exercise runs: Build 19) */
+    if (practice && !(B.drilling && B.drilling())) {
       var people = B.people();
       rows.push(h("h3.status-h", null, t("practice.asH")));
       rows.push(h("div.as-keys", null, people.map(function (u) {
@@ -453,7 +454,7 @@
                        : { label: t("clock.breakStart"), emoji: "☕", id: "breakKey", onClick: clockAct(B.breakStart, function () { return t("clock.breakAt", { t: E.fmtTime(new Date()) }); }) });
       actions.push({ label: t("clock.out"), emoji: "🕔", id: "clockOutKey", onClick: clockAct(function () { return B.clockOut(); }, function (x) { return t("clock.outAt", { t: E.fmtTime(new Date(x.out)), h: ui.dur(B.shiftMs(x)) }); }) });
     }
-    if (practice && B.isOwner()) {
+    if (practice && B.isOwner() && !(B.drilling && B.drilling())) {
       actions.push({ label: t("practice.reset"), onClick: function (close) { close(); ui.confirm(t("practice.resetQ"), t("practice.resetP"), t("practice.reset")).then(function (yes) {
         if (!yes) return; B.resetPractice().then(function () { return B.openPractice(); }).then(function () { E.app.opened(); ui.toast(t("practice.done"), "good"); });
       }); } });
