@@ -137,7 +137,7 @@ const wait = (p, ms) => p.waitForTimeout(ms);
   await p.click("#studioHistory"); await p.waitForSelector("#studioLog li", { timeout: 10000 });
   const log = await p.textContent("#studioLog");
   ok(/The app's name/.test(log) && /phrases? \(English\)/.test(log) && /The colours/.test(log) && /The receipt's lines/.test(log), "the history says what was changed");
-  ok(/Owner/.test(log), "and by whom");
+  ok(/Yannie/.test(log), "and by whom (the owner, by name)");
   const [dl] = await Promise.all([p.waitForEvent("download"), p.click("#studioExport")]);
   const file = path.join(os.tmpdir(), "lakay-studio-" + Date.now() + ".json"); await dl.saveAs(file);
   const body = JSON.parse(fs.readFileSync(file, "utf8"));
