@@ -2670,10 +2670,14 @@
       var raw = [], ops = [], took = {};
       Object.keys(work).forEach(function (k) { raw.push({ k: k, v: work[k].v, s: work[k].s }); });
       fresh.forEach(function (c) {
-        var last = c.lines[c.lines.length - 1];
-        sync.chains[c.dev] = { code: c.code, seq: last.seq, hash: c.hashes[c.hashes.length - 1], at: last.at, knows: knows[c.dev] };
+        var last = c.lines[c.lines.length - 1], before = sync.chains[c.dev];
+        /* the lines that only say what a device took in: they change nothing in the books, so they are not counted as
+           changes still to carry (Build 25) */
+        var quiet = ((before && before.quiet) || []).concat(c.lines.filter(function (l) { return l.type === "sync.took"; }).map(function (l) { return l.seq; })).slice(-300);
+        sync.chains[c.dev] = { code: c.code, seq: last.seq, hash: c.hashes[c.hashes.length - 1], at: last.at, knows: knows[c.dev], quiet: quiet };
         took[c.code] = [c.lines[0].seq, last.seq];
       });
+      sync.quiet = (sync.quiet || []).concat([st.head.seq + 1]).slice(-300);
       sync.peers = sync.peers || {}; sync.peers[pl.from] = { have: pl.have || {}, at: new Date().toISOString() };
       raw.push({ k: "sync:main", v: sync });
       var users = clone(st.users), settings = st.settings;
@@ -2927,6 +2931,11 @@
     if (p && p.have) Object.keys(p.have).forEach(function (d) { h[d] = Math.max(h[d] || 0, p.have[d] || 0); });
     return h;
   }
+  /* the lines after "from" up to "to" that change the books (not those that only say what was taken in) */
+  function real(from, to, quiet) {
+    if (to <= from) return 0;
+    return (to - from) - (quiet || []).filter(function (q) { return q > from && q <= to; }).length;
+  }
   B.makeBundleFor = function (dev) { return state ? B.makeBundle(peerHave(state, dev)) : Promise.reject(err("locked")); };
   /* every device of the store, for the Devices section: its letter, name and state, when it was last heard from, and
      how many of this device's changes (and of the others' it holds) it has yet to take */
@@ -2944,8 +2953,8 @@
     Object.keys(out).forEach(function (id) {
       var r = out[id]; if (r.me) return;
       var hv = peerHave(st, id), more = 0;
-      r.behind = Math.max(0, st.head.seq - (hv[me] || 0));
-      Object.keys(chains).forEach(function (d) { if (d !== id) more += Math.max(0, chains[d].seq - (hv[d] || 0)); });
+      r.behind = real(hv[me] || 0, st.head.seq, st.sync && st.sync.quiet);
+      Object.keys(chains).forEach(function (d) { if (d !== id) more += real(hv[d] || 0, chains[d].seq, chains[d].quiet); });
       r.behindOthers = more;
     });
     return Object.keys(out).map(function (k) { return out[k]; }).sort(function (a, b) { return a.code < b.code ? -1 : a.code > b.code ? 1 : 0; });

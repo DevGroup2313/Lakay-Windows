@@ -120,6 +120,8 @@
       enter.addEventListener("click", go);
       kids = [h("p.intro-lede", null, t("intro.lede")),
         h("p.intro-tourline", null, [h("span", null, t("intro.moving") + " "), h("button.intro-tour#introRestore", { type: "button", onclick: function () { restore("intro"); } }, t("intro.restore"))]),
+        /* Build 25: a device joins a store already kept on another device, with its joining file and pairing code */
+        h("p.intro-tourline", null, [h("span", null, t("intro.joining") + " "), h("button.intro-tour#introJoin", { type: "button", onclick: function () { joinStore("intro"); } }, t("intro.join"))]),
         enter, msg];
     } else {
       enter.addEventListener("click", openSignIn);
@@ -408,6 +410,56 @@
       door.masterGrid(code), h("p", null, t("master.card.p1")), h("p", null, t("master.card.p2")),
       h("p.small", null, t("master.card.made", { d: ui.dateLong(new Date()) }) + " · Lakay " + t("build") + " " + E.BUILD.number)]));
   }
+
+  /* ---------- joining a store from another device (Build 25, stage 2): the joining file and its pairing code ----------
+     The owner made the file and was shown the code on a device already in the store (Settings, Devices in step). Here,
+     on a device with no store of its own, the file is read and checked, the code opens it, the device takes the letter
+     and the place reserved for it, and the door then asks each person for their own password. */
+  var JOIN_ERR = { notinvite: "ld.jn.notinvite", expired: "ld.jn.expired", corrupt: "restore.corrupt", badcode: "ld.jn.badcode", wrongcode: "ld.jn.wrongcode",
+    cancelled: "ld.jn.cancelled", samedevice: "ld.jn.used", hasstore: "ld.jn.hasstore", chain: "restore.chain" };
+  var joinStore = door.join = screen(function (from) {
+    var mode = from === "intro" ? "intro" : "door";
+    var card = lockDoor(mode);
+    var file = h("input#joinFile", { type: "file", accept: ".lakay,.json,application/json", hidden: true });
+    var picked = h("span.ild-file", null, t("ld.rs.none"));
+    var pick = h("button.ild-key.ild-ghost#joinPick", { type: "button", onclick: function () { file.click(); } }, t("ld.jn.choose"));
+    var body = h("div");
+    function back() { if (mode === "intro") { hideLock(); door.view = intro; } else ways(); }
+    file.addEventListener("change", function () {
+      var f = file.files && file.files[0]; if (!f) return;
+      picked.textContent = f.name; err(card, ""); U.clear(body);
+      f.text().then(B.readInvite).then(chosen, function (x) { err(card, t(JOIN_ERR[x && x.code] || "ld.jn.notinvite")); });
+    });
+    function chosen(inv) {
+      U.clear(body);
+      var code = field("joinCode", "text", "off");
+      code.setAttribute("spellcheck", "false"); code.setAttribute("autocapitalize", "characters"); code.setAttribute("maxlength", "40");
+      var go = h("button.ild-key#joinGo", { type: "submit" }, t("ld.jn.go"));
+      var store = inv.storeName || (inv.backup.door && inv.backup.door.storeName) || "Lakay", ex = new Date(inv.expires);
+      body.appendChild(h("p.ild-hint#joinSummary", null, t("ld.jn.summary", { store: store, c: inv.device.code, n: inv.device.name ? " (" + inv.device.name + ")" : "",
+        d: E.fmtDate(ex, "short") + " " + E.fmtTime(ex) })));
+      body.appendChild(h("form#ldJoin", { autocomplete: "off", onsubmit: function (e) {
+        e.preventDefault();
+        if (!code.value.trim()) return err(card, t("ld.jn.badcode"));
+        busy(card, true); err(card, "");
+        B.joinFromInvite(inv, code.value).then(function (r) {
+          code.value = "";
+          door.outNote = t("ld.jn.done", { c: r.code, store: r.storeName || store });
+          if (E.sound) E.sound.play("welcome");
+          return door.show("signout");
+        }, function (x) {
+          busy(card, false);
+          var k = JOIN_ERR[x && x.code];
+          if (!k) console.error(x);
+          err(card, t(k || "door.problem"));
+        });
+      } }, [label(t("ld.jn.code"), code), h("div.ild-keys", null, [h("button.ild-link#joinBack", { type: "button", onclick: back }, t("back")), go])]));
+      setTimeout(function () { U.focusSoon(code, card); }, 60);
+    }
+    fill(card, [h("h2", null, t("ld.jn.h")), h("p", null, t("ld.jn.p")),
+      h("div.ild-filepick", null, [file, pick, picked]), body,
+      h("div.ild-keys.ild-keys-back", null, [h("button.ild-link#joinCancel", { type: "button", onclick: back }, t("back"))])]);
+  });
 
   /* ---------- bringing a store from a backup (at the door, or from Settings while open) ---------- */
   var restore = door.restore = screen(function (from) {

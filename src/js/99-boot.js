@@ -17,7 +17,7 @@
     Array.prototype.forEach.call(document.querySelectorAll(".layer"), function (n) { n.remove(); });
     U.clear(document.getElementById("print"));
     U.clear(document.getElementById("toasts"));                 // nothing said while open stays on the screen once locked
-    if (why === "restore") return;
+    if (why === "restore" || why === "join") return;
     E.door.show(why);
   });
   window.addEventListener("hashchange", function () { if (B.isOpen) { var r = location.hash.replace("#", ""); if (r && r !== ui.current && ui.rooms[r]) ui.go(r); } });
