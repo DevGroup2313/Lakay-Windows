@@ -28,7 +28,7 @@ This is the second stage of the plan the owner approved on 15 November 2026 (`do
 **Fixes**
 - The restoring screen showed two Back keys once a file was chosen. It now shows one, as the new joining screen does.
 - Every word is in English, French and Kreyòl (89 new phrases; the Kreyòl is marked for review by a native speaker).
-- tests/t_build25.js: 49 checks, through the screens, with two browsers standing for two devices. Every suite passes: TOTAL checks in all.
+- tests/t_build25.js: 49 checks, through the screens, with two browsers standing for two devices. Every suite passes: 1,001 checks in all.
 
 ## Build 24 (15 November 2026): devices in step (stage 1), the owner's requests for the Home, the rail, the notes and the Studio
 
