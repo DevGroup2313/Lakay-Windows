@@ -2488,6 +2488,7 @@
   function learn(knows, line, code) {
     var d = line.data || {};
     if (line.type === "device.joined" && d.fromCode) knows[d.fromCode] = Math.max(knows[d.fromCode] || 0, d.at || 0);
+    if (line.type === "device.joined" && d.holds) Object.keys(d.holds).forEach(function (c) { knows[c] = Math.max(knows[c] || 0, d.holds[c] || 0); });
     if (line.type === "sync.took" && d.chains) Object.keys(d.chains).forEach(function (c) { knows[c] = Math.max(knows[c] || 0, (d.chains[c] || [])[1] || 0); });
     knows[code] = Math.max(knows[code] || 0, line.seq);
   }
@@ -2568,7 +2569,8 @@
         return C.open(key, e[1], aadPeer(id, dev, seq)).then(function (l) { into(dev, codeOfDev(st, dev), l); });
       })).then(function () {
         var list = Object.keys(chains).map(function (d) { var c = chains[d]; c.lines.sort(function (a, b) { return a.seq - b.seq; }); return c; });
-        list.forEach(function (c) { c.lines.forEach(function (l) { if (!l.ts) throw err("old", c.code); }); });
+        /* lines written before Build 24 travel as they are: the device taking them in already holds them (it joined from a
+           copy made after them), or it refuses them */
         var payload = { v: 1, from: me, code: B.device.code, at: new Date().toISOString(), have: myHave(st), chains: list };
         return C.seal(key, payload, aadBundle(id, me)).then(function (sealed) {
           return JSON.stringify({ format: "lakay-changes", v: 1, store: id, from: me, iv: U.b64e(sealed.iv), ct: U.b64e(sealed.ct) });
@@ -2602,6 +2604,12 @@
     return pl.chains.reduce(function (p, ch) {
       return p.then(function () {
         if (!ch || !ch.dev || ch.dev === B.device.id || !Array.isArray(ch.lines)) return;
+        /* a device removed from the store (or an invitation cancelled): its changes are refused (Build 25) */
+        var dr = st.devices && st.devices[ch.dev];
+        if (dr && (dr.status === "removed" || dr.status === "cancelled")) {
+          if (ch.dev === pl.from) throw err("removed", dr.code);
+          rep.setAside = (rep.setAside || []).concat([dr.code]); return;
+        }
         var held = sync.chains[ch.dev] || { code: ch.code, seq: 0, hash: ZERO, knows: {} };
         var code = held.code || ch.code, at = ch.lines.filter(function (l) { return l.seq === held.seq; })[0];
         var lines = ch.lines.filter(function (l) { return l.seq > held.seq; }).sort(function (a, b) { return a.seq - b.seq; });
@@ -2626,6 +2634,8 @@
          refused, and joins again from a newer copy */
       var codes = {}; codes[B.device.code] = B.device.id;
       Object.keys(sync.chains).forEach(function (d) { var c = sync.chains[d].code; if (!codes[c]) codes[c] = d; });
+      /* and the letters this store's books have given out, invitations included (Build 25) */
+      Object.keys(st.devices || {}).forEach(function (d) { var c = st.devices[d].code; if (c && !codes[c]) codes[c] = d; });
       fresh.forEach(function (c) { var o = codes[c.code]; if (o && o !== c.dev) throw err("letter", c.code); codes[c.code] = c.dev; });
       /* 2. every new line, from every chain, in the order of the stamps */
       var queue2 = [], work = {}, knows = {}, maxTs = 0, vaultTaken = {}, custom, customTaken = false;
@@ -2698,74 +2708,247 @@
     });
   }
 
-  /* ---------- a device joins the store from a copy (a sealed backup) made by a device already in it ---------- */
-  B.joinFromBackup = function (body, secret, isMaster, name) {
-    var v = body.vault;
+  /* ---------- a device joins the store from a copy (a sealed backup) made by a device already in it ----------
+     Stage 1 (Build 24): with the owner's password or the Master Key; the device takes the next free letter.
+     Stage 2 (Build 25): with a joining file and its pairing code; the device takes the letter and the place that the
+     inviting device reserved for it in its books, so two devices never share a letter. */
+  function joinStart() {
     if (B.mode === "practice") B.useBooks(false);
     /* only a device with no store of its own joins: the books of a store already here are never replaced this way */
-    return D.get("meta", "vault").then(function (here) {
-      if (here) throw err("hasstore");
-      return backupKey(body, secret, isMaster);
-    }).then(function (key) {
-      var journal = body.journal.map(function (e) { return [e[0], { iv: U.b64d(e[1]), ct: U.b64d(e[2]) }]; });
-      var rec = body.rec.map(function (e) { return [e[0], { iv: U.b64d(e[1]), ct: U.b64d(e[2]) }]; });
-      var src, devRecs = {}, copySync = null;
-      return readChains(key, v.storeId, journal, true).then(function (r) {
-        src = r;
-        return Promise.all(rec.filter(function (e) { return /^device:/.test(e[0]) || e[0] === "sync:main"; }).map(function (e) {
-          return C.open(key, e[1], aadRec(v.storeId, e[0])).then(function (val) {
-            if (val && val["~s"] && Object.prototype.hasOwnProperty.call(val, "~v")) val = val["~v"];
-            if (e[0] === "sync:main") copySync = val; else devRecs[e[0].slice(7)] = val;
-          });
-        }));
-      }).then(function () {
-        var last = src.lines[src.lines.length - 1];
-        var srcDev = (body.device && body.device.id) || (last && last.dev);
-        if (!last || !srcDev) throw err("notbackup");
-        if (srcDev === B.device.id || src.peers[B.device.id] || devRecs[B.device.id]) throw err("samedevice");
-        var used = {}, srcCode = (devRecs[srcDev] && devRecs[srcDev].code) || (body.device && body.device.code) || "A";
+    return D.get("meta", "vault").then(function (here) { if (here) throw err("hasstore"); });
+  }
+  function joinWith(body, key, opts) {
+    opts = opts || {};
+    var v = body.vault;
+    var journal = body.journal.map(function (e) { return [e[0], { iv: U.b64d(e[1]), ct: U.b64d(e[2]) }]; });
+    var rec = body.rec.map(function (e) { return [e[0], { iv: U.b64d(e[1]), ct: U.b64d(e[2]) }]; });
+    var src, devRecs = {}, copySync = null;
+    return readChains(key, v.storeId, journal, true).then(function (r) {
+      src = r;
+      return Promise.all(rec.filter(function (e) { return /^device:/.test(e[0]) || e[0] === "sync:main"; }).map(function (e) {
+        return C.open(key, e[1], aadRec(v.storeId, e[0])).then(function (val) {
+          if (val && val["~s"] && Object.prototype.hasOwnProperty.call(val, "~v")) val = val["~v"];
+          if (e[0] === "sync:main") copySync = val; else devRecs[e[0].slice(7)] = val;
+        });
+      }));
+    }).then(function () {
+      var last = src.lines[src.lines.length - 1];
+      var srcDev = (body.device && body.device.id) || (last && last.dev);
+      if (!last || !srcDev) throw err("notbackup");
+      var me = opts.device ? opts.device.id : B.device.id, myCode, mine, now = new Date();
+      if (srcDev === me || src.peers[me]) throw err("samedevice");
+      var srcCode = (devRecs[srcDev] && devRecs[srcDev].code) || (body.device && body.device.code) || "A";
+      if (opts.device) {
+        /* the place the inviting device reserved: this device's letter, its name, the invitation it came with */
+        var held = devRecs[me];
+        if (!held || held.code !== opts.device.code || held.invite !== opts.invite) throw err("notinvite");
+        if (held.status === "cancelled" || held.status === "removed") throw err("cancelled");
+        if (held.status !== "invited") throw err("samedevice");
+        myCode = held.code;
+        mine = clone(held); mine.status = "joined"; mine.joined = now.toISOString(); mine.from = srcDev;
+        if (opts.name) mine.name = cleanName(opts.name);
+      } else {
+        if (devRecs[me]) throw err("samedevice");
+        var used = {};
         Object.keys(devRecs).forEach(function (d) { used[devRecs[d].code] = 1; });
         Object.keys((copySync && copySync.chains) || {}).forEach(function (d) { used[copySync.chains[d].code] = 1; });
         used[srcCode] = 1;
-        var myCode = nextCode(used), now = new Date(), ts = Math.max(now.getTime(), src.maxTs + 1), knowsSrc = {};
-        src.lines.forEach(function (l) { learn(knowsSrc, l, srcCode); });
-        var mine = { id: B.device.id, code: myCode, name: cleanName(name), joined: now.toISOString(), from: srcDev };
-        var w = [["device:" + B.device.id, mine, null]], newRecs = [["device:" + B.device.id, mine]];
-        if (!devRecs[srcDev]) {
-          var theirs = { id: srcDev, code: srcCode, name: "", joined: src.lines[0].at, from: null };
-          w.push(["device:" + srcDev, theirs, null]); newRecs.push(["device:" + srcDev, theirs]);
-        }
-        var line = { seq: 1, at: now.toISOString(), day: U.dayKey(now), by: "owner", dev: B.device.id, type: "device.joined",
-          data: { code: myCode, from: srcDev, fromCode: srcCode, at: last.seq, hash: src.hash, name: mine.name }, prev: ZERO, build: E.BUILD.number, ts: ts, w: w };
-        var stamp = stampOf(ts, myCode, 1), sync = { v: 1, chains: {}, vs: (copySync && copySync.vs) || {}, cs: (copySync && copySync.cs) || "" };
-        Object.keys((copySync && copySync.chains) || {}).forEach(function (d) { if (d !== B.device.id) sync.chains[d] = copySync.chains[d]; });
-        sync.chains[srcDev] = { code: srcCode, seq: last.seq, hash: src.hash, at: last.at, knows: knowsSrc };
-        var device = { id: B.device.id, code: myCode, created: B.device.created };
-        return U.sha256hex(U.canon(line)).then(function (hash) {
-          var head = { seq: 1, hash: hash, at: line.at, ts: ts };
-          return Promise.all([C.seal(key, line, aadLine(v.storeId, 1)), C.seal(key, head, aadRec(v.storeId, "head:main")), C.seal(key, sync, aadRec(v.storeId, "sync:main"))]
-            .concat(newRecs.map(function (r) { return C.seal(key, wrapRec(r[1], { "": stamp }), aadRec(v.storeId, r[0])); }))
-            .concat(src.lines.map(function (l) { return C.seal(key, l, aadPeer(v.storeId, srcDev, l.seq)); })));
-        }).then(function (sealed) {
-          var outRec = rec.filter(function (e) { return e[0] !== "head:main" && e[0] !== "sync:main" && !/^notes:/.test(e[0]); });
-          outRec.push(["head:main", sealed[1]], ["sync:main", sealed[2]]);
-          newRecs.forEach(function (r, i) { outRec = outRec.filter(function (e) { return e[0] !== r[0]; }); outRec.push([r[0], sealed[3 + i]]); });
-          var outJournal = [[1, sealed[0]]];
-          src.lines.forEach(function (l, i) { outJournal.push([peerKey(srcDev, l.seq), sealed[3 + newRecs.length + i]]); });
-          journal.forEach(function (e) { if (typeof e[0] !== "number") outJournal.push(e); });
-          return B.lock("join").then(function () {
-            var meta = [["vault", v], ["door", body.door], ["device", device]];
-            if (body.custom) meta.push(["custom", E.cleanCustom ? E.cleanCustom(body.custom) : body.custom]);
-            return D.replaceAll(meta, outRec, outJournal);
-          });
-        }).then(function () {
-          B.device = device;
-          doorMeta = body.door || null; E.custom = body.custom && E.cleanCustom ? E.cleanCustom(body.custom) : null;
-          if (E.ui && E.ui.applyLook) E.ui.applyLook();
-          return load(v, key);
+        myCode = nextCode(used);
+        mine = { id: me, code: myCode, name: cleanName(opts.name), joined: now.toISOString(), from: srcDev, status: "joined" };
+      }
+      var ts = Math.max(now.getTime(), src.maxTs + 1), knowsSrc = {};
+      src.lines.forEach(function (l) { learn(knowsSrc, l, srcCode); });
+      /* what this device holds of every chain, so that the others send it only what it lacks (Build 25) */
+      var holds = {}; holds[srcCode] = last.seq;
+      Object.keys(src.peers).forEach(function (d) { var c = copySync && copySync.chains && copySync.chains[d]; if (c && c.code) holds[c.code] = src.peers[d].seq; });
+      var w = [["device:" + me, mine, null]], newRecs = [["device:" + me, mine]];
+      if (!devRecs[srcDev]) {
+        var theirs = { id: srcDev, code: srcCode, name: "", joined: src.lines[0].at, from: null, status: "joined" };
+        w.push(["device:" + srcDev, theirs, null]); newRecs.push(["device:" + srcDev, theirs]);
+      }
+      var data = { code: myCode, from: srcDev, fromCode: srcCode, at: last.seq, hash: src.hash, name: mine.name, holds: holds };
+      if (opts.invite) data.invite = opts.invite;
+      var line = { seq: 1, at: now.toISOString(), day: U.dayKey(now), by: "owner", dev: me, type: "device.joined",
+        data: data, prev: ZERO, build: E.BUILD.number, ts: ts, w: w };
+      var stamp = stampOf(ts, myCode, 1), sync = { v: 1, chains: {}, vs: (copySync && copySync.vs) || {}, cs: (copySync && copySync.cs) || "" };
+      Object.keys((copySync && copySync.chains) || {}).forEach(function (d) { if (d !== me) sync.chains[d] = copySync.chains[d]; });
+      sync.chains[srcDev] = { code: srcCode, seq: last.seq, hash: src.hash, at: last.at, knows: knowsSrc };
+      var device = { id: me, code: myCode, created: opts.device ? now.toISOString() : B.device.created };
+      return U.sha256hex(U.canon(line)).then(function (hash) {
+        var head = { seq: 1, hash: hash, at: line.at, ts: ts };
+        return Promise.all([C.seal(key, line, aadLine(v.storeId, 1)), C.seal(key, head, aadRec(v.storeId, "head:main")), C.seal(key, sync, aadRec(v.storeId, "sync:main"))]
+          .concat(newRecs.map(function (r) { return C.seal(key, wrapRec(r[1], { "": stamp }), aadRec(v.storeId, r[0])); }))
+          .concat(src.lines.map(function (l) { return C.seal(key, l, aadPeer(v.storeId, srcDev, l.seq)); })));
+      }).then(function (sealed) {
+        var outRec = rec.filter(function (e) { return e[0] !== "head:main" && e[0] !== "sync:main" && !/^notes:/.test(e[0]); });
+        outRec.push(["head:main", sealed[1]], ["sync:main", sealed[2]]);
+        newRecs.forEach(function (r, i) { outRec = outRec.filter(function (e) { return e[0] !== r[0]; }); outRec.push([r[0], sealed[3 + i]]); });
+        var outJournal = [[1, sealed[0]]];
+        src.lines.forEach(function (l, i) { outJournal.push([peerKey(srcDev, l.seq), sealed[3 + newRecs.length + i]]); });
+        journal.forEach(function (e) { if (typeof e[0] !== "number") outJournal.push(e); });
+        return B.lock("join").then(function () {
+          var meta = [["vault", v], ["door", body.door], ["device", device]];
+          if (body.custom) meta.push(["custom", E.cleanCustom ? E.cleanCustom(body.custom) : body.custom]);
+          return D.replaceAll(meta, outRec, outJournal);
         });
+      }).then(function () {
+        B.device = device;
+        doorMeta = body.door || null; E.custom = body.custom && E.cleanCustom ? E.cleanCustom(body.custom) : null;
+        if (E.ui && E.ui.applyLook) E.ui.applyLook();
+        return { v: v, key: key, code: myCode };
       });
     });
+  }
+  B.joinFromBackup = function (body, secret, isMaster, name) {
+    return joinStart().then(function () { return backupKey(body, secret, isMaster); })
+      .then(function (key) { return joinWith(body, key, { name: name }); })
+      .then(function (r) { return load(r.v, r.key); });
+  };
+
+  /* ---------- inviting a device (Build 25, stage 2) ----------
+     The owner names the new device and gives the owner's password. This device reserves the next letter in the books
+     (a line, device.invited), makes a sealed copy of the books, and seals the Store Key under a key made from a fresh
+     pairing code, bound to the store, to the invitation, to the reserved place and to the hour it expires. The joining
+     file carries the copy and that envelope; the code is shown once, on this screen, and kept nowhere. Each part is
+     useless without the other. The invitation can be used once, until it expires (a day), or cancelled. */
+  var INVITE_HOURS = 24;
+  function usedLetters(st) {
+    var used = {}; used[B.device.code] = 1;
+    Object.keys(st.devices || {}).forEach(function (d) { used[st.devices[d].code] = 1; });
+    Object.keys((st.sync && st.sync.chains) || {}).forEach(function (d) { used[st.sync.chains[d].code] = 1; });
+    return used;
+  }
+  function inviteAad(storeId, inv) { return aadEnv(storeId, "invite:" + inv.id + "|" + inv.device.id + "|" + inv.device.code + "|" + inv.expires); }
+  function selfRecord() { return { id: B.device.id, code: B.device.code, name: "", joined: B.device.created || null, from: null, status: "joined" }; }
+  B.prepareInvite = function (ownerPassword, name) {
+    if (!state || !KEY) return Promise.reject(err("locked"));
+    if (B.mode === "practice") return Promise.reject(err("practice"));
+    if (!B.isOwner()) return Promise.reject(err("denied"));
+    var hk, pc, inv = { id: U.uid("v"), device: { id: U.uid("d"), code: "", name: cleanName(name) }, expires: new Date(Date.now() + INVITE_HOURS * 3600000).toISOString() };
+    return ownerKeyExtractable(ownerPassword).then(function (x) { hk = x; return C.newPairing(); }).then(function (p) {
+      pc = p;
+      return enqueue(function () {
+        if (!KEY || !state) throw err("locked");
+        var st = state, me = B.device.id;
+        inv.device.code = nextCode(usedLetters(st));
+        var recs = [];
+        if (!(st.devices && st.devices[me])) recs.push({ kind: "device", id: me, value: selfRecord() });
+        recs.push({ kind: "device", id: inv.device.id, value: { id: inv.device.id, code: inv.device.code, name: inv.device.name, status: "invited",
+          invited: clock().toISOString(), by: B.user.id, expires: inv.expires, invite: inv.id } });
+        /* what the new device will hold: this device's lines up to this one, and what it holds of the others */
+        var sync = clone(st.sync) || { v: 1, chains: {}, vs: {}, cs: "" };
+        sync.peers = sync.peers || {};
+        var have = myHave(st); have[me] = st.head.seq + 1;
+        sync.peers[inv.device.id] = { have: have, at: new Date().toISOString() };
+        return commit("device.invited", { id: inv.device.id, code: inv.device.code, name: inv.device.name, expires: inv.expires, invite: inv.id }, recs, [], { raw: [{ k: "sync:main", v: sync }] });
+      });
+    }).then(function () { return B.makeBackup(); }).then(function (text) {
+      var body = JSON.parse(text);
+      return C.pairingKey(pc.secret, idBytes(ID), inv.id).then(function (kek) { return C.wrap(hk.key, kek, inviteAad(ID, inv)); }).then(function (env) {
+        hk.key = null;
+        var file = JSON.stringify({ format: "lakay-join", v: 1, store: ID, id: inv.id, device: inv.device, from: B.device.id, fromCode: B.device.code,
+          expires: inv.expires, storeName: state ? state.settings.storeName : "", env: env, backup: body });
+        return { code: pc.code, file: file, device: clone(inv.device), expires: inv.expires };
+      });
+    });
+  };
+  /* A joining file, read and checked (its copy's checksum too) before anything is asked. */
+  B.readInvite = function (text) {
+    var inv;
+    try { inv = JSON.parse(text); } catch (e) { return Promise.reject(err("notinvite")); }
+    if (!inv || inv.format !== "lakay-join" || inv.v !== 1 || !inv.id || !inv.device || !inv.device.id || !inv.device.code || !inv.env || !inv.backup || !inv.expires) return Promise.reject(err("notinvite"));
+    if (!(Date.now() <= Date.parse(inv.expires))) return Promise.reject(err("expired"));
+    return B.readBackup(JSON.stringify(inv.backup)).then(function (body) {
+      if (!body.vault || body.vault.storeId !== inv.store) throw err("notinvite");
+      inv.backup = body; return inv;
+    }, function (e) { throw e && e.code === "corrupt" ? e : err("notinvite"); });
+  };
+  /* The new device joins with the joining file and the code. It does not open the books: the door then asks each
+     person for their own password, as on every device. */
+  B.joinFromInvite = function (inv, codeText) {
+    var v = inv.backup.vault;
+    return joinStart().then(function () { return C.readPairing(codeText); }).then(function (secret) {
+      if (!secret) throw err("badcode");
+      return C.pairingKey(secret, idBytes(v.storeId), inv.id);
+    }).then(function (kek) {
+      return C.unwrap(inv.env, kek, inviteAad(v.storeId, inv), false).then(null, function () { throw err("wrongcode"); });
+    }).then(function (key) {
+      if (!(Date.now() <= Date.parse(inv.expires))) throw err("expired");
+      return joinWith(inv.backup, key, { device: inv.device, invite: inv.id, name: inv.device.name });
+    }).then(function (r) { return { code: r.code, storeName: (inv.backup.door && inv.backup.door.storeName) || inv.storeName || "" }; });
+  };
+
+  /* ---------- the store's devices (Build 25): naming one, cancelling an invitation, removing a device ---------- */
+  B.renameDevice = function (id, name) {
+    var nm = cleanName(name);
+    return B.change(function (st) {
+      need("owner");
+      if (B.mode === "practice") throw err("practice");
+      var d = st.devices && st.devices[id];
+      if (!d && id !== B.device.id) throw err("nodevice");
+      var r = d ? clone(d) : selfRecord();
+      if (r.name === nm) return null;
+      r.name = nm;
+      return { type: "device.named", data: { id: id, code: r.code, name: nm }, recs: [{ kind: "device", id: id, value: r }], result: r };
+    });
+  };
+  /* A device removed (lost, stolen, or given up) is refused from then on: its changes are no longer taken in, here or
+     on any device that takes this line. An invitation not yet used is cancelled the same way. The removed device keeps
+     what it held; its password is still needed to open it. */
+  B.removeDevice = function (id) {
+    return B.change(function (st) {
+      need("owner");
+      if (B.mode === "practice") throw err("practice");
+      if (id === B.device.id) throw err("self");
+      var d = st.devices && st.devices[id]; if (!d) throw err("nodevice");
+      if (d.status === "removed" || d.status === "cancelled") return null;
+      var r = clone(d), invited = d.status === "invited";
+      r.status = invited ? "cancelled" : "removed"; r.removed = clock().toISOString(); r.removedBy = B.user.id;
+      return { type: invited ? "device.cancelled" : "device.removed", data: { id: id, code: d.code }, recs: [{ kind: "device", id: id, value: r }], result: r };
+    });
+  };
+  function devOfCode(st, code) {
+    if (B.device && B.device.code === code) return B.device.id;
+    var ch = (st.sync && st.sync.chains) || {}, d;
+    for (d in ch) if (ch[d].code === code) return d;
+    var ds = st.devices || {};
+    for (d in ds) if (ds[d].code === code) return d;
+    return null;
+  }
+  /* What another device surely holds: its own lines as far as this device has them, what its lines say it took from
+     the others, and what it said it held in the last bundle it sent here (or at its invitation). */
+  function peerHave(st, dev) {
+    var h = {}, sync = st.sync || {}, ch = (sync.chains || {})[dev];
+    if (ch) {
+      h[dev] = ch.seq;
+      Object.keys(ch.knows || {}).forEach(function (code) { var d = devOfCode(st, code); if (d && d !== dev) h[d] = Math.max(h[d] || 0, ch.knows[code] || 0); });
+    }
+    var p = (sync.peers || {})[dev];
+    if (p && p.have) Object.keys(p.have).forEach(function (d) { h[d] = Math.max(h[d] || 0, p.have[d] || 0); });
+    return h;
+  }
+  B.makeBundleFor = function (dev) { return state ? B.makeBundle(peerHave(state, dev)) : Promise.reject(err("locked")); };
+  /* every device of the store, for the Devices section: its letter, name and state, when it was last heard from, and
+     how many of this device's changes (and of the others' it holds) it has yet to take */
+  B.devices = function () {
+    var st = state; if (!st) return [];
+    var me = B.device.id, out = {}, chains = (st.sync && st.sync.chains) || {};
+    function row(id) { return out[id] || (out[id] = { id: id, code: "?", name: "", me: id === me, status: "joined" }); }
+    var self = row(me); self.code = B.device.code; self.seq = st.head.seq; self.at = st.head.at;
+    Object.keys(st.devices || {}).forEach(function (id) {
+      var d = st.devices[id], r = row(id);
+      if (!r.me) r.code = d.code;
+      r.name = d.name || ""; r.status = d.status || "joined"; r.invited = d.invited || null; r.expires = d.expires || null; r.joined = d.joined || null; r.removed = d.removed || null;
+    });
+    Object.keys(chains).forEach(function (id) { var c = chains[id], r = row(id); if (r.code === "?") r.code = c.code; r.seq = c.seq; r.at = c.at || null; });
+    Object.keys(out).forEach(function (id) {
+      var r = out[id]; if (r.me) return;
+      var hv = peerHave(st, id), more = 0;
+      r.behind = Math.max(0, st.head.seq - (hv[me] || 0));
+      Object.keys(chains).forEach(function (d) { if (d !== id) more += Math.max(0, chains[d].seq - (hv[d] || 0)); });
+      r.behindOthers = more;
+    });
+    return Object.keys(out).map(function (k) { return out[k]; }).sort(function (a, b) { return a.code < b.code ? -1 : a.code > b.code ? 1 : 0; });
   };
 
   /* ---------- erasing the store from this device (the owner only, with the password) ---------- */
