@@ -96,6 +96,35 @@
     });
   };
 
+  /* ---------- the pairing code (Build 25): a second device joins the store with it ----------
+     96 random bits and a 3-byte checksum (the first bytes of their SHA-256), written as the Master Key is (Crockford's
+     Base32): 24 characters in 6 groups of 4. It is shown once, on the screen of the device that invites, and opens the
+     joining file only; with HKDF it is bound to the store and to the one invitation. */
+  C.newPairing = function () {
+    var secret = U.rnd(12);
+    return S.digest("SHA-256", secret).then(function (d) {
+      var all = new Uint8Array(15); all.set(secret, 0); all.set(new Uint8Array(d).subarray(0, 3), 12);
+      return { secret: secret, code: toB32(all) };
+    });
+  };
+  C.readPairing = function (text) {
+    var t = C.cleanMasterText(text);
+    if (t.length !== 24) return Promise.resolve(null);
+    var all = fromB32(t);
+    if (!all || all.length !== 15) return Promise.resolve(null);
+    var secret = all.subarray(0, 12);
+    return S.digest("SHA-256", secret).then(function (d) {
+      var dd = new Uint8Array(d);
+      return dd[0] === all[12] && dd[1] === all[13] && dd[2] === all[14] ? new Uint8Array(secret) : null;
+    });
+  };
+  C.pairingKey = function (secret, storeIdBytes, inviteId) {
+    return S.importKey("raw", secret, "HKDF", false, ["deriveKey"]).then(function (base) {
+      return S.deriveKey({ name: "HKDF", hash: "SHA-256", salt: storeIdBytes, info: TE.encode("lakay pairing wrap v1|" + inviteId) }, base,
+        { name: "AES-GCM", length: 256 }, false, ["wrapKey", "unwrapKey"]);
+    });
+  };
+
   /* How strong a password is, in words a person can act on (never a promise of safety). */
   C.passwordAdvice = function (pw) {
     pw = String(pw || "");
