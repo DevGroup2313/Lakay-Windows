@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-/8fAHp/Thc068ZMfy9lUBQ9vAd+zAlpAYkgOeDYtXTk='; style-src 'unsafe-inline'; img-src data: blob: 'self'; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-t/KQ4wsEzfIneG5QcKsD68VOn+Lsv+O+GO2v3UO9COk='; style-src 'unsafe-inline'; img-src data: blob: 'self'; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#f5f4f8">
 <meta name="application-name" content="Lakay">
-<meta name="lakay-build" content="24">
-<!-- LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt. Build 24 (2026-11-15). -->
+<meta name="lakay-build" content="25">
+<!-- LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt. Build 25 (2026-11-20). -->
 <title>Lakay</title>
 <!-- Lakay's logo, inside the page (the page's own policy shows only pictures it carries): the square tile, filled edge to
      edge with the coin's periwinkle, for the shortcuts a browser makes on a home screen; the round coin, on nothing, for the
@@ -2910,6 +2910,8 @@ html.drilling .shell { outline: 3px solid rgba(var(--pri-rgb), .35); outline-off
 .i-secondary:disabled { opacity: .55; cursor: default; transform: none; }
 .i-secondary:focus-visible { outline: 3px solid var(--pri-ring); outline-offset: 2px; }
 :root[data-theme="night"] .i-secondary { color: #e9e6ff; background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .16); box-shadow: 0 1px 0 rgba(255, 255, 255, .08) inset, 0 2px 0 rgba(0, 0, 0, .4), 0 6px 12px rgba(0, 0, 0, .3); }
+/* Build 25: a row of keys set aside (the lower Back, once a chosen file's form brings its own) */
+#lockDoor .ild-keys[hidden] { display: none; }
 
 </style>
 </head>
@@ -2922,7 +2924,7 @@ html.drilling .shell { outline: 3px solid rgba(var(--pri-rgb), .35); outline-off
 "use strict";
 
 var E = window.Emporium = window.Emporium || {};
-E.BUILD = { number: "24", date: "2026-11-15" };
+E.BUILD = { number: "25", date: "2026-11-20" };
 
 /* ---------- drawing: every piece of text goes in as text, never as markup ---------- */
 function $(sel, root) { return (root || document).querySelector(sel); }
@@ -9926,6 +9928,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
           err(card, t(k || "door.problem"));
         });
       } }, [label(t("ld.jn.code"), code), h("div.ild-keys", null, [h("button.ild-link#joinBack", { type: "button", onclick: back }, t("back")), go])]));
+      var lower = card.querySelector("#joinCancel"); if (lower && lower.parentNode) lower.parentNode.hidden = true;
       setTimeout(function () { U.focusSoon(code, card); }, 60);
     }
     fill(card, [h("h2", null, t("ld.jn.h")), h("p", null, t("ld.jn.p")),
@@ -9969,6 +9972,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
         });
       } }, [label(t("restore.secret"), secret), h("label.ild-check", null, [useMaster, h("span", null, t("restore.isMaster"))]),
         h("div.ild-keys", null, [h("button.ild-link#restoreBack", { type: "button", onclick: back }, t("back")), go])]));
+      var lower = card.querySelector("#restoreCancel"); if (lower && lower.parentNode) lower.parentNode.hidden = true;
     }
     fill(card, [h("h2", null, t("ld.rs.h")), h("p", null, t("ld.rs.p")),
       h("div.ild-filepick", null, [file, pick, picked]), body,

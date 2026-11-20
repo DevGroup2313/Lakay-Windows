@@ -229,3 +229,5 @@
 .i-secondary:disabled { opacity: .55; cursor: default; transform: none; }
 .i-secondary:focus-visible { outline: 3px solid var(--pri-ring); outline-offset: 2px; }
 :root[data-theme="night"] .i-secondary { color: #e9e6ff; background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .16); box-shadow: 0 1px 0 rgba(255, 255, 255, .08) inset, 0 2px 0 rgba(0, 0, 0, .4), 0 6px 12px rgba(0, 0, 0, .3); }
+/* Build 25: a row of keys set aside (the lower Back, once a chosen file's form brings its own) */
+#lockDoor .ild-keys[hidden] { display: none; }

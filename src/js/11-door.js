@@ -454,6 +454,7 @@
           err(card, t(k || "door.problem"));
         });
       } }, [label(t("ld.jn.code"), code), h("div.ild-keys", null, [h("button.ild-link#joinBack", { type: "button", onclick: back }, t("back")), go])]));
+      var lower = card.querySelector("#joinCancel"); if (lower && lower.parentNode) lower.parentNode.hidden = true;
       setTimeout(function () { U.focusSoon(code, card); }, 60);
     }
     fill(card, [h("h2", null, t("ld.jn.h")), h("p", null, t("ld.jn.p")),
@@ -497,6 +498,7 @@
         });
       } }, [label(t("restore.secret"), secret), h("label.ild-check", null, [useMaster, h("span", null, t("restore.isMaster"))]),
         h("div.ild-keys", null, [h("button.ild-link#restoreBack", { type: "button", onclick: back }, t("back")), go])]));
+      var lower = card.querySelector("#restoreCancel"); if (lower && lower.parentNode) lower.parentNode.hidden = true;
     }
     fill(card, [h("h2", null, t("ld.rs.h")), h("p", null, t("ld.rs.p")),
       h("div.ild-filepick", null, [file, pick, picked]), body,
