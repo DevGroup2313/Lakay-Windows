@@ -2648,6 +2648,8 @@
       function workGet(k) { if (Object.prototype.hasOwnProperty.call(work, k)) return work[k]; var v = getRec(st, k); return v ? { v: v, s: st.stamps[k] || {} } : null; }
       queue2.forEach(function (q) {
         var stamp = q[0], line = q[1], c = q[2], kn = knows[c.dev];
+        /* what the device knew as it wrote this line (a joining line says what it came with) counts for the line itself */
+        learn(kn, line, c.code);
         var apart = function (ls) { if (!ls) return false; var lc = stampCode(ls); if (!lc || lc === c.code) return false; return (kn[lc] || 0) < stampSeq(ls); };
         (line.w || []).forEach(function (e) {
           var k = e[0], kind = kindOf(k); if (LOCAL[kind]) return;
@@ -2664,7 +2666,6 @@
           (line.m.v || []).forEach(function (pt) { if (stamp > (sync.vs[pt[0]] || "")) { vaultTaken[pt[0]] = pt[1]; sync.vs[pt[0]] = stamp; } });
           if (line.m.c !== undefined && stamp > sync.cs) { custom = line.m.c; customTaken = true; sync.cs = stamp; }
         }
-        learn(kn, line, c.code);
       });
       /* 3. the books as they now stand: the records changed, the vault, the door, and what this device holds */
       var raw = [], ops = [], took = {};
