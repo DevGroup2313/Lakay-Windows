@@ -91,7 +91,18 @@ const OWNER_PW = "a long owner sentence for the store", MARIE_FIRST = "Marie's f
   await Bp.setInputFiles("#joinFile", longer); await Bp.waitForSelector("#joinCode");
   await Bp.fill("#joinCode", code); await Bp.click("#joinGo"); await wait(Bp, 900);
   ok(/does not open this joining file/.test(await Bp.textContent("#lockDoor .ild-err")), "a file whose time was lengthened by hand no longer opens with the right code");
-  await Bp.setInputFiles("#joinFile", joinFile.path); await Bp.waitForSelector("#joinCode");
+  const renamed = path.join(TMP, "renamed.lakay");
+  fs.writeFileSync(renamed, await Bp.evaluate(async (text) => {
+    const f = JSON.parse(text); f.device.name = "Front desk"; f.storeName = "Another store";
+    const body = f.backup; body.door.storeName = "Another store"; delete body.sum;
+    body.sum = await E.util.sha256hex(E.util.canon(body)); return JSON.stringify(f);
+  }, joinFile.text));
+  await Bp.setInputFiles("#joinFile", renamed); await wait(Bp, 500); await Bp.waitForSelector("#joinCode");
+  const shown = await Bp.textContent("#joinSummary");
+  await Bp.fill("#joinCode", code); await Bp.click("#joinGo"); await wait(Bp, 900);
+  ok(/Another store: this device will be device B \(Front desk\)/.test(shown) && /does not open this joining file/.test(await Bp.textContent("#lockDoor .ild-err")),
+    "a file whose names were changed by hand (its copy's checksum made again) no longer opens with the right code");
+  await Bp.setInputFiles("#joinFile", joinFile.path); await wait(Bp, 500); await Bp.waitForSelector("#joinCode");
   ok(/Lakay Pairing Test: this device will be device B \(Mac mini\)/.test(await Bp.textContent("#joinSummary")), "the right file says which store, and that this device will be B (Mac mini)");
   await Bp.fill("#joinCode", code.slice(0, 20)); await Bp.click("#joinGo"); await wait(Bp, 400);
   ok(/not complete, or has a typing mistake/.test(await Bp.textContent("#lockDoor .ild-err")), "a code cut short is caught at once");

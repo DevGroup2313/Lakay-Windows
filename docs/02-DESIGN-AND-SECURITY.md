@@ -168,6 +168,28 @@ works. What matters for security:
   (each is reported). Anyone who holds the Store Key can write lines, as before: the limits on who may do what are kept
   by Lakay itself. An independent review of this part is recommended before the books travel between devices for real.
 
+**Stage 2, adding a device and carrying the changes by file (Build 25).** What matters for security:
+
+- Only the owner adds a device, with the owner's password, in the store's own books (Settings is the owner's alone). The
+  new device's letter and place are reserved by a ledger line before anything leaves the device.
+- The joining file holds a sealed backup and one more envelope of the Store Key. That envelope is sealed with a key made
+  (HKDF with SHA-256) from a pairing code of 96 random bits, shown once on the inviting device and kept nowhere. Its
+  associated data names the store, the invitation, the new device's id and letter, the hour the invitation ends, and a
+  fingerprint of the file's readable parts together with the backup's own checksum. A file whose hour, names or copy
+  were changed no longer opens with its code. The file alone cannot open the books, and the code alone opens nothing.
+- The file shows what a backup shows: the store's name, the people's names and staff numbers for the door, and the
+  Author Studio's choices. Keep it as one keeps a backup, and delete it once the device has joined. The code is read
+  from one screen and typed on the other; it should never be sent with the file.
+- An invitation lasts a day, and the owner cancels it with one line. A device joins only into the place reserved for
+  it, so a cancelled or used invitation is refused.
+- Joining opens no books. Each person signs in on the new device with their own password, which opens their own
+  envelope, carried in the backup.
+- Changes travel by the sealed bundles of stage 1. The books let only someone with Backups save or take them in; the
+  keys are in Settings, which only the owner opens.
+- A removed device's changes are refused from then on, on every device that has taken in the line that removed it.
+- Limits: removal does not change the Store Key, so a removed device still opens, with a person's password, on what it
+  held. An invitation used on two devices lets the first one heard from keep the place, and refuses the other as a fork.
+
 ## 6. Payments (Stage 7)
 
 When cards are added, the card system (for example Square) handles the card. Emporium records only the amount, the
@@ -317,6 +339,9 @@ Encryption protects data at rest and in transit. It cannot protect against every
 - **The store's earnings from transfers count only the commissions written.** A cashier cannot write a commission;
   until someone with the reports writes it from the provider's statement, that entry counts as nothing, and the room
   says how many there are.
+- **A joining file is a backup with an invitation inside** (Build 25). Its readable parts are those of any backup. A
+  device removed from the store keeps what it held, sealed, and still opens with a person's password: removal stops
+  its changes from being taken in, but does not take back what it holds, and does not change the Store Key.
 - **Notes are kept apart by Lakay, not by a key of each person's own.** Every person who can open the books holds the
   Store Key, so someone who signs in and uses a browser's developer tools could, with effort, read another person's
   sealed notes on that device. Lakay never opens or shows them, but the seal itself is shared by everyone with a key.

@@ -4,6 +4,32 @@ Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED.
 
 The newest build is first. The build number also shows in Lakay's About.
 
+## Build 25 (20 November 2026): devices in step (stage 2), adding a device and carrying the changes by file
+
+This is the second stage of the plan the owner approved on 15 November 2026 (`docs/05-DEVICES-IN-STEP.md`). A device joins the store with a joining file and a pairing code, and the devices carry their changes to one another by sealed files. Nothing travels over a network yet: that is stage 3, the relay.
+
+**Settings, Devices in step**
+- A new section, after Backups, lists the store's devices. Each shows its letter, its name and its state: this device; in the store since a given day; invited until a given hour; an invitation expired or cancelled; removed. For each other device it says when a change was last taken in from it, and how many changes it still needs from this one ("3 changes to carry to it"), or that it has every change this device holds, as far as this device knows.
+- **Add a device** is the owner's alone, with the owner's password. Lakay reserves the next letter in the books (a ledger line, `device.invited`, with nothing secret in it) and prepares a joining file: a sealed copy of the books, with the Store Key sealed again under a key made from a new pairing code. The code is shown once, in six groups of four, in the Master Key's letters (24 characters: 96 random bits and a checksum). Lakay keeps it nowhere. The file and the code work once, for a day.
+- **Save changes for B** saves a sealed file with only the changes that device B does not have yet, as far as this device knows. **Take in changes** takes such a file in and reports how many changes came in, and from which device. A field changed on both devices while they were apart is named in the report: the later change is kept, and both stay in the ledger. The same file taken in twice brings nothing new.
+- **Name** gives a device a name (the counter's computer, the Mac mini). **Cancel the invitation** ends an invitation not yet used: its file and its code no longer join the store. **Remove** is for a device lost, stolen or given up: its changes are no longer taken in, here or on any device that takes this change in. It keeps what it held, sealed, and its passwords are still needed to open it.
+- The practice store stays on each device alone. Its Devices section says so and offers nothing to add.
+- A Guidebook chapter, Devices in step, with its advice: carry the changes at least once a day, and before any large change to prices or people.
+
+**Joining at the door**
+- A new device's door asks "Joining a store from another device?", with a key, Join it. The person chooses the joining file. The door says which store it is and which letter this device will take, then asks for the code. Small letters and spaces are accepted. A code cut short or mistyped is caught at once by its checksum. A wrong code, a file out of date, or a file changed by hand (its dates, its names, its copy) is refused, and the door says why.
+- Joining opens no books. The door then asks each person for their own password, as on every device. The new device's first changes, carried back to the device that invited it, tell that device it has joined.
+
+**Limits, said plainly**
+- A joining file is a sealed backup with an invitation inside. Like every backup, it shows the store's name, the people's names and staff numbers (for the door's list) and the Author Studio's choices; everything else is sealed. Carry it as one carries a backup, and delete it once the device has joined. Never send the code with the file: it is read from the inviting device's screen and typed on the new one.
+- An invitation is for one device. If two devices joined with the same file and code, the first to bring its changes back keeps the place, and the other is refused (its books no longer match) until it is invited again.
+- Removing a device does not change the Store Key. A removed device still opens, with a person's password, on what it held when it was removed. Changing the Store Key on every device is still to come.
+
+**Fixes**
+- The restoring screen showed two Back keys once a file was chosen. It now shows one, as the new joining screen does.
+- Every word is in English, French and Kreyòl (89 new phrases; the Kreyòl is marked for review by a native speaker).
+- tests/t_build25.js: 49 checks, through the screens, with two browsers standing for two devices. Every suite passes: TOTAL checks in all.
+
 ## Build 24 (15 November 2026): devices in step (stage 1), the owner's requests for the Home, the rail, the notes and the Studio
 
 The owner approved the plan for Devices in step on 15 November 2026 (`docs/05-DEVICES-IN-STEP.md`), and approved this build's preview the same day, asking only for a better calculator key. This build is the plan's first stage: the books of several devices join, tested with no network. The owner's requests of the same day are in it too.

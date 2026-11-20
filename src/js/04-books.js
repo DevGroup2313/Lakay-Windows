@@ -2815,7 +2815,10 @@
      (a line, device.invited), makes a sealed copy of the books, and seals the Store Key under a key made from a fresh
      pairing code, bound to the store, to the invitation, to the reserved place and to the hour it expires. The joining
      file carries the copy and that envelope; the code is shown once, on this screen, and kept nowhere. Each part is
-     useless without the other. The invitation can be used once, until it expires (a day), or cancelled. */
+     useless without the other. The invitation can be used once, until it expires (a day), or cancelled.
+     The file's readable parts (the new device's name, the inviting device, the store's name) and the copy's own
+     checksum (which covers the door's names and the Author Studio's choices) make one fingerprint, bound to the
+     envelope with the rest: a file changed on its way no longer opens with its code. */
   var INVITE_HOURS = 24;
   function usedLetters(st) {
     var used = {}; used[B.device.code] = 1;
@@ -2823,7 +2826,11 @@
     Object.keys((st.sync && st.sync.chains) || {}).forEach(function (d) { used[st.sync.chains[d].code] = 1; });
     return used;
   }
-  function inviteAad(storeId, inv) { return aadEnv(storeId, "invite:" + inv.id + "|" + inv.device.id + "|" + inv.device.code + "|" + inv.expires); }
+  function inviteAad(storeId, inv, sum) { return aadEnv(storeId, "invite:" + inv.id + "|" + inv.device.id + "|" + inv.device.code + "|" + inv.expires + "|" + sum); }
+  function inviteSum(inv, backupSum) {
+    return U.sha256hex(U.canon({ store: inv.store, id: inv.id, device: inv.device, from: inv.from, fromCode: inv.fromCode, expires: inv.expires,
+      storeName: inv.storeName || "", backup: backupSum || "" }));
+  }
   function selfRecord() { return { id: B.device.id, code: B.device.code, name: "", joined: B.device.created || null, from: null, status: "joined" }; }
   B.prepareInvite = function (ownerPassword, name) {
     if (!state || !KEY) return Promise.reject(err("locked"));
@@ -2849,11 +2856,14 @@
       });
     }).then(function () { return B.makeBackup(); }).then(function (text) {
       var body = JSON.parse(text);
-      return C.pairingKey(pc.secret, idBytes(ID), inv.id).then(function (kek) { return C.wrap(hk.key, kek, inviteAad(ID, inv)); }).then(function (env) {
+      var file = { format: "lakay-join", v: 1, store: ID, id: inv.id, device: inv.device, from: B.device.id, fromCode: B.device.code,
+        expires: inv.expires, storeName: (state && state.settings.storeName) || "" };
+      return inviteSum(file, body.sum).then(function (sum) {
+        return C.pairingKey(pc.secret, idBytes(ID), inv.id).then(function (kek) { return C.wrap(hk.key, kek, inviteAad(ID, inv, sum)); });
+      }).then(function (env) {
         hk.key = null;
-        var file = JSON.stringify({ format: "lakay-join", v: 1, store: ID, id: inv.id, device: inv.device, from: B.device.id, fromCode: B.device.code,
-          expires: inv.expires, storeName: state ? state.settings.storeName : "", env: env, backup: body });
-        return { code: pc.code, file: file, device: clone(inv.device), expires: inv.expires };
+        file.env = env; file.backup = body;
+        return { code: pc.code, file: JSON.stringify(file), device: clone(inv.device), expires: inv.expires };
       });
     });
   };
@@ -2863,20 +2873,21 @@
     try { inv = JSON.parse(text); } catch (e) { return Promise.reject(err("notinvite")); }
     if (!inv || inv.format !== "lakay-join" || inv.v !== 1 || !inv.id || !inv.device || !inv.device.id || !inv.device.code || !inv.env || !inv.backup || !inv.expires) return Promise.reject(err("notinvite"));
     if (!(Date.now() <= Date.parse(inv.expires))) return Promise.reject(err("expired"));
+    var backupSum = inv.backup.sum;
     return B.readBackup(JSON.stringify(inv.backup)).then(function (body) {
       if (!body.vault || body.vault.storeId !== inv.store) throw err("notinvite");
-      inv.backup = body; return inv;
+      inv.backup = body; inv.backupSum = backupSum; return inv;
     }, function (e) { throw e && e.code === "corrupt" ? e : err("notinvite"); });
   };
   /* The new device joins with the joining file and the code. It does not open the books: the door then asks each
      person for their own password, as on every device. */
   B.joinFromInvite = function (inv, codeText) {
-    var v = inv.backup.vault;
+    var v = inv.backup.vault, kek;
     return joinStart().then(function () { return C.readPairing(codeText); }).then(function (secret) {
       if (!secret) throw err("badcode");
       return C.pairingKey(secret, idBytes(v.storeId), inv.id);
-    }).then(function (kek) {
-      return C.unwrap(inv.env, kek, inviteAad(v.storeId, inv), false).then(null, function () { throw err("wrongcode"); });
+    }).then(function (k) { kek = k; return inviteSum(inv, inv.backupSum); }).then(function (sum) {
+      return C.unwrap(inv.env, kek, inviteAad(v.storeId, inv, sum), false).then(null, function () { throw err("wrongcode"); });
     }).then(function (key) {
       if (!(Date.now() <= Date.parse(inv.expires))) throw err("expired");
       return joinWith(inv.backup, key, { device: inv.device, invite: inv.id, name: inv.device.name });

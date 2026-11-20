@@ -6,9 +6,14 @@ Written 15 November 2026. The owner approved its recommendations the same day: t
 pairing and carrying the changes by file (stage 2), then a relay on the Mac mini at the store (stage 3). Questions 1, 3
 and 4 below are still open; they matter from stage 2 on.
 
-**Stage 1 is built (Build 24, 15 November 2026), waiting for the owner's approval.** It has no screens yet: it is the
-joining of the books, tested with two, three and five simulated devices (`tests/t_build24.js`). The appendix says how it
-works.
+**Stage 1 was released in Build 24 (15 November 2026).** It joined the books, with no screens, tested with two, three
+and five simulated devices (`tests/t_build24.js`).
+
+**Stage 2 is built (Build 25, 20 November 2026), waiting for the owner's approval.** The owner adds a device in Settings,
+Devices in step: the device's letter is reserved in the books, and a joining file and a pairing code are made. The new
+device joins at the door with the file and the code, and each person then signs in with their own password. The devices
+carry their changes to one another by sealed files, with a plain report (`tests/t_build25.js`, through the screens, with
+two browsers standing for two devices). The appendices say how each stage works.
 
 ## What the owner asked
 
@@ -118,8 +123,63 @@ All of it is in `src/js/04-books.js`, in the section "devices in step", with the
   each device's counters.
 - **Honest limits.** "The later change wins" trusts the devices' clocks only as far as `ts` allows: a device whose clock
   runs ahead wins clashes it should not. Two devices that join from the same copy before either is heard of take the
-  same letter; the second is refused and must join again (stage 2's pairing will reserve the letter on the inviting
-  device). Two people added on two devices while apart may share a staff number; signing in still works (both envelopes
+  same letter; the second is refused and must join again. (Since stage 2, an invitation reserves the letter on the
+  inviting device, so this happens only when joining from a backup.) Two people added on two devices while apart may share a staff number; signing in still works (both envelopes
   are tried), but the screens would show the same number twice. Anyone holding the Store Key can write lines, as today:
   the limits on who may do what are kept by Lakay itself, not by the seal. Before the books travel between devices for
   real, an independent security review of this part is recommended.
+
+## Appendix: how stage 2 is built (for whoever continues the work)
+
+The books' side is in `src/js/04-books.js` (after the joining: "inviting a device" and "the store's devices"). The
+pairing code is in `src/js/02-crypto.js`. The screens are `src/js/29-devices.js` (Settings, Devices in step, the owner's
+alone, as all of Settings is) and `joinStore` in `src/js/11-door.js` (the door).
+
+- **The pairing code** (`C.newPairing`, `C.readPairing`, `C.pairingKey`). Twelve random bytes (96 bits) and a checksum of
+  three bytes (the first bytes of their SHA-256), written as the Master Key is, in Crockford's Base32: 24 characters in
+  six groups of four. Reading it ignores case, spaces and hyphens (O is read as 0, I and L as 1), and refuses a code of
+  the wrong length or with a wrong checksum (`badcode`) before any key is tried. The key that seals the Store Key comes
+  from the code by HKDF with SHA-256, with the store's id as the salt and `lakay pairing wrap v1|` and the invitation's id
+  as the info. Ninety-six random bits are far too many to guess, so no slow derivation is needed, unlike a password.
+- **The invitation** (`B.prepareInvite(ownerPassword, name)`): the owner only, in the store's own books. The owner's
+  password opens the Store Key in a form that can be sealed again. One line, `device.invited`, writes the new device's
+  record (`device:<id>`: the next free letter, its name, status `invited`, when, by whom, until when, the invitation's
+  id) and, if it is missing, this device's own record. Nothing secret is in the line. The sync record notes what the new
+  device will hold (`sync.peers[<id>].have`: this device's lines up to and including this one, and what it holds of the
+  others). Then a sealed backup is made, and the Store Key is sealed under the pairing key, with associated data naming
+  the store, the invitation, the new device's id and letter, the hour it expires, and a fingerprint of the file's
+  readable parts (`inviteSum`: the new device's name, the inviting device and its letter, the store's name, and the
+  backup's own checksum, which covers the door's names and the Author Studio's choices). A file changed by hand, even
+  with its backup's checksum made again, no longer opens with its code. The joining file is `{ format: "lakay-join",
+  v: 1, store, id, device: { id, code, name }, from, fromCode, expires, storeName, env, backup }`. The code goes to the
+  screen and is never stored.
+- **Joining** (`B.readInvite(text)`, then `B.joinFromInvite(inv, code)`): reading checks the format, the hour (`expired`),
+  the backup's checksum (`corrupt`) and that the backup is the named store's (`notinvite`). Joining needs a device with no
+  store (`hasstore`), a code with a good checksum (`badcode`), and the right code for an unchanged file (`wrongcode`); the
+  hour is checked again. `joinWith` then takes the place the copy holds for this device: the record must exist with the
+  same letter and the same invitation, and still be `invited` (`notinvite`, `cancelled`, `samedevice`). The new device
+  takes the invitation's device id as its own, writes `device.joined` (with the invitation's id and `holds`: what it holds
+  of every chain), replaces its empty storage in one transaction, and opens no books.
+- **What another device holds** (`peerHave(st, dev)`): its own lines as far as this device has them; what its lines say
+  it took from the others (`knows`, read from its `device.joined` and `sync.took` lines, letters turned into device ids);
+  and what it said it held in the last bundle it sent (`sync.peers[dev].have`, also set at its invitation).
+  `B.makeBundleFor(dev)` makes the bundle from that. The receiver takes only what follows on from what it holds; lines it
+  already has bring nothing new.
+- **What is left to carry** (`B.devices()`): for each other device, this device's own lines it does not hold yet, and the
+  other devices' lines this device holds that it does not. Lines that only say what was taken in (`sync.took`) are not
+  counted (`real`, with the lists `sync.quiet` and `sync.chains[dev].quiet`, the last 300 of each kept), or two devices
+  would never reach zero.
+- **Naming and removing** (`B.renameDevice`, `B.removeDevice`): the owner's, one line each (`device.named`;
+  `device.cancelled` for an invitation not yet used, `device.removed` otherwise; never this device). Taking in refuses a
+  bundle from a removed or cancelled device (`removed`) and sets aside the lines of a removed device that another device
+  relays (`setAside`, named in the report). The letter check also counts the letters in the device records, so a reserved
+  letter is never taken by another device.
+- **Knowledge before writes.** When a line is taken in, what it says it knew (`learn`) is counted before its writes are
+  applied, so a device's own `device.joined` line never reports a clash with the record it writes.
+- **Honest limits.** An invitation can be used by more than one device if each holds the file and the code: the first
+  whose changes are taken in keeps the place, and the other is refused as a fork (`fork`) until it is invited again. The
+  joining file shows what any backup shows (the store's name, the people's names and staff numbers, the Author Studio's
+  choices); now that it is bound to the code, those parts cannot be changed unseen, but they can be read. Removing a
+  device does not change the Store Key, so a removed device still opens, with a person's password, on what it held;
+  changing the Store Key on every device (and with it each person's envelope) is still to come. As before, an independent
+  security review of this part is recommended before the books travel between devices for real.
