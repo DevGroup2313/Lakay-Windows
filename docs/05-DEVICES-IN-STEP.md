@@ -10,11 +10,14 @@ questions).
 **Stage 1 was released in Build 24 (15 November 2026).** It joined the books, with no screens, tested with two, three
 and five simulated devices (`tests/t_build24.js`).
 
-**Stage 2 is built (Build 25, 20 November 2026), waiting for the owner's approval.** The owner adds a device in Settings,
+**Stage 2 was built in Build 25 (20 November 2026).** The owner adds a device in Settings,
 Devices in step: the device's letter is reserved in the books, and a joining file and a pairing code are made. The new
 device joins at the door with the file and the code, and each person then signs in with their own password. The devices
 carry their changes to one another by sealed files, with a plain report (`tests/t_build25.js`, through the screens, with
 two browsers standing for two devices). The appendices say how each stage works.
+
+**Stage 2 was released in Build 25 (20 November 2026).** The plan for stage 3, the relay on the Mac mini, is
+`06-THE-RELAY.md`, written on 20 November 2026 for the owner's approval.
 
 ## What the owner asked
 
