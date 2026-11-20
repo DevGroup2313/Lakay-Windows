@@ -3,8 +3,9 @@
 Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt.
 
 Written 15 November 2026. The owner approved its recommendations the same day: the books join first (stage 1), then
-pairing and carrying the changes by file (stage 2), then a relay on the Mac mini at the store (stage 3). Questions 1, 3
-and 4 below are still open; they matter from stage 2 on.
+pairing and carrying the changes by file (stage 2), then a relay on the Mac mini at the store (stage 3). The owner
+answered questions 3 and 4 on 20 November 2026, and asked for a recommendation on question 1 (see the answers below the
+questions).
 
 **Stage 1 was released in Build 24 (15 November 2026).** It joined the books, with no screens, tested with two, three
 and five simulated devices (`tests/t_build24.js`).
@@ -87,6 +88,15 @@ number. The practice store stays on each device alone.
 3. Away from the store, should the owner's phone only see the books, or also change them (sell, receive, change
    prices)?
 4. Is the Mac mini on and connected day and night?
+
+**The owner's answers, 20 November 2026.**
+- Question 3: away from the store, the owner's phone may see the books and change them (sell, receive, change prices,
+  and the rest), as any device in step can.
+- Question 4: the Mac mini will be on and connected day and night, for the relay.
+- Question 1: the owner asked for a recommendation. Recommended: begin with the counter's Windows computer and the
+  owner's iPhone. The Mac mini runs the relay only, without the books, since the relay never needs to read them. Add
+  the iPad, the Fire tablet or the MacBook Pro when one is used for the store's work (Settings, Devices in step, Add a
+  device). The owner's choice is still to confirm.
 
 ## Appendix: how stage 1 is built (for whoever continues the work)
 
