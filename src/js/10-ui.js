@@ -287,6 +287,14 @@
     if (!quiet) { try { main.focus({ preventScroll: true }); } catch (e) { } window.scrollTo(0, 0); }
   };
   ui.refresh = function () { if (ui.current && document.getElementById("room")) { var y = window.scrollY; ui.go(ui.current, true); window.scrollTo(0, y); } };
+  /* changes from the other devices came in by the relays (Build 26): the top bar always, and the room as well when that
+     takes nothing away from anyone: not while a field is being typed in, not under an open window, never at the Register */
+  ui.afterRelay = function () {
+    ui.refreshTop();
+    var a = document.activeElement, room = document.getElementById("room");
+    var typing = a && room && room.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName);
+    if (!typing && !document.querySelector(".layer .dialog") && ui.current !== "register") ui.refresh();
+  };
   /* The end of every room: its tip (Build 17, 24-learn.js; fresh: a new visit shows the next one), then the footer. */
   ui.roomFoot = function (main, fresh) {
     var tip = E.learn && E.learn.tipStrip ? E.learn.tipStrip(ui.current, fresh) : null;
@@ -343,6 +351,9 @@
     var who = me ? me.name.split(" ")[0] : "";
     c.appendChild(h("button.cl-key#statusPill" + (practice ? ".practice" : "") + clockCls, { type: "button", title: (practice ? t("practice.pillTip") + " · " : "") + t("status.tip"), onclick: ui.statusPanel },
       [h("span.pdot", { "aria-hidden": "true" }), h("span.nm", null, practice ? (B.isOwner() ? t("practice.pill") : t("practice.pill") + " · " + who) : who || t("status.h"))]));
+    /* devices in step (Build 26): the relays' sign, when this device is connected to them */
+    var relaySign = !practice && E.relay && E.relay.sign ? E.relay.sign() : null;
+    if (relaySign) c.appendChild(relaySign);
     c.appendChild(h("button.cl-key#alertsBtn", { type: "button", title: t("top.alertsTip"), "aria-label": t("top.alerts") + (alertsN ? " (" + alertsN + ")" : ""), onclick: ui.alertsPanel },
       [t("top.alerts"), alertsN ? h("span.cnt", { "aria-hidden": "true" }) : null]));
     /* the calculator moved to the side rail in Build 24, under the cart (20-rail.js) */

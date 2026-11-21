@@ -21,3 +21,23 @@
 .dev-took, .dev-clash { margin: 6px 0 10px; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; color: var(--ink-2); }
 @media (max-width: 560px) { .dev-keys { width: 100%; } }
 @media print { .dev-keys { display: none; } }
+
+/* The relays (30-relay.js, Build 26): Lakay Relay on the owner's own Mac minis, each with a small dot: periwinkle when
+   in step, champagne while it cannot be reached, rose when this device's key was closed. Never green. */
+.rel-block { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line-soft); }
+.rel-list { list-style: none; margin: 10px 0 12px; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.rel-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line-soft); }
+.rel-t { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.rel-t b { color: var(--ink); font-weight: 600; overflow-wrap: anywhere; }
+.rel-t small { color: var(--muted); line-height: 1.35; }
+.rel-dot, .relay-sign .rdot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: #a7a3bb; }
+.relay-sign .rdot { width: 8px; height: 8px; }
+.rel-dot.ok, .relay-sign.ok .rdot { background: var(--pri); box-shadow: 0 0 0 3px rgba(var(--pri-rgb), .18); }
+.rel-dot.wait, .relay-sign.wait .rdot { background: #c98a1d; box-shadow: 0 0 0 3px rgba(201, 138, 29, .16); }
+.rel-dot.closed, .relay-sign.closed .rdot { background: #c26a7d; box-shadow: 0 0 0 3px rgba(194, 106, 125, .16); }
+.rel-results { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.rel-results li.good { color: var(--pri-text); }
+.rel-results li.warn { color: var(--warn); }
+.rel-problems { margin: 6px 0 10px; padding-left: 20px; color: var(--warn); display: flex; flex-direction: column; gap: 4px; }
+.relay-sign { position: relative; }
+@media (prefers-reduced-motion: reduce) { .rel-dot, .relay-sign .rdot { box-shadow: none; } }

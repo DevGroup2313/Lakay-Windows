@@ -33,6 +33,9 @@
     return t("dev.k.other", { k: kind });
   }
   function field(f) { return String(f).replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase(); }
+  V.what = what; V.field = field;
+  var RES = { ok: "rel.res.ok", needclaim: "rel.res.needclaim", claim: "rel.res.claim", wait: "rel.res.wait", unreachable: "rel.res.unreachable",
+    otherstore: "rel.res.otherstore", key: "rel.res.key" };
 
   /* the pairing code, in its groups of four, as the Master Key is shown */
   function codeGrid(code) {
@@ -67,6 +70,9 @@
       if (d.status === "joined" || d.status === "invited") keys.push(h("button.key.sm", { type: "button", "data-name": d.code, onclick: function () { rename(d); } }, [ui.emo("🏷️"), t("dev.rename")]));
       if (!d.me && (d.status === "joined" || d.status === "invited")) keys.push(h("button.key.sm.danger", { type: "button", "data-remove": d.code, onclick: function () { remove(d); } },
         d.status === "invited" ? t("dev.cancelInv") : t("dev.remove")));
+      /* a removed device's key at the relays (Build 26): closed when it is removed, or here, later */
+      if (d.status === "removed" && E.relay && E.relay.connected()) keys.push(h("button.key.sm", { type: "button", "data-close": d.code, onclick: function () { closeAtRelays(d); } },
+        [ui.emo("🔒"), t("rel.closeKey")]));
       return h("li.dev-row" + (d.me ? ".me" : "") + (d.status === "removed" || d.status === "cancelled" || expired ? ".off" : ""), { "data-dev": d.code },
         [h("span.dev-jewel" + (d.me ? ".me" : ""), { "aria-hidden": "true" }, d.code), h("div.dev-t", null, facts), keys.length ? h("div.dev-keys", null, keys) : null]);
     }
@@ -87,7 +93,86 @@
       var inv = d.status === "invited";
       ui.confirm(t(inv ? "dev.cancelQ" : "dev.removeQ", { c: d.code }), t(inv ? "dev.cancelP" : "dev.removeP"), t(inv ? "dev.cancelInv" : "dev.remove"), "danger").then(function (yes) {
         if (!yes) return;
-        B.removeDevice(d.id).then(function () { ui.toast(t(inv ? "dev.cancelledT" : "dev.removedT", { c: d.code }), "good"); draw(); }, ui.failed);
+        B.removeDevice(d.id).then(function () {
+          ui.toast(t(inv ? "dev.cancelledT" : "dev.removedT", { c: d.code }), "good"); draw();
+          if (!inv && E.relay && E.relay.connected()) closeAtRelays(d);
+        }, ui.failed);
+      });
+    }
+    /* closing a removed device's key at every relay: the owner's password makes the owner's relay key */
+    function closeAtRelays(d) {
+      var pw = ui.input({ id: "relClosePw", type: "password", autocomplete: "current-password" });
+      ui.dialog({ title: t("rel.closeH", { c: d.code }), emoji: "🔒", focus: "#relClosePw", body: [h("p", null, t("rel.closeP", { c: d.code })), ui.field("dev.pwL", pw, { required: true })],
+        actions: [{ label: t("rel.later") }, { label: t("rel.closeKey"), kind: "primary", id: "relCloseGo", onClick: function (close, btn) {
+          ui.fieldError(pw, "");
+          if (!pw.value) { ui.fieldError(pw, t("door.needPassword")); return false; }
+          btn.disabled = true;
+          E.relay.closeDevice(d.id, pw.value).then(function (out) {
+            pw.value = "";
+            var bad = Object.keys(out).filter(function (a) { return out[a] !== "ok"; });
+            close();
+            if (bad.length) ui.toast(t("rel.closedSome", { a: bad.map(E.relay.label).join(", ") }), "warn"); else ui.toast(t("rel.closedAll"), "good");
+          }, function (e) { btn.disabled = false; if (e && e.code === "wrong") ui.fieldError(pw, t("ld.wrongPw")); else ui.failed(e); });
+          return false;
+        } }] });
+    }
+    /* ---------- the relays (Build 26): Lakay Relay on the owner's own Mac minis at home ---------- */
+    var relays = h("div.rel-block#relBlock");
+    function drawRelays() {
+      var R = E.relay, addrs = R ? R.addresses() : [];
+      U.clear(relays);
+      relays.appendChild(h("h3.status-h", null, t("rel.h")));
+      if (!addrs.length) { relays.appendChild(h("p.hint#relNone", null, t("rel.none"))); return; }
+      relays.appendChild(h("p", null, t("rel.intro")));
+      relays.appendChild(h("ul.rel-list#relList", null, R.status().map(function (s) {
+        var k = !s.on ? "off" : s.err ? (s.err.code === "key" ? "closed" : "wait") : "ok";
+        return h("li.rel-row", { "data-relay": s.a }, [h("span.rel-dot." + k, { "aria-hidden": "true" }),
+          h("div.rel-t", null, [h("b.mono", null, R.label(s.a)), h("small", null, R.stateText(s))])]);
+      })));
+      relays.appendChild(h("div.row-keys", null, [
+        h("button.key.primary#relConnect", { type: "button", onclick: connect }, [ui.emo("🔗"), t(R.connected() ? "rel.reconnect" : "rel.connect")]),
+        R.connected() ? h("button.key#relNowKey", { type: "button", onclick: function (ev) {
+          var b = ev.currentTarget; b.disabled = true;
+          R.run().then(function () { draw(); drawRelays(); });
+        } }, [ui.emo("🔄"), t("rel.now")]) : null]));
+    }
+    V.paintRelays = function () { if (relays.isConnected) drawRelays(); };
+    function connect() {
+      var R = E.relay, pw = ui.input({ id: "relPw", type: "password", autocomplete: "current-password" });
+      var claimBox = h("div#relClaims", null, [h("p.hint", null, t("rel.checking"))]), claims = {}, results = h("ul.rel-results#relResults");
+      ui.dialog({ title: t("rel.connectH"), emoji: "🔗", wide: true, focus: "#relPw",
+        body: [h("p", null, t("rel.connectP")), claimBox, ui.field("dev.pwL", pw, { required: true }), results],
+        actions: [{ label: t("cancel") }, { label: t("rel.connect"), kind: "primary", id: "relGo", onClick: function (close, btn) {
+          ui.fieldError(pw, "");
+          if (!pw.value) { ui.fieldError(pw, t("door.needPassword")); return false; }
+          var given = {};
+          Object.keys(claims).forEach(function (a) { if (claims[a].value.trim()) given[a] = claims[a].value.trim(); });
+          btn.disabled = true; btn.textContent = t("rel.connecting");
+          R.connect(pw.value, given).then(function (out) {
+            pw.value = "";
+            U.clear(results);
+            var all = true;
+            Object.keys(out).forEach(function (a) {
+              if (out[a] !== "ok") all = false;
+              results.appendChild(h("li" + (out[a] === "ok" ? ".good" : ".warn"), null, t(RES[out[a]] || "rel.res.other", { a: R.label(a), c: out[a] })));
+            });
+            btn.disabled = false; btn.textContent = t("rel.connect");
+            drawRelays(); draw();
+            if (all) { close(); ui.toast(t("rel.connected"), "good"); }
+          }, function (e) {
+            btn.disabled = false; btn.textContent = t("rel.connect");
+            if (e && e.code === "wrong") ui.fieldError(pw, t("ld.wrongPw")); else ui.failed(e);
+          });
+          return false;
+        } }] });
+      R.check().then(function (list) {
+        U.clear(claimBox);
+        list.forEach(function (x, i) {
+          if (!x.reach || x.claimed) return;
+          var inp = ui.input({ id: "relClaim" + i, type: "text", autocomplete: "off", spellcheck: "false", maxlength: "24", "data-relay": x.a });
+          claims[x.a] = inp;
+          claimBox.appendChild(ui.field(t("rel.claimL", { a: R.label(x.a) }), inp));
+        });
       });
     }
     function addDevice() {
@@ -143,10 +228,10 @@
       });
     });
     function failedJoin() { ui.dialog({ title: t("dev.takeIn"), emoji: "⚠️", body: [h("p#devErr", null, t("dev.err.joinfile"))], actions: [{ label: t("close"), kind: "primary" }] }); }
-    draw();
+    draw(); drawRelays();
     return sec("set-devices", "set.devices", "tip.devices", [h("p", null, t("dev.intro")), list,
       h("div.row-keys", null, [file,
         h("button.key.primary", { type: "button", id: "devAdd", onclick: addDevice }, [ui.emo("📲"), t("dev.add")]),
-        h("button.key", { type: "button", id: "devTake", onclick: function () { file.click(); } }, [ui.emo("📥"), t("dev.takeIn")])])]);
+        h("button.key", { type: "button", id: "devTake", onclick: function () { file.click(); } }, [ui.emo("📥"), t("dev.takeIn")])]), relays]);
   };
 })();

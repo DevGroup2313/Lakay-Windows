@@ -55,6 +55,19 @@ def main():
     digest = base64.b64encode(hashlib.sha256(js.encode("utf-8")).digest()).decode("ascii")
     out = (page.replace("@@CSS@@", css).replace("@@FAVICON@@", favicon).replace("@@ICON_TILE@@", tile).replace("@@TOUCH_ICON@@", touch).replace("@@BUILD@@", build).replace("@@DATE@@", date)
            .replace("@@SCRIPT_HASH@@", "sha256-" + digest).replace("@@JS@@", js))
+    # The relays (Build 26): the addresses of Lakay Relay on the owner's own Mac minis, from build.json, are the only places
+    # the page may reach (connect-src), in the apps and the web app alike. With none, nothing is reached, as before. Each
+    # is https, or plain http on this very computer (for tests). The page reads them back from its own policy.
+    relays = info.get("relays") or []
+    if not isinstance(relays, list):
+        sys.exit("build stopped: relays in build.json must be a list")
+    for r in relays:
+        if not re.match(r"^https://([A-Za-z0-9.-]+|\[[0-9A-Fa-f:]+\])(:[0-9]{1,5})?$|^http://(127\.0\.0\.1|localhost)(:[0-9]{1,5})?$", str(r)):
+            sys.exit("build stopped: not a relay's address: %r" % (r,))
+    if relays:
+        if out.count("connect-src 'none'") != 1:
+            sys.exit("build stopped: the policy's connect-src was not found")
+        out = out.replace("connect-src 'none'", "connect-src " + " ".join(relays))
     os.makedirs(os.path.join(HERE, "app"), exist_ok=True)
     path = os.path.join(HERE, "app", "Lakay.html")
     with open(path, "w", encoding="utf-8", newline="\n") as f:

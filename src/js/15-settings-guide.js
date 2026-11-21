@@ -230,8 +230,8 @@
   }
 
   /* ---------- the Guidebook ---------- */
-  var ARTICLES = ["start", "learn", "train", "door", "team", "clock", "schedule", "earnings", "travel", "master", "sale", "pay", "items", "receive", "correct", "depts", "svc", "reports", "notes", "backup", "devices", "sealed", "verify", "display", "studio", "build", "limits"];
-  var ART_EMO = { start: "🌟", learn: "🎓", train: "📋", door: "🚪", team: "👥", clock: "🕘", schedule: "🗓️", earnings: "💰", travel: "✈️", master: "🗝️", sale: "🛒", pay: "💳", items: "🏷️", receive: "🚚", correct: "✏️", depts: "🗂️", svc: "💱", reports: "📊", notes: "🗒️", backup: "💾", devices: "📲", sealed: "🔐", verify: "🛡️", display: "🎨", studio: "⚒️", build: "🔢", limits: "🧭" };
+  var ARTICLES = ["start", "learn", "train", "door", "team", "clock", "schedule", "earnings", "travel", "master", "sale", "pay", "items", "receive", "correct", "depts", "svc", "reports", "notes", "backup", "devices", "relays", "sealed", "verify", "display", "studio", "build", "limits"];
+  var ART_EMO = { start: "🌟", learn: "🎓", train: "📋", door: "🚪", team: "👥", clock: "🕘", schedule: "🗓️", earnings: "💰", travel: "✈️", master: "🗝️", sale: "🛒", pay: "💳", items: "🏷️", receive: "🚚", correct: "✏️", depts: "🗂️", svc: "💱", reports: "📊", notes: "🗒️", backup: "💾", devices: "📲", relays: "🛰️", sealed: "🔐", verify: "🛡️", display: "🎨", studio: "⚒️", build: "🔢", limits: "🧭" };
   /* the Author Studio's chapter only for whoever may open the Studio (Build 24) */
   function chapters() { return ARTICLES.filter(function (id) { return id !== "studio" || ui.allowed("studio"); }); }
   E.guideCount = function () { return chapters().length; };

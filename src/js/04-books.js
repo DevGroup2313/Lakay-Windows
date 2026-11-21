@@ -2549,10 +2549,14 @@
   };
 
   /* ---------- a bundle: this device's lines (and those it holds of the others) that the other device lacks ---------- */
-  B.makeBundle = function (have) {
+  /* by hand (a file, Build 25): the person needs Backups. By the relays (Build 26): the exchange goes on by itself for
+     whoever is signed in, since nothing leaves the seal and nothing is shown to the person. */
+  B.makeBundle = function (have) { return bundleOf(have, true).then(function (r) { return r.text; }); };
+  B.relayBundle = function (have) { return bundleOf(have, false); };
+  function bundleOf(have, byHand) {
     if (!KEY || !state) return Promise.reject(err("locked"));
     if (B.mode === "practice") return Promise.reject(err("practice"));
-    if (B.user && !B.can("backup")) return Promise.reject(err("denied"));
+    if (byHand && B.user && !B.can("backup")) return Promise.reject(err("denied"));
     have = have || {};
     var key = KEY, id = ID, st = state, me = B.device.id;
     return D.entries("journal").then(function (entries) {
@@ -2572,21 +2576,25 @@
         /* lines written before Build 24 travel as they are: the device taking them in already holds them (it joined from a
            copy made after them), or it refuses them */
         var payload = { v: 1, from: me, code: B.device.code, at: new Date().toISOString(), have: myHave(st), chains: list };
+        var lines = list.reduce(function (n, c) { return n + c.lines.length; }, 0);
         return C.seal(key, payload, aadBundle(id, me)).then(function (sealed) {
-          return JSON.stringify({ format: "lakay-changes", v: 1, store: id, from: me, iv: U.b64e(sealed.iv), ct: U.b64e(sealed.ct) });
+          return { text: JSON.stringify({ format: "lakay-changes", v: 1, store: id, from: me, iv: U.b64e(sealed.iv), ct: U.b64e(sealed.ct) }),
+            lines: lines, have: payload.have };
         });
       });
     });
-  };
+  }
 
   /* ---------- taking a bundle in ---------- */
-  B.takeBundle = function (text) {
+  B.takeBundle = function (text) { return takeText(text, true); };
+  B.relayTake = function (text) { return takeText(text, false); };
+  function takeText(text, byHand) {
     var bundle;
     try { bundle = JSON.parse(text); } catch (e) { return Promise.reject(err("notbundle")); }
     if (!bundle || bundle.format !== "lakay-changes" || bundle.v !== 1 || !bundle.iv || !bundle.ct || !bundle.from) return Promise.reject(err("notbundle"));
     if (!KEY || !state) return Promise.reject(err("locked"));
     if (B.mode === "practice") return Promise.reject(err("practice"));
-    if (B.user && !B.can("backup")) return Promise.reject(err("denied"));
+    if (byHand && B.user && !B.can("backup")) return Promise.reject(err("denied"));
     if (bundle.store !== ID) return Promise.reject(err("otherstore"));
     if (bundle.from === B.device.id) return Promise.reject(err("mine"));
     var key = KEY, id = ID;
@@ -2594,12 +2602,17 @@
       if (!pl || pl.from !== bundle.from || !Array.isArray(pl.chains)) throw err("notbundle");
       return enqueue(function () { return takeIn(pl, key, id); });
     });
-  };
+  }
   function takeIn(pl, key, id) {
     if (!KEY || !state || KEY !== key) throw err("locked");
     var st = state, sync = clone(st.sync) || { v: 1, chains: {}, vs: {}, cs: "" };
     sync.chains = sync.chains || {}; sync.vs = sync.vs || {}; sync.cs = sync.cs || "";
-    var rep = { from: pl.code, lines: 0, chains: {}, clashes: [], problems: [] }, fresh = [];
+    var rep = { from: pl.code, fromId: pl.from, lines: 0, real: 0, chains: {}, clashes: [], problems: [], upTo: {} }, fresh = [];
+    /* how far each chain goes in this bundle: what the relay it came from holds (Build 26) */
+    pl.chains.forEach(function (ch) {
+      if (!ch || !ch.dev || !Array.isArray(ch.lines)) return;
+      ch.lines.forEach(function (l) { if (l && l.seq > (rep.upTo[ch.dev] || 0)) rep.upTo[ch.dev] = l.seq; });
+    });
     /* 1. each chain must follow on from what this device holds of it */
     return pl.chains.reduce(function (p, ch) {
       return p.then(function () {
@@ -2643,6 +2656,7 @@
         knows[c.dev] = clone(c.held.knows) || {};
         c.lines.forEach(function (l) { queue2.push([lineStamp(l, c.code), l, c]); maxTs = Math.max(maxTs, l.ts || 0); });
         rep.chains[c.code] = c.lines.length; rep.lines += c.lines.length;
+        rep.real += c.lines.filter(function (l) { return l.type !== "sync.took"; }).length;
       });
       queue2.sort(function (a, b) { return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0; });
       function workGet(k) { if (Object.prototype.hasOwnProperty.call(work, k)) return work[k]; var v = getRec(st, k); return v ? { v: v, s: st.stamps[k] || {} } : null; }
@@ -2678,7 +2692,8 @@
         sync.chains[c.dev] = { code: c.code, seq: last.seq, hash: c.hashes[c.hashes.length - 1], at: last.at, knows: knows[c.dev], quiet: quiet };
         took[c.code] = [c.lines[0].seq, last.seq];
       });
-      sync.quiet = (sync.quiet || []).concat([st.head.seq + 1]).slice(-300);
+      var quietOnly = !rep.real && !Object.keys(work).length && !Object.keys(vaultTaken).length && !customTaken;
+      if (!quietOnly) sync.quiet = (sync.quiet || []).concat([st.head.seq + 1]).slice(-300);
       sync.peers = sync.peers || {}; sync.peers[pl.from] = { have: pl.have || {}, at: new Date().toISOString() };
       raw.push({ k: "sync:main", v: sync });
       var users = clone(st.users), settings = st.settings;
@@ -2702,6 +2717,14 @@
         });
       }).then(function () {
         if (customTaken) ops.push({ store: "meta", key: "custom", value: custom });
+        if (quietOnly) {
+          /* nothing in the books changes: the other device's lines are kept, and what this device holds, with no line */
+          rep.quiet = true;
+          return C.seal(key, sync, aadRec(id, "sync:main")).then(function (env) {
+            ops.push({ store: "rec", key: "sync:main", value: env });
+            return D.write(ops);
+          }).then(function () { if (state) state.sync = sync; emit("synced", rep); });
+        }
         var data = { from: pl.from, code: pl.code, chains: took, lines: rep.lines, clashes: rep.clashes.length, list: rep.clashes.slice(0, 40) };
         if (rep.problems.length) data.problems = rep.problems.slice(0, 20);
         return commit("sync.took", data, [], meta, { raw: raw, ops: ops, minTs: maxTs });
@@ -2948,6 +2971,44 @@
     if (to <= from) return 0;
     return (to - from) - (quiet || []).filter(function (q) { return q > from && q <= to; }).length;
   }
+  /* ---------- the relays (Build 26, stage 3) ----------
+     This device's own record of the relays: its key to them, and for each relay how far it has read (the cursor), what
+     that relay holds of each chain, and the bundles waiting for earlier changes. It is sealed with the Store Key in this
+     device's meta ("relay"), which no backup and no joining file carries, so a device's key never leaves it. */
+  function relayAad() { return aadRec(ID, "relay:" + B.device.id); }
+  B.storeId = function () { return ID; };
+  B.relayState = function () {
+    if (!KEY || !state || B.mode === "practice") return Promise.resolve(null);
+    var key = KEY;
+    return D.get("meta", "relay").then(function (env) {
+      if (!env || !env.ct) return null;
+      return C.open(key, env, relayAad()).then(null, function () { return null; });
+    });
+  };
+  B.saveRelayState = function (rs) {
+    if (!KEY || !state || B.mode === "practice") return Promise.reject(err("locked"));
+    return C.seal(KEY, rs, relayAad()).then(function (env) { return D.write([{ store: "meta", key: "relay", value: env }]); });
+  };
+  /* the owner's key to the relays, made only once the owner's password has opened the owner's envelope */
+  B.relayOwnerKey = function (password) {
+    if (!state || B.mode === "practice") return Promise.reject(err("locked"));
+    if (!B.isOwner()) return Promise.reject(err("denied"));
+    return ownerKeyExtractable(password).then(function (h) {
+      return C.relayOwnerKey(password, h.vault.storeId, iterations(h.vault));
+    }).then(function (bytes) { return C.b64url(bytes); });
+  };
+  /* what every other device of the store surely holds: a relay connected now need carry nothing older */
+  B.relayFloor = function () {
+    var st = state; if (!st) return {};
+    var me = B.device.id, out = myHave(st);
+    Object.keys(st.devices || {}).forEach(function (id) {
+      var d = st.devices[id];
+      if (id === me || !d || d.status === "removed" || d.status === "cancelled") return;
+      var hv = peerHave(st, id);
+      Object.keys(out).forEach(function (c) { out[c] = Math.min(out[c], hv[c] || 0); });
+    });
+    return out;
+  };
   B.makeBundleFor = function (dev) { return state ? B.makeBundle(peerHave(state, dev)) : Promise.reject(err("locked")); };
   /* every device of the store, for the Devices section: its letter, name and state, when it was last heard from, and
      how many of this device's changes (and of the others' it holds) it has yet to take */

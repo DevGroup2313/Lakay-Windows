@@ -125,6 +125,17 @@
     });
   };
 
+  /* The owner's key to the relays (Build 26): made from the owner's password with a salt of its own (the store's id
+     and "lakay relay owner"), so it equals nothing else made from the password, and a device that holds only the
+     Store Key cannot make it. The relays keep only its SHA-256. */
+  C.relayOwnerKey = function (password, storeId, iterations) {
+    return S.importKey("raw", TE.encode(String(password)), "PBKDF2", false, ["deriveBits"]).then(function (base) {
+      return S.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: TE.encode("lakay relay owner|" + storeId), iterations: iterations || C.ITERATIONS }, base, 256);
+    }).then(function (bits) { return new Uint8Array(bits); });
+  };
+  C.b64url = function (bytes) { return U.b64e(bytes).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
+  C.sha256hexOf = function (bytes) { return S.digest("SHA-256", bytes).then(function (d) { return U.hex(new Uint8Array(d)); }); };
+
   /* How strong a password is, in words a person can act on (never a promise of safety). */
   C.passwordAdvice = function (pw) {
     pw = String(pw || "");

@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-HkaHcHugh1PoLiB6l+Xq467TvhTScns9fSrKC4sXeWg='; style-src 'unsafe-inline'; img-src data: blob: 'self'; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-rzBcA8ALvkufKvvD3p0VNLD9vgfwHFpbNqC7o7SlRkk='; style-src 'unsafe-inline'; img-src data: blob: 'self'; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#f5f4f8">
 <meta name="application-name" content="Lakay">
-<meta name="lakay-build" content="25">
-<!-- LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt. Build 25 (2026-11-20). -->
+<meta name="lakay-build" content="26">
+<!-- LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt. Build 26 (2026-11-20). -->
 <title>Lakay</title>
 <!-- Lakay's logo, inside the page (the page's own policy shows only pictures it carries): the square tile, filled edge to
      edge with the coin's periwinkle, for the shortcuts a browser makes on a home screen; the round coin, on nothing, for the
@@ -109,6 +109,26 @@
 .dev-took, .dev-clash { margin: 6px 0 10px; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; color: var(--ink-2); }
 @media (max-width: 560px) { .dev-keys { width: 100%; } }
 @media print { .dev-keys { display: none; } }
+
+/* The relays (30-relay.js, Build 26): Lakay Relay on the owner's own Mac minis, each with a small dot: periwinkle when
+   in step, champagne while it cannot be reached, rose when this device's key was closed. Never green. */
+.rel-block { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line-soft); }
+.rel-list { list-style: none; margin: 10px 0 12px; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.rel-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line-soft); }
+.rel-t { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.rel-t b { color: var(--ink); font-weight: 600; overflow-wrap: anywhere; }
+.rel-t small { color: var(--muted); line-height: 1.35; }
+.rel-dot, .relay-sign .rdot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: #a7a3bb; }
+.relay-sign .rdot { width: 8px; height: 8px; }
+.rel-dot.ok, .relay-sign.ok .rdot { background: var(--pri); box-shadow: 0 0 0 3px rgba(var(--pri-rgb), .18); }
+.rel-dot.wait, .relay-sign.wait .rdot { background: #c98a1d; box-shadow: 0 0 0 3px rgba(201, 138, 29, .16); }
+.rel-dot.closed, .relay-sign.closed .rdot { background: #c26a7d; box-shadow: 0 0 0 3px rgba(194, 106, 125, .16); }
+.rel-results { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.rel-results li.good { color: var(--pri-text); }
+.rel-results li.warn { color: var(--warn); }
+.rel-problems { margin: 6px 0 10px; padding-left: 20px; color: var(--warn); display: flex; flex-direction: column; gap: 4px; }
+.relay-sign { position: relative; }
+@media (prefers-reduced-motion: reduce) { .rel-dot, .relay-sign .rdot { box-shadow: none; } }
 
 /* EMPORIUM | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt.
    Emporium's dress, after Ingenium 6.50's own (Build 3), refined for Emporium. Its shapes were read from Ingenium 6.50
@@ -2924,7 +2944,7 @@ html.drilling .shell { outline: 3px solid rgba(var(--pri-rgb), .35); outline-off
 "use strict";
 
 var E = window.Emporium = window.Emporium || {};
-E.BUILD = { number: "25", date: "2026-11-20" };
+E.BUILD = { number: "26", date: "2026-11-20" };
 
 /* ---------- drawing: every piece of text goes in as text, never as markup ---------- */
 function $(sel, root) { return (root || document).querySelector(sel); }
@@ -5200,6 +5220,61 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     ["guide.devices.b", "Every device of the store keeps the whole of the books, sealed, and works with no connection. They come into step by sealed files that you carry between them.\nTo add a device, open Settings, Devices in step, and press Add a device: name it, give your password, and save the joining file. The device gets its own letter (B, C and so on), so that its receipt numbers never meet another's. On the new device, open Lakay, choose Join a store from another device at the door, choose the file and type the code this device showed. The code is shown only once; the file and the code work once, for a day. Each person then signs in on the new device with their own password.\nTo carry the changes, press Save changes for the other device, carry the file to it (a USB stick, AirDrop or email) and press Take in changes there; then do the same the other way. Stock is counted from every device's sales and deliveries. A thing changed on two devices while they were apart keeps the later change; both stay in the ledger, and Lakay says so. A device lost or stolen can be removed: its changes are no longer taken in.", "Chaque appareil du magasin garde tous les livres, scellés, et fonctionne sans connexion. Ils se mettent en phase par des fichiers scellés que vous portez de l'un à l'autre.\nPour ajouter un appareil, ouvrez Réglages, Appareils en phase, et appuyez sur Ajouter un appareil : nommez-le, donnez votre mot de passe et enregistrez le fichier d'adhésion. L'appareil reçoit sa propre lettre (B, C et ainsi de suite), pour que ses numéros de reçu ne croisent jamais ceux d'un autre. Sur le nouvel appareil, ouvrez Lakay, choisissez Rejoindre un magasin depuis un autre appareil à la porte, choisissez le fichier et tapez le code que cet appareil a montré. Le code n'est montré qu'une fois ; le fichier et le code servent une fois, pendant un jour. Chacun se connecte ensuite sur le nouvel appareil avec son propre mot de passe.\nPour porter les changements, appuyez sur Enregistrer les changements pour l'autre appareil, portez-lui le fichier (une clé USB, AirDrop ou un courriel) et appuyez là-bas sur Recevoir des changements ; puis faites de même dans l'autre sens. Le stock est compté à partir des ventes et des livraisons de chaque appareil. Une chose changée sur deux appareils pendant qu'ils étaient séparés garde le changement le plus récent ; les deux restent dans le registre, et Lakay le dit. Un appareil perdu ou volé peut être retiré : ses changements ne sont plus reçus.", "Chak aparèy magazen an kenbe tout liv yo, sele, epi li mache san koneksyon. Yo vin an akò ak fichye sele ou pote soti nan youn al nan lòt.\nPou ajoute yon aparèy, louvri Reglaj, Aparèy ki an akò, epi peze Ajoute yon aparèy: ba l yon non, bay modpas ou, epi anrejistre fichye pou antre a. Aparèy la resevwa pwòp lèt pa l (B, C, elatriye), pou nimewo resi li yo pa janm kontre ak resi yon lòt. Sou nouvo aparèy la, louvri Lakay, chwazi Antre nan yon magazen ki sou yon lòt aparèy devan pòt la, chwazi fichye a epi tape kòd aparèy sa a te montre a. Kòd la parèt yon sèl fwa; fichye a ak kòd la mache yon sèl fwa, pandan yon jou. Apre sa chak moun konekte sou nouvo aparèy la ak pwòp modpas yo.\nPou pote chanjman yo, peze Anrejistre chanjman pou lòt aparèy la, pote fichye a ba li (yon kle USB, AirDrop oswa yon imèl) epi peze Resevwa chanjman la; apre sa fè menm bagay la nan lòt sans lan. Stòk la konte ak vant ak livrezon chak aparèy. Yon bagay ki chanje sou de aparèy pandan yo te separe kenbe chanjman ki pi resan an; tou de rete nan rejis la, epi Lakay di sa. Yo ka retire yon aparèy ki pèdi oswa yo vòlò: chanjman li yo p ap resevwa ankò."],
     ["guide.devices.tip", "Carry the changes at least once a day, and before any big change to prices or people: the fewer changes made apart, the fewer things to settle.", "Portez les changements au moins une fois par jour, et avant tout grand changement de prix ou de personnes : moins il y a de changements faits séparément, moins il y a de choses à régler.", "Pote chanjman yo omwen yon fwa pa jou, epi anvan nenpòt gwo chanjman nan pri oswa nan moun: mwens chanjman ki fèt apa, mwens bagay pou regle."]);
 
+  /* Devices in step, stage 3 (Build 26): the relays on the owner's own Mac minis at home. The Kreyòl is marked for review by a
+     native speaker. */
+  add(
+    ["rel.h", "The relays", "Les relais", "Relè yo"],
+    ["rel.none", "This copy of Lakay has no relays yet. Once the Mac minis at home are ready, their addresses are added to Lakay, and the changes then travel by themselves.", "Cette copie de Lakay n'a pas encore de relais. Quand les Mac mini de la maison seront prêts, leurs adresses seront ajoutées à Lakay, et les changements voyageront alors d'eux-mêmes.", "Kopi Lakay sa a poko gen relè. Lè Mac mini lakay yo pare, y ap ajoute adrès yo nan Lakay, epi chanjman yo ap vwayaje poukont yo."],
+    ["rel.intro", "Lakay Relay runs on your own Mac minis at home. Each device leaves its sealed changes there and takes the others', by itself, whenever it can reach them.", "Lakay Relay fonctionne sur vos propres Mac mini, à la maison. Chaque appareil y dépose ses changements scellés et prend ceux des autres, de lui-même, chaque fois qu'il peut les joindre.", "Lakay Relay ap mache sou pwòp Mac mini ou yo lakay ou. Chak aparèy kite chanjman sele li yo la, epi li pran pa lòt yo, poukont li, chak fwa li ka jwenn yo."],
+    ["rel.connect", "Connect this device", "Connecter cet appareil", "Konekte aparèy sa a"],
+    ["rel.reconnect", "Connect again", "Connecter de nouveau", "Konekte ankò"],
+    ["rel.now", "Exchange now", "Échanger maintenant", "Fè echanj la kounye a"],
+    ["rel.running", "Exchanging…", "Échange en cours…", "Echanj la ap fèt…"],
+    ["rel.st.off", "This device is not connected to it", "Cet appareil n'y est pas connecté", "Aparèy sa a pa konekte ak li"],
+    ["rel.st.ok", "Last exchange at {d}", "Dernier échange à {d}", "Dènye echanj nan a {d}"],
+    ["rel.st.wait", "Cannot be reached since {d}", "Injoignable depuis {d}", "Pa ka jwenn li depi {d}"],
+    ["rel.st.closed", "This device's key was closed", "La clé de cet appareil a été fermée", "Yo fèmen kle aparèy sa a"],
+    ["rel.st.never", "Connected; no exchange yet", "Connecté ; pas encore d'échange", "Konekte; poko gen echanj"],
+    ["rel.st.waiting", "{n} waiting for earlier changes", "{n} en attente de changements antérieurs", "{n} ap tann chanjman ki te fèt anvan"],
+    ["rel.connectH", "Connect this device to the relays", "Connecter cet appareil aux relais", "Konekte aparèy sa a ak relè yo"],
+    ["rel.connectP", "Type your password. A relay used for the first time also asks for its claim code, which Lakay Relay shows on its Mac mini.", "Tapez votre mot de passe. Un relais utilisé pour la première fois demande aussi son code d'activation, que Lakay Relay affiche sur son Mac mini.", "Tape modpas ou. Yon relè w ap itilize pou premye fwa mande kòd aktivasyon li tou, Lakay Relay montre l sou Mac mini li a."],
+    ["rel.claimL", "Claim code of {a}", "Code d'activation de {a}", "Kòd aktivasyon {a}"],
+    ["rel.checking", "Asking the relays…", "Interrogation des relais…", "N ap mande relè yo…"],
+    ["rel.connecting", "Connecting…", "Connexion…", "N ap konekte…"],
+    ["rel.res.ok", "{a}: connected", "{a} : connecté", "{a}: konekte"],
+    ["rel.res.needclaim", "{a}: type its claim code", "{a} : tapez son code d'activation", "{a}: tape kòd aktivasyon li"],
+    ["rel.res.claim", "{a}: that claim code is not right", "{a} : ce code d'activation n'est pas le bon", "{a}: kòd aktivasyon sa a pa bon"],
+    ["rel.res.wait", "{a}: too many wrong codes; try again in ten minutes", "{a} : trop de codes erronés ; réessayez dans dix minutes", "{a}: twòp move kòd; eseye ankò nan dis minit"],
+    ["rel.res.unreachable", "{a}: cannot be reached now", "{a} : injoignable pour l'instant", "{a}: pa ka jwenn li kounye a"],
+    ["rel.res.otherstore", "{a}: it serves another store", "{a} : il sert un autre magasin", "{a}: li sèvi yon lòt magazen"],
+    ["rel.res.key", "{a}: it refused the owner's key", "{a} : il a refusé la clé du propriétaire", "{a}: li refize kle pwopriyetè a"],
+    ["rel.res.other", "{a}: it refused ({c})", "{a} : il a refusé ({c})", "{a}: li refize ({c})"],
+    ["rel.connected", "This device is connected to the relays.", "Cet appareil est connecté aux relais.", "Aparèy sa a konekte ak relè yo."],
+    ["rel.closeH", "Close device {c}'s key at the relays", "Fermer la clé de l'appareil {c} aux relais", "Fèmen kle aparèy {c} nan relè yo"],
+    ["rel.closeP", "Device {c} is removed. Type your password to close its key at the relays as well, so that it can no longer fetch new changes.", "L'appareil {c} est retiré. Tapez votre mot de passe pour fermer aussi sa clé aux relais : il ne pourra plus prendre de nouveaux changements.", "Yo retire aparèy {c}. Tape modpas ou pou fèmen kle li nan relè yo tou, konsa li p ap ka pran nouvo chanjman ankò."],
+    ["rel.closeKey", "Close its key at the relays", "Fermer sa clé aux relais", "Fèmen kle li nan relè yo"],
+    ["rel.later", "Later", "Plus tard", "Pita"],
+    ["rel.closedAll", "Its key is closed at the relays.", "Sa clé est fermée aux relais.", "Kle li fèmen nan relè yo."],
+    ["rel.closedSome", "Its key could not be closed at: {a}. Close it again when they can be reached.", "Sa clé n'a pas pu être fermée à : {a}. Fermez-la de nouveau quand ils seront joignables.", "Pa t ka fèmen kle li nan: {a}. Fèmen l ankò lè yo ka jwenn yo."],
+    ["rel.panelP", "This device's changes travel to the relays at home by themselves, and the other devices' changes come back the same way.", "Les changements de cet appareil voyagent d'eux-mêmes vers les relais de la maison, et ceux des autres appareils reviennent de la même façon.", "Chanjman aparèy sa a ale nan relè lakay yo poukont yo, epi chanjman lòt aparèy yo tounen menm jan an."],
+    ["rel.took", "{n} changes taken in at the last exchange.", "{n} changements reçus au dernier échange.", "{n} chanjman antre nan dènye echanj nan."],
+    ["rel.took1", "1 change taken in at the last exchange.", "1 changement reçu au dernier échange.", "1 chanjman antre nan dènye echanj nan."],
+    ["rel.tookNone", "Nothing new at the last exchange.", "Rien de nouveau au dernier échange.", "Pa gen anyen nouvo nan dènye echanj nan."],
+    ["rel.notYet", "No exchange yet since the store opened.", "Pas encore d'échange depuis l'ouverture du magasin.", "Poko gen echanj depi magazen an louvri."],
+    ["rel.pb.gap", "Some of device {c}'s changes wait for earlier ones.", "Certains changements de l'appareil {c} attendent des changements antérieurs.", "Kèk chanjman aparèy {c} ap tann chanjman ki te fèt anvan yo."],
+    ["rel.pb.lost", "Relay {a} let go of some changes before this device took them: carry a file from the other devices, or join again.", "Le relais {a} a laissé partir des changements avant que cet appareil ne les prenne : apportez un fichier des autres appareils, ou rejoignez de nouveau.", "Relè {a} lage kèk chanjman anvan aparèy sa a te pran yo: pote yon fichye ki soti nan lòt aparèy yo, oswa rejwenn ankò."],
+    ["rel.pb.other", "A change from device {c} was set aside ({a}).", "Un changement de l'appareil {c} a été mis de côté ({a}).", "Yo mete yon chanjman aparèy {c} sou kote ({a})."],
+    ["sign.ok", "In step", "À jour", "Ajou"],
+    ["sign.wait", "Waiting", "En attente", "Ap tann"],
+    ["sign.closed", "Disconnected", "Déconnecté", "Dekonekte"],
+    ["sign.tipOk", "Devices in step: last exchange at {d}", "Appareils en phase : dernier échange à {d}", "Aparèy ki an akò: dènye echanj nan a {d}"],
+    ["sign.tipStart", "Devices in step: the first exchange is on its way", "Appareils en phase : le premier échange arrive", "Aparèy ki an akò: premye echanj nan ap vini"],
+    ["sign.tipWait", "The relays cannot be reached: this device keeps working and will catch up", "Les relais sont injoignables : cet appareil continue de fonctionner et rattrapera son retard", "Pa ka jwenn relè yo: aparèy sa a kontinye travay, l ap ratrape sa ki manke"],
+    ["sign.tipClosed", "This device's key was closed at the relays", "La clé de cet appareil a été fermée aux relais", "Yo fèmen kle aparèy sa a nan relè yo"],
+    ["guide.relays.tip", "Keep both Mac minis switched on and connected: either one is enough for the changes to travel, and each device catches up by itself as soon as it can reach one again.", "Gardez les deux Mac mini allumés et connectés : un seul suffit pour que les changements voyagent, et chaque appareil rattrape son retard de lui-même dès qu'il peut en joindre un.", "Kenbe de Mac mini yo limen epi konekte: youn sèlman ase pou chanjman yo vwayaje, epi chak aparèy ratrape sa ki manke poukont li depi li ka jwenn youn ankò."],
+    ["guide.relays.t", "The relays at home", "Les relais de la maison", "Relè lakay yo"],
+    ["guide.relays.b", "Once your Mac minis at home run Lakay Relay, each device's changes travel by themselves: sealed, through your own private network, with no company in the way. The sign in the top bar says when this device was last in step.\nTo connect a device, open Settings, Devices in step, The relays, and press Connect this device. Your password is asked, and the first time, each relay's claim code, shown on its Mac mini.\nIf a device is lost or stolen, remove it there: Lakay then closes its key at the relays too.", "Quand vos Mac mini de la maison font tourner Lakay Relay, les changements de chaque appareil voyagent d'eux-mêmes : scellés, par votre propre réseau privé, sans aucune entreprise entre les deux. Le signe dans la barre du haut indique quand cet appareil a été à jour pour la dernière fois.\nPour connecter un appareil, ouvrez Réglages, Appareils en phase, Les relais, et appuyez sur Connecter cet appareil. Votre mot de passe est demandé et, la première fois, le code d'activation de chaque relais, affiché sur son Mac mini.\nSi un appareil est perdu ou volé, retirez-le là : Lakay ferme alors aussi sa clé aux relais.", "Lè Mac mini lakay ou yo ap fè Lakay Relay mache, chanjman chak aparèy vwayaje poukont yo: sele, nan pwòp rezo prive ou, san okenn konpayi nan mitan. Siy ki nan ba anwo a di ki dènye fwa aparèy sa a te ajou.\nPou konekte yon aparèy, louvri Paramèt, Aparèy ki an akò, Relè yo, epi peze Konekte aparèy sa a. Y ap mande modpas ou, epi premye fwa a, kòd aktivasyon chak relè, ki parèt sou Mac mini li a.\nSi yon aparèy pèdi oswa yo vòlò l, retire l la: Lakay ap fèmen kle li nan relè yo tou."]);
+
   E.t = function (key, vars) {
     var c = E.custom && E.custom.words && E.custom.words[E.lang], s = c && typeof c[key] === "string" && c[key] ? c[key] : DICT[E.lang][key];
     if (s === undefined) s = DICT.en[key];
@@ -5358,6 +5433,17 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
         { name: "AES-GCM", length: 256 }, false, ["wrapKey", "unwrapKey"]);
     });
   };
+
+  /* The owner's key to the relays (Build 26): made from the owner's password with a salt of its own (the store's id
+     and "lakay relay owner"), so it equals nothing else made from the password, and a device that holds only the
+     Store Key cannot make it. The relays keep only its SHA-256. */
+  C.relayOwnerKey = function (password, storeId, iterations) {
+    return S.importKey("raw", TE.encode(String(password)), "PBKDF2", false, ["deriveBits"]).then(function (base) {
+      return S.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: TE.encode("lakay relay owner|" + storeId), iterations: iterations || C.ITERATIONS }, base, 256);
+    }).then(function (bits) { return new Uint8Array(bits); });
+  };
+  C.b64url = function (bytes) { return U.b64e(bytes).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
+  C.sha256hexOf = function (bytes) { return S.digest("SHA-256", bytes).then(function (d) { return U.hex(new Uint8Array(d)); }); };
 
   /* How strong a password is, in words a person can act on (never a promise of safety). */
   C.passwordAdvice = function (pw) {
@@ -8048,10 +8134,14 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   };
 
   /* ---------- a bundle: this device's lines (and those it holds of the others) that the other device lacks ---------- */
-  B.makeBundle = function (have) {
+  /* by hand (a file, Build 25): the person needs Backups. By the relays (Build 26): the exchange goes on by itself for
+     whoever is signed in, since nothing leaves the seal and nothing is shown to the person. */
+  B.makeBundle = function (have) { return bundleOf(have, true).then(function (r) { return r.text; }); };
+  B.relayBundle = function (have) { return bundleOf(have, false); };
+  function bundleOf(have, byHand) {
     if (!KEY || !state) return Promise.reject(err("locked"));
     if (B.mode === "practice") return Promise.reject(err("practice"));
-    if (B.user && !B.can("backup")) return Promise.reject(err("denied"));
+    if (byHand && B.user && !B.can("backup")) return Promise.reject(err("denied"));
     have = have || {};
     var key = KEY, id = ID, st = state, me = B.device.id;
     return D.entries("journal").then(function (entries) {
@@ -8071,21 +8161,25 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
         /* lines written before Build 24 travel as they are: the device taking them in already holds them (it joined from a
            copy made after them), or it refuses them */
         var payload = { v: 1, from: me, code: B.device.code, at: new Date().toISOString(), have: myHave(st), chains: list };
+        var lines = list.reduce(function (n, c) { return n + c.lines.length; }, 0);
         return C.seal(key, payload, aadBundle(id, me)).then(function (sealed) {
-          return JSON.stringify({ format: "lakay-changes", v: 1, store: id, from: me, iv: U.b64e(sealed.iv), ct: U.b64e(sealed.ct) });
+          return { text: JSON.stringify({ format: "lakay-changes", v: 1, store: id, from: me, iv: U.b64e(sealed.iv), ct: U.b64e(sealed.ct) }),
+            lines: lines, have: payload.have };
         });
       });
     });
-  };
+  }
 
   /* ---------- taking a bundle in ---------- */
-  B.takeBundle = function (text) {
+  B.takeBundle = function (text) { return takeText(text, true); };
+  B.relayTake = function (text) { return takeText(text, false); };
+  function takeText(text, byHand) {
     var bundle;
     try { bundle = JSON.parse(text); } catch (e) { return Promise.reject(err("notbundle")); }
     if (!bundle || bundle.format !== "lakay-changes" || bundle.v !== 1 || !bundle.iv || !bundle.ct || !bundle.from) return Promise.reject(err("notbundle"));
     if (!KEY || !state) return Promise.reject(err("locked"));
     if (B.mode === "practice") return Promise.reject(err("practice"));
-    if (B.user && !B.can("backup")) return Promise.reject(err("denied"));
+    if (byHand && B.user && !B.can("backup")) return Promise.reject(err("denied"));
     if (bundle.store !== ID) return Promise.reject(err("otherstore"));
     if (bundle.from === B.device.id) return Promise.reject(err("mine"));
     var key = KEY, id = ID;
@@ -8093,12 +8187,17 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       if (!pl || pl.from !== bundle.from || !Array.isArray(pl.chains)) throw err("notbundle");
       return enqueue(function () { return takeIn(pl, key, id); });
     });
-  };
+  }
   function takeIn(pl, key, id) {
     if (!KEY || !state || KEY !== key) throw err("locked");
     var st = state, sync = clone(st.sync) || { v: 1, chains: {}, vs: {}, cs: "" };
     sync.chains = sync.chains || {}; sync.vs = sync.vs || {}; sync.cs = sync.cs || "";
-    var rep = { from: pl.code, lines: 0, chains: {}, clashes: [], problems: [] }, fresh = [];
+    var rep = { from: pl.code, fromId: pl.from, lines: 0, real: 0, chains: {}, clashes: [], problems: [], upTo: {} }, fresh = [];
+    /* how far each chain goes in this bundle: what the relay it came from holds (Build 26) */
+    pl.chains.forEach(function (ch) {
+      if (!ch || !ch.dev || !Array.isArray(ch.lines)) return;
+      ch.lines.forEach(function (l) { if (l && l.seq > (rep.upTo[ch.dev] || 0)) rep.upTo[ch.dev] = l.seq; });
+    });
     /* 1. each chain must follow on from what this device holds of it */
     return pl.chains.reduce(function (p, ch) {
       return p.then(function () {
@@ -8142,6 +8241,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
         knows[c.dev] = clone(c.held.knows) || {};
         c.lines.forEach(function (l) { queue2.push([lineStamp(l, c.code), l, c]); maxTs = Math.max(maxTs, l.ts || 0); });
         rep.chains[c.code] = c.lines.length; rep.lines += c.lines.length;
+        rep.real += c.lines.filter(function (l) { return l.type !== "sync.took"; }).length;
       });
       queue2.sort(function (a, b) { return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0; });
       function workGet(k) { if (Object.prototype.hasOwnProperty.call(work, k)) return work[k]; var v = getRec(st, k); return v ? { v: v, s: st.stamps[k] || {} } : null; }
@@ -8177,7 +8277,8 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
         sync.chains[c.dev] = { code: c.code, seq: last.seq, hash: c.hashes[c.hashes.length - 1], at: last.at, knows: knows[c.dev], quiet: quiet };
         took[c.code] = [c.lines[0].seq, last.seq];
       });
-      sync.quiet = (sync.quiet || []).concat([st.head.seq + 1]).slice(-300);
+      var quietOnly = !rep.real && !Object.keys(work).length && !Object.keys(vaultTaken).length && !customTaken;
+      if (!quietOnly) sync.quiet = (sync.quiet || []).concat([st.head.seq + 1]).slice(-300);
       sync.peers = sync.peers || {}; sync.peers[pl.from] = { have: pl.have || {}, at: new Date().toISOString() };
       raw.push({ k: "sync:main", v: sync });
       var users = clone(st.users), settings = st.settings;
@@ -8201,6 +8302,14 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
         });
       }).then(function () {
         if (customTaken) ops.push({ store: "meta", key: "custom", value: custom });
+        if (quietOnly) {
+          /* nothing in the books changes: the other device's lines are kept, and what this device holds, with no line */
+          rep.quiet = true;
+          return C.seal(key, sync, aadRec(id, "sync:main")).then(function (env) {
+            ops.push({ store: "rec", key: "sync:main", value: env });
+            return D.write(ops);
+          }).then(function () { if (state) state.sync = sync; emit("synced", rep); });
+        }
         var data = { from: pl.from, code: pl.code, chains: took, lines: rep.lines, clashes: rep.clashes.length, list: rep.clashes.slice(0, 40) };
         if (rep.problems.length) data.problems = rep.problems.slice(0, 20);
         return commit("sync.took", data, [], meta, { raw: raw, ops: ops, minTs: maxTs });
@@ -8447,6 +8556,44 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     if (to <= from) return 0;
     return (to - from) - (quiet || []).filter(function (q) { return q > from && q <= to; }).length;
   }
+  /* ---------- the relays (Build 26, stage 3) ----------
+     This device's own record of the relays: its key to them, and for each relay how far it has read (the cursor), what
+     that relay holds of each chain, and the bundles waiting for earlier changes. It is sealed with the Store Key in this
+     device's meta ("relay"), which no backup and no joining file carries, so a device's key never leaves it. */
+  function relayAad() { return aadRec(ID, "relay:" + B.device.id); }
+  B.storeId = function () { return ID; };
+  B.relayState = function () {
+    if (!KEY || !state || B.mode === "practice") return Promise.resolve(null);
+    var key = KEY;
+    return D.get("meta", "relay").then(function (env) {
+      if (!env || !env.ct) return null;
+      return C.open(key, env, relayAad()).then(null, function () { return null; });
+    });
+  };
+  B.saveRelayState = function (rs) {
+    if (!KEY || !state || B.mode === "practice") return Promise.reject(err("locked"));
+    return C.seal(KEY, rs, relayAad()).then(function (env) { return D.write([{ store: "meta", key: "relay", value: env }]); });
+  };
+  /* the owner's key to the relays, made only once the owner's password has opened the owner's envelope */
+  B.relayOwnerKey = function (password) {
+    if (!state || B.mode === "practice") return Promise.reject(err("locked"));
+    if (!B.isOwner()) return Promise.reject(err("denied"));
+    return ownerKeyExtractable(password).then(function (h) {
+      return C.relayOwnerKey(password, h.vault.storeId, iterations(h.vault));
+    }).then(function (bytes) { return C.b64url(bytes); });
+  };
+  /* what every other device of the store surely holds: a relay connected now need carry nothing older */
+  B.relayFloor = function () {
+    var st = state; if (!st) return {};
+    var me = B.device.id, out = myHave(st);
+    Object.keys(st.devices || {}).forEach(function (id) {
+      var d = st.devices[id];
+      if (id === me || !d || d.status === "removed" || d.status === "cancelled") return;
+      var hv = peerHave(st, id);
+      Object.keys(out).forEach(function (c) { out[c] = Math.min(out[c], hv[c] || 0); });
+    });
+    return out;
+  };
   B.makeBundleFor = function (dev) { return state ? B.makeBundle(peerHave(state, dev)) : Promise.reject(err("locked")); };
   /* every device of the store, for the Devices section: its letter, name and state, when it was last heard from, and
      how many of this device's changes (and of the others' it holds) it has yet to take */
@@ -9189,6 +9336,14 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     if (!quiet) { try { main.focus({ preventScroll: true }); } catch (e) { } window.scrollTo(0, 0); }
   };
   ui.refresh = function () { if (ui.current && document.getElementById("room")) { var y = window.scrollY; ui.go(ui.current, true); window.scrollTo(0, y); } };
+  /* changes from the other devices came in by the relays (Build 26): the top bar always, and the room as well when that
+     takes nothing away from anyone: not while a field is being typed in, not under an open window, never at the Register */
+  ui.afterRelay = function () {
+    ui.refreshTop();
+    var a = document.activeElement, room = document.getElementById("room");
+    var typing = a && room && room.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName);
+    if (!typing && !document.querySelector(".layer .dialog") && ui.current !== "register") ui.refresh();
+  };
   /* The end of every room: its tip (Build 17, 24-learn.js; fresh: a new visit shows the next one), then the footer. */
   ui.roomFoot = function (main, fresh) {
     var tip = E.learn && E.learn.tipStrip ? E.learn.tipStrip(ui.current, fresh) : null;
@@ -9245,6 +9400,9 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     var who = me ? me.name.split(" ")[0] : "";
     c.appendChild(h("button.cl-key#statusPill" + (practice ? ".practice" : "") + clockCls, { type: "button", title: (practice ? t("practice.pillTip") + " · " : "") + t("status.tip"), onclick: ui.statusPanel },
       [h("span.pdot", { "aria-hidden": "true" }), h("span.nm", null, practice ? (B.isOwner() ? t("practice.pill") : t("practice.pill") + " · " + who) : who || t("status.h"))]));
+    /* devices in step (Build 26): the relays' sign, when this device is connected to them */
+    var relaySign = !practice && E.relay && E.relay.sign ? E.relay.sign() : null;
+    if (relaySign) c.appendChild(relaySign);
     c.appendChild(h("button.cl-key#alertsBtn", { type: "button", title: t("top.alertsTip"), "aria-label": t("top.alerts") + (alertsN ? " (" + alertsN + ")" : ""), onclick: ui.alertsPanel },
       [t("top.alerts"), alertsN ? h("span.cnt", { "aria-hidden": "true" }) : null]));
     /* the calculator moved to the side rail in Build 24, under the cart (20-rail.js) */
@@ -11595,8 +11753,8 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   }
 
   /* ---------- the Guidebook ---------- */
-  var ARTICLES = ["start", "learn", "train", "door", "team", "clock", "schedule", "earnings", "travel", "master", "sale", "pay", "items", "receive", "correct", "depts", "svc", "reports", "notes", "backup", "devices", "sealed", "verify", "display", "studio", "build", "limits"];
-  var ART_EMO = { start: "🌟", learn: "🎓", train: "📋", door: "🚪", team: "👥", clock: "🕘", schedule: "🗓️", earnings: "💰", travel: "✈️", master: "🗝️", sale: "🛒", pay: "💳", items: "🏷️", receive: "🚚", correct: "✏️", depts: "🗂️", svc: "💱", reports: "📊", notes: "🗒️", backup: "💾", devices: "📲", sealed: "🔐", verify: "🛡️", display: "🎨", studio: "⚒️", build: "🔢", limits: "🧭" };
+  var ARTICLES = ["start", "learn", "train", "door", "team", "clock", "schedule", "earnings", "travel", "master", "sale", "pay", "items", "receive", "correct", "depts", "svc", "reports", "notes", "backup", "devices", "relays", "sealed", "verify", "display", "studio", "build", "limits"];
+  var ART_EMO = { start: "🌟", learn: "🎓", train: "📋", door: "🚪", team: "👥", clock: "🕘", schedule: "🗓️", earnings: "💰", travel: "✈️", master: "🗝️", sale: "🛒", pay: "💳", items: "🏷️", receive: "🚚", correct: "✏️", depts: "🗂️", svc: "💱", reports: "📊", notes: "🗒️", backup: "💾", devices: "📲", relays: "🛰️", sealed: "🔐", verify: "🛡️", display: "🎨", studio: "⚒️", build: "🔢", limits: "🧭" };
   /* the Author Studio's chapter only for whoever may open the Studio (Build 24) */
   function chapters() { return ARTICLES.filter(function (id) { return id !== "studio" || ui.allowed("studio"); }); }
   E.guideCount = function () { return chapters().length; };
@@ -15771,6 +15929,9 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     return t("dev.k.other", { k: kind });
   }
   function field(f) { return String(f).replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase(); }
+  V.what = what; V.field = field;
+  var RES = { ok: "rel.res.ok", needclaim: "rel.res.needclaim", claim: "rel.res.claim", wait: "rel.res.wait", unreachable: "rel.res.unreachable",
+    otherstore: "rel.res.otherstore", key: "rel.res.key" };
 
   /* the pairing code, in its groups of four, as the Master Key is shown */
   function codeGrid(code) {
@@ -15805,6 +15966,9 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       if (d.status === "joined" || d.status === "invited") keys.push(h("button.key.sm", { type: "button", "data-name": d.code, onclick: function () { rename(d); } }, [ui.emo("🏷️"), t("dev.rename")]));
       if (!d.me && (d.status === "joined" || d.status === "invited")) keys.push(h("button.key.sm.danger", { type: "button", "data-remove": d.code, onclick: function () { remove(d); } },
         d.status === "invited" ? t("dev.cancelInv") : t("dev.remove")));
+      /* a removed device's key at the relays (Build 26): closed when it is removed, or here, later */
+      if (d.status === "removed" && E.relay && E.relay.connected()) keys.push(h("button.key.sm", { type: "button", "data-close": d.code, onclick: function () { closeAtRelays(d); } },
+        [ui.emo("🔒"), t("rel.closeKey")]));
       return h("li.dev-row" + (d.me ? ".me" : "") + (d.status === "removed" || d.status === "cancelled" || expired ? ".off" : ""), { "data-dev": d.code },
         [h("span.dev-jewel" + (d.me ? ".me" : ""), { "aria-hidden": "true" }, d.code), h("div.dev-t", null, facts), keys.length ? h("div.dev-keys", null, keys) : null]);
     }
@@ -15825,7 +15989,86 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       var inv = d.status === "invited";
       ui.confirm(t(inv ? "dev.cancelQ" : "dev.removeQ", { c: d.code }), t(inv ? "dev.cancelP" : "dev.removeP"), t(inv ? "dev.cancelInv" : "dev.remove"), "danger").then(function (yes) {
         if (!yes) return;
-        B.removeDevice(d.id).then(function () { ui.toast(t(inv ? "dev.cancelledT" : "dev.removedT", { c: d.code }), "good"); draw(); }, ui.failed);
+        B.removeDevice(d.id).then(function () {
+          ui.toast(t(inv ? "dev.cancelledT" : "dev.removedT", { c: d.code }), "good"); draw();
+          if (!inv && E.relay && E.relay.connected()) closeAtRelays(d);
+        }, ui.failed);
+      });
+    }
+    /* closing a removed device's key at every relay: the owner's password makes the owner's relay key */
+    function closeAtRelays(d) {
+      var pw = ui.input({ id: "relClosePw", type: "password", autocomplete: "current-password" });
+      ui.dialog({ title: t("rel.closeH", { c: d.code }), emoji: "🔒", focus: "#relClosePw", body: [h("p", null, t("rel.closeP", { c: d.code })), ui.field("dev.pwL", pw, { required: true })],
+        actions: [{ label: t("rel.later") }, { label: t("rel.closeKey"), kind: "primary", id: "relCloseGo", onClick: function (close, btn) {
+          ui.fieldError(pw, "");
+          if (!pw.value) { ui.fieldError(pw, t("door.needPassword")); return false; }
+          btn.disabled = true;
+          E.relay.closeDevice(d.id, pw.value).then(function (out) {
+            pw.value = "";
+            var bad = Object.keys(out).filter(function (a) { return out[a] !== "ok"; });
+            close();
+            if (bad.length) ui.toast(t("rel.closedSome", { a: bad.map(E.relay.label).join(", ") }), "warn"); else ui.toast(t("rel.closedAll"), "good");
+          }, function (e) { btn.disabled = false; if (e && e.code === "wrong") ui.fieldError(pw, t("ld.wrongPw")); else ui.failed(e); });
+          return false;
+        } }] });
+    }
+    /* ---------- the relays (Build 26): Lakay Relay on the owner's own Mac minis at home ---------- */
+    var relays = h("div.rel-block#relBlock");
+    function drawRelays() {
+      var R = E.relay, addrs = R ? R.addresses() : [];
+      U.clear(relays);
+      relays.appendChild(h("h3.status-h", null, t("rel.h")));
+      if (!addrs.length) { relays.appendChild(h("p.hint#relNone", null, t("rel.none"))); return; }
+      relays.appendChild(h("p", null, t("rel.intro")));
+      relays.appendChild(h("ul.rel-list#relList", null, R.status().map(function (s) {
+        var k = !s.on ? "off" : s.err ? (s.err.code === "key" ? "closed" : "wait") : "ok";
+        return h("li.rel-row", { "data-relay": s.a }, [h("span.rel-dot." + k, { "aria-hidden": "true" }),
+          h("div.rel-t", null, [h("b.mono", null, R.label(s.a)), h("small", null, R.stateText(s))])]);
+      })));
+      relays.appendChild(h("div.row-keys", null, [
+        h("button.key.primary#relConnect", { type: "button", onclick: connect }, [ui.emo("🔗"), t(R.connected() ? "rel.reconnect" : "rel.connect")]),
+        R.connected() ? h("button.key#relNowKey", { type: "button", onclick: function (ev) {
+          var b = ev.currentTarget; b.disabled = true;
+          R.run().then(function () { draw(); drawRelays(); });
+        } }, [ui.emo("🔄"), t("rel.now")]) : null]));
+    }
+    V.paintRelays = function () { if (relays.isConnected) drawRelays(); };
+    function connect() {
+      var R = E.relay, pw = ui.input({ id: "relPw", type: "password", autocomplete: "current-password" });
+      var claimBox = h("div#relClaims", null, [h("p.hint", null, t("rel.checking"))]), claims = {}, results = h("ul.rel-results#relResults");
+      ui.dialog({ title: t("rel.connectH"), emoji: "🔗", wide: true, focus: "#relPw",
+        body: [h("p", null, t("rel.connectP")), claimBox, ui.field("dev.pwL", pw, { required: true }), results],
+        actions: [{ label: t("cancel") }, { label: t("rel.connect"), kind: "primary", id: "relGo", onClick: function (close, btn) {
+          ui.fieldError(pw, "");
+          if (!pw.value) { ui.fieldError(pw, t("door.needPassword")); return false; }
+          var given = {};
+          Object.keys(claims).forEach(function (a) { if (claims[a].value.trim()) given[a] = claims[a].value.trim(); });
+          btn.disabled = true; btn.textContent = t("rel.connecting");
+          R.connect(pw.value, given).then(function (out) {
+            pw.value = "";
+            U.clear(results);
+            var all = true;
+            Object.keys(out).forEach(function (a) {
+              if (out[a] !== "ok") all = false;
+              results.appendChild(h("li" + (out[a] === "ok" ? ".good" : ".warn"), null, t(RES[out[a]] || "rel.res.other", { a: R.label(a), c: out[a] })));
+            });
+            btn.disabled = false; btn.textContent = t("rel.connect");
+            drawRelays(); draw();
+            if (all) { close(); ui.toast(t("rel.connected"), "good"); }
+          }, function (e) {
+            btn.disabled = false; btn.textContent = t("rel.connect");
+            if (e && e.code === "wrong") ui.fieldError(pw, t("ld.wrongPw")); else ui.failed(e);
+          });
+          return false;
+        } }] });
+      R.check().then(function (list) {
+        U.clear(claimBox);
+        list.forEach(function (x, i) {
+          if (!x.reach || x.claimed) return;
+          var inp = ui.input({ id: "relClaim" + i, type: "text", autocomplete: "off", spellcheck: "false", maxlength: "24", "data-relay": x.a });
+          claims[x.a] = inp;
+          claimBox.appendChild(ui.field(t("rel.claimL", { a: R.label(x.a) }), inp));
+        });
       });
     }
     function addDevice() {
@@ -15881,11 +16124,300 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       });
     });
     function failedJoin() { ui.dialog({ title: t("dev.takeIn"), emoji: "⚠️", body: [h("p#devErr", null, t("dev.err.joinfile"))], actions: [{ label: t("close"), kind: "primary" }] }); }
-    draw();
+    draw(); drawRelays();
     return sec("set-devices", "set.devices", "tip.devices", [h("p", null, t("dev.intro")), list,
       h("div.row-keys", null, [file,
         h("button.key.primary", { type: "button", id: "devAdd", onclick: addDevice }, [ui.emo("📲"), t("dev.add")]),
-        h("button.key", { type: "button", id: "devTake", onclick: function () { file.click(); } }, [ui.emo("📥"), t("dev.takeIn")])])]);
+        h("button.key", { type: "button", id: "devTake", onclick: function () { file.click(); } }, [ui.emo("📥"), t("dev.takeIn")])]), relays]);
+  };
+})();
+
+/* LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt.
+   Devices in step, stage 3 (Build 26): the relays. Lakay Relay (relay/lakay_relay.py) runs on the owner's own Mac minis
+   at home. Each device of the store leaves its new changes there, sealed, and takes the other devices' changes, by
+   itself: when the store opens, every two minutes while it is open, two seconds after a change, and when the connection
+   comes back. Every device uses every relay, so either Mac mini can be off; a change taken twice brings nothing new.
+   The relays' addresses are the only ones the page's security policy lets it reach (connect-src, written by build.py
+   from build.json); the page reads them back from its own policy. The owner connects each device with the owner's
+   password (and, the first time, a relay's claim code); a device's own key never leaves it.
+   The books' side is in 04-books.js (relayBundle, relayTake, relayState, saveRelayState, relayOwnerKey, relayFloor). */
+"use strict";
+(function () {
+  var U = E.util, h = U.h, t = E.t, B = E.books, C = E.crypto;
+  var R = E.relay = {};
+  var EVERY = 120000, AFTER_CHANGE = 2000, GAP_DAYS = 7, FRESH = 6 * 60000;
+  var rs = null, timer = null, soon = null, running = null, again = false;
+  var last = { at: null, took: 0, clashes: [], problems: [], setAside: [], seen: true };
+
+  /* the relays this copy of Lakay may reach: exactly the addresses its own security policy allows */
+  R.addresses = function () {
+    var m = document.querySelector('meta[http-equiv="Content-Security-Policy"]'), c = m ? m.getAttribute("content") || "" : "";
+    var d = /(?:^|;)\s*connect-src\s+([^;]*)/.exec(c);
+    if (!d) return [];
+    return d[1].trim().split(/\s+/).filter(function (x) { return /^https?:\/\/[A-Za-z0-9.\-:\[\]]+$/.test(x); }).map(function (x) { return x.replace(/\/+$/, ""); });
+  };
+  R.label = function (a) { return String(a).replace(/^https?:\/\//, ""); };
+  function usable() { return B.isOpen && B.mode !== "practice" && !(B.drilling && B.drilling()) && !!B.storeId(); }
+
+  /* ---------- talking to a relay ---------- */
+  function call(addr, method, path, o) {
+    o = o || {};
+    var ctl = typeof AbortController !== "undefined" ? new AbortController() : null;
+    var tm = setTimeout(function () { if (ctl) ctl.abort(); }, o.wait || 20000);
+    var init = { method: method, headers: {}, cache: "no-store", credentials: "omit", mode: "cors", referrerPolicy: "no-referrer" };
+    if (ctl) init.signal = ctl.signal;
+    if (o.auth) init.headers.Authorization = o.auth;
+    if (o.raw != null) { init.body = o.raw; init.headers["Content-Type"] = "application/json"; }
+    else if (o.body) { init.body = JSON.stringify(o.body); init.headers["Content-Type"] = "application/json"; }
+    return fetch(addr + path, init).then(function (r) {
+      return r.text().then(function (x) {
+        clearTimeout(tm);
+        var j = null; try { j = x ? JSON.parse(x) : null; } catch (e) { }
+        if (!r.ok) { var e2 = new Error("relay"); e2.code = (j && j.error) || "http"; e2.status = r.status; throw e2; }
+        return j;
+      });
+    }, function () { clearTimeout(tm); var e3 = new Error("unreachable"); e3.code = "unreachable"; throw e3; });
+  }
+  function bytesOf(b64u) { return U.b64d(b64u.replace(/-/g, "+").replace(/_/g, "/") + "="); }
+  function hashOf(b64u) { return C.sha256hexOf(bytesOf(b64u)); }
+  function deviceAuth() { return "Lakay device=" + B.device.id + ", key=" + rs.key; }
+
+  /* ---------- this device's record of the relays (sealed, kept on this device alone) ---------- */
+  function load() {
+    return B.relayState().then(function (x) { rs = x || { v: 1, key: null, relays: {} }; rs.relays = rs.relays || {}; return rs; });
+  }
+  function save() { return rs && usable() ? B.saveRelayState(rs).catch(function () { }) : Promise.resolve(); }
+  R.connected = function () { return !!(rs && rs.key && R.addresses().some(function (a) { return rs.relays[a] && rs.relays[a].on; })); };
+  R.status = function () {
+    return R.addresses().map(function (a) {
+      var r = rs && rs.relays[a];
+      return { a: a, on: !!(r && r.on), ok: r ? r.ok || null : null, err: r ? r.err || null : null, waiting: r && r.deferred ? r.deferred.length : 0 };
+    });
+  };
+  R.last = function () { return last; };
+
+  /* ---------- the owner: claiming a relay, connecting this device, closing a removed device's key ---------- */
+  /* Asks each relay whether it is claimed, and by this store: for the connecting window. */
+  R.check = function () {
+    var sid = B.storeId();
+    return Promise.all(R.addresses().map(function (a) {
+      return call(a, "GET", "/v1/" + sid + "/hello", { wait: 8000 }).then(function (hi) {
+        return { a: a, reach: true, claimed: !!hi.claimed, mine: !!hi.store };
+      }, function () { return { a: a, reach: false }; });
+    }));
+  };
+  R.connect = function (password, claims) {
+    if (!usable()) return Promise.reject(Object.assign(new Error("locked"), { code: "locked" }));
+    var sid = B.storeId(), ownerKey, hashes, out = {};
+    return B.relayOwnerKey(password).then(function (k) { ownerKey = k; return load(); }).then(function () {
+      if (!rs.key) rs.key = C.b64url(U.rnd(32));
+      return Promise.all([hashOf(ownerKey), hashOf(rs.key)]);
+    }).then(function (hs) {
+      hashes = hs;
+      return R.addresses().reduce(function (p, a) {
+        return p.then(function () {
+          return call(a, "GET", "/v1/" + sid + "/hello", { wait: 8000 }).then(function (hi) {
+            if (!hi.claimed) {
+              var code = claims && claims[a];
+              if (!code) { out[a] = "needclaim"; return null; }
+              return call(a, "PUT", "/v1/" + sid + "/owner", { body: { claim: code, owner: hashes[0] } });
+            }
+            if (!hi.store) { out[a] = "otherstore"; return null; }
+            return null;
+          }).then(function () {
+            if (out[a]) return null;
+            return call(a, "PUT", "/v1/" + sid + "/devices/" + B.device.id, { body: { key: hashes[1] }, auth: "Lakay owner=" + ownerKey }).then(function () {
+              var r = rs.relays[a];
+              if (!r || !r.on) r = rs.relays[a] = { cursor: 0, have: B.relayFloor(), deferred: [] };
+              r.on = true; r.err = null; out[a] = "ok";
+            });
+          }).catch(function (e) { out[a] = (e && e.code) || "unreachable"; });
+        });
+      }, Promise.resolve());
+    }).then(function () { return save(); }).then(function () {
+      if (R.connected()) { R.start(); schedule(300); }
+      paint();
+      return out;
+    });
+  };
+  /* A device removed from the store: its key is closed at every relay that can be reached. */
+  R.closeDevice = function (devId, password) {
+    var sid = B.storeId(), out = {};
+    return B.relayOwnerKey(password).then(function (ownerKey) {
+      return R.addresses().reduce(function (p, a) {
+        return p.then(function () {
+          return call(a, "DELETE", "/v1/" + sid + "/devices/" + devId, { auth: "Lakay owner=" + ownerKey }).then(function () { out[a] = "ok"; },
+            function (e) { out[a] = (e && e.code) || "unreachable"; });
+        });
+      }, Promise.resolve());
+    }).then(function () { return out; });
+  };
+
+  /* ---------- the exchange ---------- */
+  function one(a, sum) {
+    var r = rs.relays[a], sid = B.storeId(), me = B.device.id, auth = deviceAuth();
+    function took(rep) {
+      Object.keys(rep.upTo || {}).forEach(function (d) { r.have[d] = Math.max(r.have[d] || 0, rep.upTo[d]); });
+      sum.took += rep.real || 0;
+      (rep.clashes || []).forEach(function (c) { sum.clashes.push(c); });
+      (rep.setAside || []).forEach(function (c) { if (sum.setAside.indexOf(c) < 0) sum.setAside.push(c); });
+    }
+    function problem(e, from) { sum.problems.push({ code: (e && e.code) || "error", c: (e && e.extra) || from || "?", a: a }); }
+    /* 1. the bundles that waited for earlier changes */
+    var waiting = r.deferred || [];
+    r.deferred = [];
+    return waiting.reduce(function (p, d) {
+      return p.then(function () {
+        return B.relayTake(d.text).then(took, function (e) {
+          if (e && e.code === "gap" && Date.now() - Date.parse(d.since) < GAP_DAYS * 864e5) r.deferred.push(d);
+          else if (e && e.code === "locked") throw e;
+          else problem(e);
+        });
+      });
+    }, Promise.resolve()).then(function () {
+      /* 2. the new bundles, page after page, in the order they were left */
+      function page() {
+        return call(a, "GET", "/v1/" + sid + "/bundles?after=" + (r.cursor || 0), { auth: auth }).then(function (res) {
+          if (r.cursor > 0 && res.first > r.cursor + 1) problem({ code: "lost" });
+          return (res.bundles || []).reduce(function (p, b) {
+            return p.then(function () {
+              r.cursor = Math.max(r.cursor || 0, b.n);
+              if (b.from === me) return null;
+              return B.relayTake(b.text).then(took, function (e) {
+                if (e && e.code === "gap") r.deferred.push({ n: b.n, from: b.from, text: b.text, since: new Date().toISOString() });
+                else if (e && e.code === "locked") throw e;
+                else problem(e);
+              });
+            });
+          }, Promise.resolve()).then(save).then(function () { if (res.more) return page(); return null; });
+        });
+      }
+      return page();
+    }).then(function () {
+      /* 3. what this relay lacks of this device's changes (and of those it holds of the others) */
+      return B.relayBundle(r.have).then(function (bd) {
+        if (!bd.lines) return null;
+        return call(a, "POST", "/v1/" + sid + "/bundles", { auth: auth, raw: bd.text, wait: 60000 }).then(function () {
+          Object.keys(bd.have).forEach(function (d) { r.have[d] = Math.max(r.have[d] || 0, bd.have[d]); });
+        });
+      });
+    }).then(function () { r.ok = new Date().toISOString(); r.err = null; }, function (e) {
+      r.err = { code: (e && e.code) || "error", at: new Date().toISOString() };
+    });
+  }
+  R.run = function () {
+    if (running) { again = true; return running; }
+    if (!rs || !rs.key || !usable()) return Promise.resolve(null);
+    var list = R.addresses().filter(function (a) { return rs.relays[a] && rs.relays[a].on; });
+    if (!list.length) return Promise.resolve(null);
+    var sum = { took: 0, clashes: [], problems: [], setAside: [] };
+    running = list.reduce(function (p, a) { return p.then(function () { return usable() ? one(a, sum) : null; }); }, Promise.resolve())
+      .then(save).then(function () {
+        last.at = new Date().toISOString();
+        if (sum.took || sum.clashes.length || sum.problems.length || sum.setAside.length) {
+          last.took = sum.took; last.clashes = sum.clashes; last.problems = sum.problems; last.setAside = sum.setAside;
+          last.seen = !(sum.clashes.length || sum.problems.length || sum.setAside.length);
+        }
+        paint();
+        if (sum.took && E.ui && E.ui.afterRelay) E.ui.afterRelay(sum);
+        return sum;
+      }).catch(function (e) { console.error(e); return null; }).then(function (r) {
+        running = null;
+        if (again) { again = false; schedule(AFTER_CHANGE); }
+        return r;
+      });
+    return running;
+  };
+  function schedule(ms) { clearTimeout(soon); soon = setTimeout(function () { soon = null; R.run(); }, ms); }
+  R.start = function () {
+    clearInterval(timer); timer = null;
+    if (!R.addresses().length || !usable()) { paint(); return Promise.resolve(); }
+    return load().then(function () {
+      if (R.connected()) { timer = setInterval(function () { R.run(); }, EVERY); schedule(1200); }
+      paint();
+    });
+  };
+  R.stop = function () { clearInterval(timer); clearTimeout(soon); timer = soon = null; rs = null; last = { at: null, took: 0, clashes: [], problems: [], setAside: [], seen: true }; paint(); };
+  B.on("open", function () { setTimeout(function () { R.start(); }, 0); });
+  B.on("lock", function () { R.stop(); });
+  B.on("drill", function (on) { if (!on && timer) schedule(AFTER_CHANGE); });
+  B.on("change", function (line) { if (timer && line && line.type !== "sync.took") schedule(AFTER_CHANGE); });
+  try { window.addEventListener("online", function () { if (timer) schedule(500); }); } catch (e) { }
+
+  /* ---------- the sign in the top bar ---------- */
+  function kind() {
+    if (!rs || !R.connected() || B.mode === "practice") return null;
+    var st = R.status().filter(function (s) { return s.on; });
+    if (st.some(function (s) { return s.err && s.err.code === "key"; }) && !st.some(function (s) { return !s.err; })) return "closed";
+    if (st.some(function (s) { return s.ok && !s.err && Date.now() - Date.parse(s.ok) < FRESH; })) return "ok";
+    if (!last.at && st.every(function (s) { return !s.err; })) return "ok";
+    return "wait";
+  }
+  function lastOk() { var best = null; R.status().forEach(function (s) { if (s.ok && (!best || s.ok > best)) best = s.ok; }); return best; }
+  function when(iso) { if (!iso) return ""; var d = new Date(iso); return E.fmtTime(d); }
+  function tip(k) {
+    if (k === "ok") return lastOk() ? t("sign.tipOk", { d: when(lastOk()) }) : t("sign.tipStart");
+    if (k === "closed") return t("sign.tipClosed");
+    return t("sign.tipWait");
+  }
+  R.sign = function () {
+    var k = kind();
+    if (!k) return null;
+    var note = !last.seen;
+    return h("button.cl-key.relay-sign#relaySign." + k + (note ? ".note" : ""), { type: "button", title: tip(k), onclick: R.panel },
+      [h("span.rdot", { "aria-hidden": "true" }), h("span.nm", null, t("sign." + k)), note ? h("span.cnt", { "aria-hidden": "true" }) : null]);
+  };
+  function paint() {
+    var old = document.getElementById("relaySign"), cl = document.getElementById("topCluster"), el = R.sign();
+    if (old && el) old.replaceWith(el);
+    else if (old) old.remove();
+    else if (el && cl) { var pill = document.getElementById("statusPill"); if (pill && pill.nextSibling) cl.insertBefore(el, pill.nextSibling); else cl.appendChild(el); }
+    if (E.devices && E.devices.paintRelays) E.devices.paintRelays();
+  }
+  R.paint = paint;
+
+  /* what the sign opens: each relay's state, the last exchange, and anything to see */
+  R.panel = function () {
+    var ui = E.ui, body = [];
+    var rows = R.status().filter(function (s) { return s.on; }).map(function (s) {
+      return h("li.rel-row", { "data-relay": s.a }, [h("span.rel-dot." + (s.err ? (s.err.code === "key" ? "closed" : "wait") : "ok"), { "aria-hidden": "true" }),
+        h("div.rel-t", null, [h("b.mono", null, R.label(s.a)), h("small", null, R.stateText(s))])]);
+    });
+    body.push(h("p", null, t("rel.panelP")));
+    body.push(h("ul.rel-list#relPanelList", null, rows));
+    body.push(h("p#relLast", null, last.at ? (last.took ? t(last.took === 1 ? "rel.took1" : "rel.took", { n: last.took }) : t("rel.tookNone")) : t("rel.notYet")));
+    body = body.concat(R.problemsList());
+    last.seen = true; paint();
+    ui.dialog({ title: t("set.devices"), emoji: "🛰️", wide: true, body: body, actions: [
+      { label: t("close") },
+      { label: t("rel.now"), kind: "primary", id: "relNow", onClick: function (close, btn) {
+        btn.disabled = true; btn.textContent = t("rel.running");
+        R.run().then(function () { close(); R.panel(); });
+        return false;
+      } }] });
+  };
+  R.stateText = function (s) {
+    if (!s.on) return t("rel.st.off");
+    if (s.err && s.err.code === "key") return t("rel.st.closed");
+    if (s.err) return t("rel.st.wait", { d: when(s.err.at) });
+    if (s.ok) return t("rel.st.ok", { d: when(s.ok) }) + (s.waiting ? " · " + t("rel.st.waiting", { n: s.waiting }) : "");
+    return t("rel.st.never");
+  };
+  /* the changes made on two devices while they were apart, and anything set aside, from the last exchange */
+  R.problemsList = function () {
+    var out = [], what = E.devices && E.devices.what, field = E.devices && E.devices.field;
+    if (last.clashes.length) {
+      out.push(h("h3.status-h", null, t("dev.clashesH")));
+      out.push(h("ul.dev-clash#relClashes", null, last.clashes.slice(0, 30).map(function (x) {
+        return h("li", null, t("dev.clashLine", { what: (what ? what(x.k) : x.k) + " (" + (field ? field(x.f) : x.f) + ")", w: x.won }));
+      })));
+    }
+    var P = { gap: "rel.pb.gap", lost: "rel.pb.lost", fork: "dev.err.fork", chain: "dev.err.fork", old: "dev.err.old", letter: "dev.err.letter", removed: "dev.err.removed", notbundle: "dev.err.notbundle", otherstore: "dev.err.otherstore" };
+    if (last.problems.length) out.push(h("ul.rel-problems#relProblems", null, last.problems.slice(0, 12).map(function (x) {
+      return h("li", null, t(P[x.code] || "rel.pb.other", { c: x.c, a: R.label(x.a) }));
+    })));
+    if (last.setAside.length) out.push(h("p.hint", null, t("dev.setAside", { c: last.setAside.join(", ") })));
+    return out;
   };
 })();
 
