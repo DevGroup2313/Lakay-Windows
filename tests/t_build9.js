@@ -5,7 +5,7 @@
    stood in for by small fakes that answer as those programs answer, so each road the words travel is driven.
    Run: node tests/t_build9.js */
 "use strict";
-const { chromium } = require("playwright");
+const { chromium } = require("./_agreed");  /* each browser has agreed to the terms (Build 26) */
 const path = require("path"), fs = require("fs"), http = require("http");
 let failed = 0, passed = 0;
 function ok(cond, what) { if (cond) { passed++; console.log("  ok   " + what); } else { failed++; console.log("  FAIL " + what); } }

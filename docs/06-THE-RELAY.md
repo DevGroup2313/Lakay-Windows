@@ -127,7 +127,10 @@ until then the policy stays closed and the relay settings say so. The web app ge
 ## After approval
 
 - **Build 26:** Lakay Relay and the exchange, tested here with simulated devices and relays, and Lakay Relay built and
-  started on GitHub's Mac; the screens shown to the owner before release.
+  started on GitHub's Mac; the screens shown to the owner before release. Status on 21 November 2026: Lakay Relay and
+  the exchange are built and tested here (`tests/t_build26.js`, 37 checks), and shown to the owner with Lakay's terms.
+  Lakay Relay as a ready-made Mac program (built and started on GitHub's Mac) is still to do; until then it runs
+  with Python 3 on the Mac mini (`python3 lakay_relay.py`).
 - **Then the setup at home,** with the steps written out for the owner's router, and the first real exchange checked
   together. The relays' addresses go into `build.json`, and that build is released once the owner approves it.
 

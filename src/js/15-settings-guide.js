@@ -4,7 +4,7 @@
 (function () {
   var U = E.util, h = U.h, t = E.t, B = E.books, C = E.crypto, ui = E.ui, money = U.money;
 
-  var SET_EMO = { store: "🏪", tax: "🧾", pay: "💳", travel: "✈️", cats: "🗂️", display: "🎨", security: "🔐", backup: "💾", devices: "📲", verify: "🛡️", storage: "🗄️", about: "ℹ️", erase: "🧹" };
+  var SET_EMO = { store: "🏪", tax: "🧾", pay: "💳", travel: "✈️", cats: "🗂️", display: "🎨", security: "🔐", backup: "💾", devices: "📲", verify: "🛡️", storage: "🗄️", own: "📜", about: "ℹ️", erase: "🧹" };
   function sec(id, titleKey, tipKey, children) {
     return h("section.card.set-sec", { id: id, "aria-labelledby": id + "-h" }, [h("div.card-head", null, [h("h2", { id: id + "-h" }, [ui.emo(SET_EMO[id.replace("set-", "")] || "⚙️"), t(titleKey)]), tipKey ? ui.tip(tipKey) : null]), children]);
   }
@@ -12,7 +12,7 @@
   ui.rooms.settings = function (main) {
     var st = B.state(), s = st.settings;
     main.appendChild(ui.roomHead("room.settings", null));
-    var nav = h("nav.set-nav", { "aria-label": t("set.sections") }, ["store", "tax", "pay", "cats", "display", "security", "backup", "devices", "verify", "storage", "about", "erase"].map(function (k) {
+    var nav = h("nav.set-nav", { "aria-label": t("set.sections") }, ["store", "tax", "pay", "cats", "display", "security", "backup", "devices", "verify", "storage", "own", "about", "erase"].map(function (k) {
       return h("button.chip", { type: "button", onclick: function () { var n = document.getElementById("set-" + k); if (n) n.scrollIntoView({ behavior: ui.still() ? "auto" : "smooth", block: "start" }); } }, [ui.emo(SET_EMO[k]), t("set." + k)]);
     }));
     main.appendChild(nav);
@@ -122,7 +122,9 @@
         h("button.key", { type: "button", onclick: function () { B.lock("hand"); } }, [ui.emo("🔒"), t("lockNow")]),
         h("button.key", { type: "button", id: "changePw", onclick: changePassword }, [ui.emo("🔑"), t("set.changePw")]),
         h("button.key", { type: "button", id: "newMaster", onclick: newMaster }, [ui.emo("🗝️"), t("set.newMaster")])]),
-      h("p.hint", null, t("set.securityHint"))]));
+      h("p.hint", null, t("set.securityHint")),
+      /* the Privacy notice, from Security (Build 26), as Ingenium's Settings, Security links to it */
+      E.terms ? h("div.row-keys", null, [h("button.key.quiet#privacyLink", { type: "button", onclick: function () { E.terms.show("privacy"); } }, [ui.emo("🛡️"), t("set.privacyLink")])]) : null]));
 
     /* backups */
     var lastB = U.prefGet("lastBackup", "");
@@ -156,6 +158,10 @@
       var est = r[0], kept = r[1];
       stOut.textContent = (est && est.usage !== undefined ? t("set.used", { mb: (est.usage / 1048576).toFixed(1) }) + " " : "") + t(kept === true ? "set.kept" : kept === false ? "set.notKept" : "set.keptUnknown");
     });
+
+    /* ownership: the licence and the copyright, then the terms and privacy (Build 26, 31-terms.js), as Ingenium has them in
+       Settings, Ownership */
+    if (E.terms) main.appendChild(sec("set-own", "set.own", "tip.own", [E.terms.licenceCard(true), E.terms.card(true)]));
 
     /* about */
     main.appendChild(sec("set-about", "set.about", null, [h("div.about", null, [ui.crestKey(84, { title: t("crest.press") }), h("div", null, [

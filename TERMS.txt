@@ -1,0 +1,96 @@
+LAKAY
+TERMS OF USE
+Version 1, 21 November 2026. Made by Yannie D. Forest.
+
+============================================================================
+
+1. THESE TERMS AND THE LICENCE
+
+These terms say how Lakay may be used. Who owns it, and who may use, copy or
+share it, is set out in its licence (in About, and in Settings, Ownership).
+If they ever differ, the licence applies.
+
+2. WHO MAY USE LAKAY
+
+Its owner, and a store and its people to whom the owner has given a
+permission, as the licence says. Anyone may try the practice store on the
+owner's own website, there and while the owner offers it (licence, clause
+6.8).
+
+3. THE STORE'S BOOKS ARE THE STORE'S
+
+What a store records with Lakay, such as its books, receipts, reports and
+notes, belongs to the store (licence, clause 3.6). The store is responsible
+for what it records, and for having the right to record it. To keep its
+records outside Lakay, a store can print its reports and save its sales,
+receipts and stock as spreadsheet files (CSV).
+
+4. FIGURES, REPORTS AND ESTIMATES
+
+Lakay's reports, taxes, earnings and pay are worked out from what is
+recorded. They are aids, not professional advice: not accounting, tax,
+payroll, legal or financial advice. Pay is an estimate before taxes and
+deductions. Check what matters with an accountant before you rely on it.
+Lakay does not file taxes, run payroll or move money.
+
+5. PAYMENTS, TRANSFERS AND BOOKINGS
+
+Lakay records payments, transfers, top-ups and travel bookings; it does not
+take payments or move money. Money moves through the store's own card
+machine, its providers (such as RIA, CAM, Unitransfer or Boss Revolution)
+and the websites where flights are booked, each under its own terms. Never
+type a card number or a passport number into Lakay.
+
+6. THE STORE'S PEOPLE AND ITS CUSTOMERS
+
+The store's owner gives each person a password and their access. Lakay
+records each person's sales, hours, shifts, pay and training, sealed. The
+store tells its people and its customers what it records about them, and
+keeps to the law where it is, such as the laws on work, privacy and tax
+records. Lakay never asks for a customer's identity; a client's name and
+phone on a booking are kept only if the store's owner turns that on.
+
+7. FAIR USE
+
+Do not use Lakay to break the law, to harm others, to keep records you have
+no right to keep, or to get around the protection of anyone else's copy or
+work.
+
+8. PASSWORDS, THE MASTER KEY AND BACKUPS
+
+Keep every password and the Master Key safe: they cannot be recovered for
+you, and without them no one can open the books. Save a sealed backup every
+day, and keep it away from the store's devices.
+
+9. DEVICES IN STEP AND THE RELAYS
+
+Only the store's owner adds a device to the store. The store's owner looks
+after the store's own network, its router and its Mac minis, and removes a
+device that is lost, stolen or given up (Settings, Devices in step).
+
+10. SERVICES MADE BY OTHERS
+
+The card machine's processor, the transfer providers, the websites where
+flights are booked, and the private network app the store's owner chooses
+(such as WireGuard or Tailscale) each come under their own terms. Using one,
+you accept its terms.
+
+11. NO WARRANTY AND NO LIABILITY
+
+Lakay is provided as it is, as the licence says (clauses 11 and 12).
+
+12. ENDING, CHANGES AND THE LAW
+
+A permission ends as the licence says (clause 7). These terms may change
+with a new release; Lakay then asks again. The law that governs them is in
+the licence (clause 18), as settled for the United States and the United
+Kingdom.
+
+13. CONTACT
+
+the contact shown in Lakay, in About, Terms and privacy
+
+============================================================================
+In Lakay, these texts are also given in French and Kreyòl. If a translation
+ever differs from this English text, the English applies. Copyright (c) 2026
+Yannie D. Forest. All rights reserved. See LICENCE.txt.

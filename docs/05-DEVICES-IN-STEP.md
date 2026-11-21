@@ -17,7 +17,9 @@ carry their changes to one another by sealed files, with a plain report (`tests/
 two browsers standing for two devices). The appendices say how each stage works.
 
 **Stage 2 was released in Build 25 (20 November 2026).** The plan for stage 3, the relay on the Mac mini, is
-`06-THE-RELAY.md`, written on 20 November 2026 for the owner's approval.
+`06-THE-RELAY.md`, written on 20 November 2026 and approved by the owner the same day. **Stage 3 is built in Build 26
+(21 November 2026)**, tested here with two copies of Lakay Relay and three devices, and shown to the owner for
+approval; it is not released yet. Its appendix is in `06-THE-RELAY.md`.
 
 ## What the owner asked
 

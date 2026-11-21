@@ -16,7 +16,7 @@ Then follow [READ ME FIRST - IPHONE AND IPAD.txt](READ%20ME%20FIRST%20-%20IPHONE
 - `builds/`: the ready-made apps. Each new build replaces them.
 - `READ ME FIRST - IPHONE AND IPAD.txt` and `READ ME FIRST - FIRE TABLET.txt`: installing, updating, and keeping the books safe.
 - The build kit, the files GitHub builds from: `app/Lakay.html` (Lakay itself), `packages/ios/` and `packages/fire/` (the shells that hold it), `release/publish.py`, and `.github/workflows/`. A push builds both again and puts them here and on the Releases page.
-- `LICENCE.txt`: all rights reserved; no licence is granted.
+- `LICENCE.txt`: the owner's licence (Copyright (c) 2026 Yannie D. Forest; all rights reserved). `TERMS.txt` and `PRIVACY.txt`: Lakay's Terms of use and Privacy notice, which each device agrees to once, in Lakay itself. `THIRD_PARTY_NOTICES.txt`: the software made by others that the programs carry. `BUILD_INFO.txt`: the build, and the SHA-256 fingerprints of the app and of the web app's page.
 
 ## The Fire tablet's signing key
 

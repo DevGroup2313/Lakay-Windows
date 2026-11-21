@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-rzBcA8ALvkufKvvD3p0VNLD9vgfwHFpbNqC7o7SlRkk='; style-src 'unsafe-inline'; img-src data: blob: 'self'; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-3j+m+V/SPTwP7XVmVS8ebI879R1jcM8QYe/Fr4+Wgyk='; style-src 'unsafe-inline'; img-src data: blob: 'self'; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#f5f4f8">
 <meta name="application-name" content="Lakay">
 <meta name="lakay-build" content="26">
-<!-- LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt. Build 26 (2026-11-20). -->
+<!-- LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt. Build 26 (2026-11-21). -->
 <title>Lakay</title>
 <!-- Lakay's logo, inside the page (the page's own policy shows only pictures it carries): the square tile, filled edge to
      edge with the coin's periwinkle, for the shortcuts a browser makes on a home screen; the round coin, on nothing, for the
@@ -2560,6 +2560,139 @@ tr.retired td { opacity: .58; }
 #peopleList .badge, #peopleList td:nth-child(3) { white-space: nowrap; }
 
 /* LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt.
+   Ownership, terms and privacy (Build 26, 31-terms.js), laid out as Ingenium 7.58 lays out its own (the PermitCore card, and its
+   modules r320 and r326), in Lakay's colours: periwinkle, pearl, indigo and champagne, never green; the keys are Lakay's acrylic
+   keys and the parts are Lakay's own tabs. Day and night. */
+
+/* ---------- the two cards: Ownership, licence and permissions; Terms and privacy ---------- */
+.lic-card, .tp-card { display: flex; flex-direction: column; gap: 10px; }
+.tp-card { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line-soft); }
+.layer .tp-card, .layer .lic-card { margin-top: 0; padding-top: 0; border-top: 0; }
+.tp-head { display: flex; gap: 12px; align-items: flex-start; }
+.tp-coin { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; flex: 0 0 auto; color: var(--pri-text); background: var(--face);
+  border: 1px solid rgba(var(--pri-rgb), .16); box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, .9), inset 0 -3px 5px rgba(40, 36, 90, .12), 0 1px 1px rgba(34, 28, 70, .22), 0 3px 5px rgba(34, 28, 70, .16), 0 8px 14px rgba(34, 28, 70, .1);
+  transition: transform .3s cubic-bezier(.2, .9, .25, 1.2); }
+:root[data-theme="night"] .tp-coin { box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, .12), inset 0 -3px 5px rgba(0, 0, 0, .4), 0 1px 1px rgba(0, 0, 0, .6), 0 3px 5px rgba(0, 0, 0, .45), 0 8px 14px rgba(0, 0, 0, .35); }
+.tp-coin:hover { transform: rotate(-6deg) scale(1.05); }
+.tp-coin svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.lic-coin { font: 600 1.45rem/1 var(--serif); }
+.tp-title { margin: 0; font: 600 1.12rem/1.3 var(--serif); color: var(--ink); letter-spacing: .01em; }
+.tp-sub { margin: 2px 0 0; color: var(--ink-2); font-size: .93rem; max-width: 68ch; }
+.lic-copy { margin: 3px 0 0; font: 600 .93rem/1.4 var(--sans); color: var(--ink); }
+.lic-line { margin: 0; color: var(--ink-2); font-size: .95rem; line-height: 1.55; max-width: 74ch; }
+.lic-note { color: var(--muted); font-size: .9rem; }
+.lic-plainbox { border-radius: 14px; padding: 12px 16px 10px; background: rgba(var(--pri-rgb), .06); border: 1px solid rgba(var(--pri-rgb), .16); }
+.lic-plainbox h4 { margin: 0 0 6px; font: 600 1rem/1.3 var(--serif); color: var(--ink); }
+.lic-plain { margin: 0; padding-left: 20px; display: grid; gap: 3px; color: var(--ink-2); font-size: .93rem; line-height: 1.5; }
+.lic-plainbox .hint { margin: 8px 0 0; }
+details.lic-text > summary { cursor: pointer; font-weight: 600; color: var(--pri-text); padding: 4px 0; list-style-position: inside; }
+details.lic-text > summary:focus-visible { outline: 2.5px solid var(--pri-ring); outline-offset: 2px; border-radius: 6px; }
+
+/* the chips: what the terms promise, at a glance */
+.tp-chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 2px 0 0; }
+.tp-chip { display: inline-flex; align-items: center; font: 600 .78rem/1 var(--sans); padding: 6px 10px; border-radius: 999px; white-space: nowrap; background: rgba(var(--pri-rgb), .12); color: var(--pri-text); }
+.tp-chip.ok { background: var(--ok-soft); color: var(--ok); }
+.tp-chip.sky { background: var(--tint); color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--line); }
+.tp-chip.lav { background: rgba(var(--pri-rgb), .16); color: var(--pri-text); }
+.tp-chip.amb { background: var(--brass-soft); color: var(--brass-ink); }
+.tp-parts { margin: 2px 0 2px; flex-wrap: wrap; }
+
+/* In short */
+.tp-shorts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 900px) { .tp-shorts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .tp-shorts { grid-template-columns: minmax(0, 1fr); } }
+.tp-short { border-radius: 14px; padding: 13px 14px; background: var(--surface-2); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 3px;
+  transition: transform .35s cubic-bezier(.2, .9, .25, 1.2), box-shadow .25s; }
+.tp-short:hover { transform: translateY(-3px); box-shadow: 0 2px 0 rgba(34, 28, 70, .06), 0 8px 16px rgba(34, 28, 70, .1); }
+.tp-short b { color: var(--ink); font: 600 .97rem/1.35 var(--serif); }
+.tp-short span { color: var(--ink-2); font-size: .9rem; line-height: 1.5; }
+
+/* the Privacy notice and the Terms of use, section by section */
+.tp-doc { max-width: 76ch; display: grid; gap: 4px; }
+.tp-sec { border-radius: 12px; padding: 10px 12px; transition: background-color .2s, transform .3s cubic-bezier(.2, .9, .25, 1.2); }
+.tp-sec:hover { background: rgba(var(--pri-rgb), .05); transform: translateX(2px); }
+.tp-sec h3 { margin: 0 0 3px; font: 600 1.02rem/1.35 var(--serif); color: var(--ink); letter-spacing: .005em; }
+.tp-sec p { margin: 0; color: var(--ink-2); font-size: .94rem; line-height: 1.6; }
+.tp-blank { background: var(--brass-soft); color: var(--brass-ink); border-radius: 6px; padding: 0 5px; font-weight: 600; }
+.tp-contact { color: var(--ink); }
+.tp-governs { margin: 6px 12px 0; color: var(--muted); font-size: .86rem; font-style: italic; }
+.tp-agreed { margin: 4px 0 0; color: var(--muted); font-size: .86rem; }
+
+/* ---------- the licence, as a document (the reading Ingenium's PermitCore gives its own) ---------- */
+.lic-doc { max-height: min(70vh, 640px); overflow: auto; scrollbar-width: none; padding: 16px 18px 18px; margin: 8px 0 4px; border-radius: 14px; background: var(--surface-2);
+  border: 1px solid var(--line); color: var(--ink-2); font-size: .94rem; line-height: 1.6; }
+.lic-doc::-webkit-scrollbar { display: none; }
+.lic-doc:focus-visible { outline: 2.5px solid var(--pri-ring); outline-offset: 2px; }
+.lcd-app { margin: 0; font: 600 .76rem/1.3 var(--sans); letter-spacing: .24em; text-transform: uppercase; color: var(--pri-text); }
+.lcd-title { margin: 4px 0 2px; font: 700 1.3rem/1.25 var(--serif); color: var(--ink); letter-spacing: .005em; }
+.lcd-meta { margin: 0 0 2px; color: var(--muted); font-size: .86rem; }
+.lcd-plain { margin: 14px 0 6px; padding: 12px 16px 10px; border-radius: 12px; background: rgba(var(--pri-rgb), .07); border: 1px solid rgba(var(--pri-rgb), .16); }
+.lcd-plain h4 { margin: 0 0 6px; font: 700 1rem/1.3 var(--serif); color: var(--ink); }
+.lcd-plain ul { margin: 0; padding-left: 20px; }
+.lcd-plain li { margin: 3px 0; }
+.lcd-note { font-size: .86rem; color: var(--muted); font-style: italic; margin: 6px 0 0; }
+.lcd-toc { margin: 12px 0 4px; }
+.lcd-toc > summary { cursor: pointer; font-weight: 700; padding: 4px 0; color: var(--ink); }
+.lcd-toc ol { margin: 6px 0 0; padding-left: 0; list-style: none; columns: 2 260px; column-gap: 24px; }
+.lcd-toc li { margin: 0 0 4px; break-inside: avoid; }
+.lcd-toc button { all: unset; cursor: pointer; color: var(--pri-text); text-decoration: underline; text-underline-offset: 2px; line-height: 1.4; padding: 2px 0; }
+.lcd-toc button:focus-visible { outline: 2px solid var(--pri-ring); outline-offset: 2px; border-radius: 3px; }
+.lcd-part { margin: 22px 0 6px; padding-top: 10px; border-top: 1px solid rgba(192, 139, 47, .35); font: 600 .78rem/1.3 var(--sans); letter-spacing: .14em; color: var(--brass-ink); }
+.lcd-h { margin: 16px 0 6px; font: 700 1.05rem/1.3 var(--serif); color: var(--ink); scroll-margin-top: 8px; }
+.lcd-h:focus { outline: none; }
+.lcd-h:focus-visible { outline: 2px solid var(--pri-ring); outline-offset: 3px; border-radius: 3px; }
+.lic-doc p { margin: 6px 0; }
+.lcd-cl { display: grid; grid-template-columns: 3.2em 1fr; gap: 0 4px; margin: 7px 0; }
+.lcd-cl > b { font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 600; }
+ol.lcd-list { list-style: none; margin: 4px 0 8px; padding-left: 3.2em; }
+ol.lcd-list > li { display: grid; grid-template-columns: 2.2em 1fr; margin: 3px 0; }
+.lcd-foot { margin: 18px 0 0; padding-top: 10px; border-top: 1px solid var(--line); color: var(--ink); font-weight: 600; }
+.lic-pre { white-space: pre-wrap; font: .8rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; max-height: min(60vh, 520px); overflow: auto; scrollbar-width: none;
+  margin: 0; padding: 14px 16px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); color: var(--ink-2); }
+.lic-pre::-webkit-scrollbar { display: none; }
+
+/* ---------- before you begin: the agreement sheet, over everything (above the door, the dialogs, the tour and the toasts) ---------- */
+.tg-veil { position: fixed; inset: 0; z-index: 2900; display: flex; align-items: center; justify-content: center; box-sizing: border-box;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  background: rgba(24, 22, 34, .42); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); animation: tgFade .25s ease both; }
+:root[data-theme="night"] .tg-veil { background: rgba(4, 4, 8, .62); }
+@keyframes tgFade { from { opacity: 0; } }
+@keyframes tgRise { from { opacity: .3; transform: translateY(10px) scale(.99); } }
+.tg { width: min(660px, 100%); max-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 20px; color: var(--ink-2);
+  background: linear-gradient(180deg, var(--slab-top) 0%, var(--slab-bot) 100%); border: 1px solid var(--line);
+  box-shadow: inset 0 1.5px 0 var(--slab-hi), inset 0 -2px 0 var(--slab-lo), 0 0 0 1px var(--slab-edge), 0 2px 4px var(--slab-sh1), 0 12px 26px var(--slab-sh2), 0 30px 70px var(--slab-sh3);
+  font: .94rem/1.55 var(--sans); animation: tgRise .35s cubic-bezier(.2, .9, .25, 1.2) both; }
+.tg-chip { align-self: flex-start; display: inline-flex; font: 600 .76rem/1 var(--sans); padding: 6px 10px; border-radius: 999px; background: rgba(var(--pri-rgb), .13); color: var(--pri-text); }
+.tg-chip.no { background: var(--danger-soft); color: var(--danger); }
+.tg h2 { margin: 0; font: 600 1.6rem/1.15 var(--serif); color: var(--ink); letter-spacing: .01em; }
+.tg-tabs { flex-wrap: wrap; overflow: visible; }
+.tg-read { flex: 1 1 auto; min-height: 120px; max-height: 52vh; overflow: auto; scrollbar-width: none; border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); padding: 12px 14px; }
+.tg-read::-webkit-scrollbar { display: none; }
+.tg-read:focus-visible { outline: 2.5px solid var(--pri-ring); outline-offset: 2px; }
+.tg-shorts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 560px) { .tg-shorts { grid-template-columns: minmax(0, 1fr); } }
+.tg-short { padding: 10px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 3px; transition: transform .3s cubic-bezier(.2, .9, .25, 1.2); }
+.tg-short:hover { transform: translateY(-2px); }
+.tg-short b { color: var(--ink); font: 600 .9rem/1.35 var(--serif); }
+.tg-short span { font-size: .86rem; line-height: 1.45; }
+.tg-read .tp-sec { padding: 8px 10px; }
+.tg-read .tp-sec:hover { background: var(--surface); }
+.tg-read .tp-sec h3 { font-size: .97rem; }
+.tg-read .tp-sec p { font-size: .9rem; }
+.tg-more { font-size: .84rem; color: var(--muted); margin: 0; }
+.tg-moreIn { margin-top: 10px; }
+.tg-tick { display: flex; gap: 10px; align-items: flex-start; font-size: .92rem; color: var(--ink); cursor: pointer; }
+.tg-tick input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--pri); flex: 0 0 auto; }
+.tg-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+.tg-said { margin: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); padding: 10px 12px; font-size: .92rem; }
+@media (max-width: 420px) { .tg { padding: 16px; gap: 10px; } .tg h2 { font-size: 1.35rem; } .tg-row .key { flex: 1 1 auto; } }
+@media (prefers-reduced-motion: reduce) { .tg, .tg-veil, .tg *, .tp-short, .tp-sec, .tp-coin { animation: none !important; transition: none !important; } }
+:root[data-calm="1"] .tg, :root[data-calm="1"] .tg-veil, :root[data-calm="1"] .tg *, :root[data-calm="1"] .tp-short, :root[data-calm="1"] .tp-sec, :root[data-calm="1"] .tp-coin { animation: none !important; transition: none !important; }
+
+/* About: the licence and the terms, for everyone */
+.about-legal { justify-content: center; margin-top: 8px; }
+
+/* LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt.
    Training (Build 19): the Learning room's tabs, a person's onboarding day by day, the lines of training with their
    keys, the team's table, the plans, and the band across the top while an exercise runs. White slabs and pearl, the
    periwinkle woven in; done wears the periwinkle check, overdue the brick, never green. */
@@ -2944,7 +3077,7 @@ html.drilling .shell { outline: 3px solid rgba(var(--pri-rgb), .35); outline-off
 "use strict";
 
 var E = window.Emporium = window.Emporium || {};
-E.BUILD = { number: "26", date: "2026-11-20" };
+E.BUILD = { number: "26", date: "2026-11-21" };
 
 /* ---------- drawing: every piece of text goes in as text, never as markup ---------- */
 function $(sel, root) { return (root || document).querySelector(sel); }
@@ -5274,6 +5407,62 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     ["guide.relays.tip", "Keep both Mac minis switched on and connected: either one is enough for the changes to travel, and each device catches up by itself as soon as it can reach one again.", "Gardez les deux Mac mini allumés et connectés : un seul suffit pour que les changements voyagent, et chaque appareil rattrape son retard de lui-même dès qu'il peut en joindre un.", "Kenbe de Mac mini yo limen epi konekte: youn sèlman ase pou chanjman yo vwayaje, epi chak aparèy ratrape sa ki manke poukont li depi li ka jwenn youn ankò."],
     ["guide.relays.t", "The relays at home", "Les relais de la maison", "Relè lakay yo"],
     ["guide.relays.b", "Once your Mac minis at home run Lakay Relay, each device's changes travel by themselves: sealed, through your own private network, with no company in the way. The sign in the top bar says when this device was last in step.\nTo connect a device, open Settings, Devices in step, The relays, and press Connect this device. Your password is asked, and the first time, each relay's claim code, shown on its Mac mini.\nIf a device is lost or stolen, remove it there: Lakay then closes its key at the relays too.", "Quand vos Mac mini de la maison font tourner Lakay Relay, les changements de chaque appareil voyagent d'eux-mêmes : scellés, par votre propre réseau privé, sans aucune entreprise entre les deux. Le signe dans la barre du haut indique quand cet appareil a été à jour pour la dernière fois.\nPour connecter un appareil, ouvrez Réglages, Appareils en phase, Les relais, et appuyez sur Connecter cet appareil. Votre mot de passe est demandé et, la première fois, le code d'activation de chaque relais, affiché sur son Mac mini.\nSi un appareil est perdu ou volé, retirez-le là : Lakay ferme alors aussi sa clé aux relais.", "Lè Mac mini lakay ou yo ap fè Lakay Relay mache, chanjman chak aparèy vwayaje poukont yo: sele, nan pwòp rezo prive ou, san okenn konpayi nan mitan. Siy ki nan ba anwo a di ki dènye fwa aparèy sa a te ajou.\nPou konekte yon aparèy, louvri Paramèt, Aparèy ki an akò, Relè yo, epi peze Konekte aparèy sa a. Y ap mande modpas ou, epi premye fwa a, kòd aktivasyon chak relè, ki parèt sou Mac mini li a.\nSi yon aparèy pèdi oswa yo vòlò l, retire l la: Lakay ap fèmen kle li nan relè yo tou."]);
+  /* Ownership, terms and privacy (Build 26), in parity with Ingenium 7.58 (31-terms.js). French uses the generic "le
+     propriétaire" and "son auteur". The Kreyòl is marked for review by a native speaker. */
+  add(
+    ["set.own", "Ownership", "Propriété", "Pwopriyete"],
+    ["tip.own.t", "Ownership, licence and terms", "Propriété, licence et conditions", "Pwopriyete, lisans ak kondisyon"],
+    ["tip.own.b", "Who owns Lakay, its licence, and the terms and privacy notice that everyone who uses Lakay agrees to. The store's own books stay the store's.", "Qui possède Lakay, sa licence, ainsi que les conditions et l'avis de confidentialité que chaque personne qui utilise Lakay accepte. Les livres du magasin restent au magasin.", "Ki moun ki mèt Lakay, lisans li, ak kondisyon yo ansanm ak avi sou vi prive chak moun ki itilize Lakay dakò avè l. Liv magazen an rete pou magazen an."],
+    ["lic.h", "Ownership, licence and permissions", "Propriété, licence et permissions", "Pwopriyete, lisans ak pèmisyon"],
+    ["lic.copy", "Copyright © 2026 Yannie D. Forest. All rights reserved.", "Copyright © 2026 Yannie D. Forest. Tous droits réservés.", "Copyright © 2026 Yannie D. Forest. Tout dwa rezève."],
+    ["lic.sole", "Lakay is the sole original work of Yannie D. Forest, its owner. Every right in it is the owner's: only the owner may use, copy, install, give, publish, sell, change or remove it, or let anyone else do any of these, and only by a permission from the owner.", "Lakay est l'œuvre originale et exclusive de Yannie D. Forest, son propriétaire. Tous les droits sur Lakay appartiennent au propriétaire : seul le propriétaire peut l'utiliser, le copier, l'installer, le donner, le publier, le vendre, le modifier ou le retirer, ou permettre à quelqu'un d'autre de le faire, et seulement par une permission du propriétaire.", "Lakay se travay orijinal Yannie D. Forest sèlman, pwopriyetè li. Tout dwa sou li se pou pwopriyetè a: se pwopriyetè a sèlman ki ka itilize l, kopye l, enstale l, bay li, pibliye l, vann li, chanje l oswa retire l, oswa kite yon lòt moun fè youn nan bagay sa yo, epi sèlman ak yon pèmisyon pwopriyetè a bay."],
+    ["lic.permit", "A permission names one person, allows only what it says, and cannot be passed on. It is valid only as a file signed with the owner's key, or as a written message from the owner. The owner may withdraw it at any time.", "Une permission nomme une seule personne, n'autorise que ce qu'elle dit, et ne peut pas être cédée. Elle n'est valable que sous la forme d'un fichier signé avec la clé du propriétaire, ou d'un message écrit du propriétaire. Le propriétaire peut la retirer à tout moment.", "Yon pèmisyon nonmen yon sèl moun, li pèmèt sèlman sa li di, epi pèsonn pa ka pase l bay yon lòt. Li valab sèlman kòm yon fichye ki siyen ak kle pwopriyetè a, oswa kòm yon mesaj pwopriyetè a ekri. Pwopriyetè a ka retire l nenpòt ki lè."],
+    ["lic.this", "This copy: Lakay, build {b} ({d}). A copy that did not come from the owner, or that has been changed, is not the owner's.", "Cette copie : Lakay, build {b} ({d}). Une copie qui ne vient pas du propriétaire, ou qui a été modifiée, n'est pas celle du propriétaire.", "Kopi sa a: Lakay, build {b} ({d}). Yon kopi ki pa soti nan men pwopriyetè a, oswa yo chanje, se pa kopi pwopriyetè a."],
+    ["lic.read", "Read the whole licence", "Lire la licence entière", "Li tout lisans lan"],
+    ["lic.versionN", "version {n}", "version {n}", "vèsyon {n}"],
+    ["lic.readH", "Lakay's licence", "La licence de Lakay", "Lisans Lakay"],
+    ["lic.contents", "Contents", "Sommaire", "Sa ki ladan l"],
+    ["lic.plain", "In plain words", "En termes simples", "An mo senp"],
+    ["lic.english", "The licence is written in English, and its English text applies. This summary helps you read it; if it ever differs, the licence applies.", "La licence est rédigée en anglais, et c'est son texte anglais qui s'applique. Ce résumé aide à la lire ; s'il en diffère un jour, la licence s'applique.", "Lisans lan ekri an angle, epi se tèks angle a ki aplike. Rezime sa a ede w li l; si yon jou li pa di menm bagay, se lisans lan ki aplike."],
+    ["lic.save", "Save the licence", "Enregistrer la licence", "Anrejistre lisans lan"],
+    ["lic.saved", "The licence is saved.", "La licence est enregistrée.", "Lisans lan anrejistre."],
+    ["lic.notices", "Notices of others' software", "Avis des logiciels de tiers", "Avi sou lojisyèl lòt moun"],
+    ["lic.noticesH", "Third-party notices", "Avis de tiers", "Avi lòt moun"],
+    ["lic.noticesP", "Lakay's page carries no software made by others. Its programs for computers carry the open-source software listed here, each under its own licence.", "La page de Lakay ne contient aucun logiciel fait par d'autres. Ses programmes pour ordinateurs contiennent les logiciels libres listés ici, chacun sous sa propre licence.", "Paj Lakay la pa gen okenn lojisyèl lòt moun fè. Pwogram li yo pou òdinatè gen lojisyèl lib ki nan lis sa a, chak anba pwòp lisans pa l."],
+    ["terms.h", "Terms and privacy", "Conditions et confidentialité", "Kondisyon ak vi prive"],
+    ["terms.sub", "What Lakay does with the store's data, and the terms of using it. {v}.", "Ce que Lakay fait des données du magasin, et les conditions de son utilisation. {v}.", "Sa Lakay fè ak done magazen an, ak kondisyon pou itilize l. {v}."],
+    ["terms.chip.maker", "Nothing sent to its maker", "Rien n'est envoyé à son auteur", "Anyen pa voye bay moun ki fè l la"],
+    ["terms.chip.offline", "Works offline", "Fonctionne hors ligne", "Mache san entènèt"],
+    ["terms.chip.sealed", "Sealed with your passwords", "Scellé par vos mots de passe", "Sele ak modpas ou yo"],
+    ["terms.chip.draft", "Draft: a lawyer reads it before it is final", "Brouillon : un avocat le relit avant qu'il soit définitif", "Bouyon: yon avoka li l anvan li fini"],
+    ["terms.p.short", "In short", "En bref", "An kout"],
+    ["terms.p.privacy", "Privacy notice", "Avis de confidentialité", "Avi sou vi prive"],
+    ["terms.p.terms", "Terms of use", "Conditions d'utilisation", "Kondisyon itilizasyon"],
+    ["terms.p.contact", "Your contact", "Votre contact", "Kontak ou"],
+    ["terms.contactL", "Your contact, for questions about these terms", "Votre contact, pour les questions sur ces conditions", "Kontak ou, pou kesyon sou kondisyon sa yo"],
+    ["terms.contactPh", "An email address or a web page", "Une adresse e-mail ou une page web", "Yon adrès imèl oswa yon paj wèb"],
+    ["terms.contactFine", "Kept on this device and shown in its Privacy notice and Terms. Other devices show it once a release of Lakay carries it.", "Gardé sur cet appareil et affiché dans son avis de confidentialité et ses conditions. Les autres appareils l'affichent dès qu'une version de Lakay le contient.", "Li rete sou aparèy sa a, epi li parèt nan avi sou vi prive ak kondisyon li yo. Lòt aparèy yo ap montre l depi yon vèsyon Lakay pote l."],
+    ["terms.saved", "Saved. The Privacy notice and the Terms now show it.", "Enregistré. L'avis de confidentialité et les conditions l'affichent maintenant.", "Anrejistre. Avi sou vi prive a ak kondisyon yo montre l kounye a."],
+    ["terms.cleared", "Cleared.", "Effacé.", "Efase."],
+    ["terms.clear", "Clear", "Effacer", "Efase"],
+    ["terms.blankContact", "the contact its maker adds", "le contact que son auteur ajoutera", "kontak moun ki fè l la ap ajoute a"],
+    ["terms.blankAge", "the age the lawyer sets", "l'âge que l'avocat fixera", "laj avoka a ap fikse a"],
+    ["terms.agreed", "You agreed to these terms ({v}) on {d} at {t}. Kept on this device only.", "Vous avez accepté ces conditions ({v}) le {d} à {t}. Gardé sur cet appareil seulement.", "Ou te dakò ak kondisyon sa yo ({v}) {d} a {t}. Sa rete sou aparèy sa a sèlman."],
+    ["terms.governs", "These texts are given in English, French and Kreyòl. If a translation ever differs from the English, the English applies.", "Ces textes sont donnés en anglais, en français et en kreyòl. Si une traduction diffère un jour de l'anglais, c'est l'anglais qui s'applique.", "Tèks sa yo an angle, an franse ak an kreyòl. Si yon jou yon tradiksyon pa di menm bagay ak angle a, se angle a ki aplike."],
+    ["gate.chip", "Before you begin", "Avant de commencer", "Anvan ou kòmanse"],
+    ["gate.h", "Lakay's terms", "Les conditions de Lakay", "Kondisyon Lakay yo"],
+    ["gate.more", "In short is a summary. The full Terms of use and the full Privacy notice are in the two tabs above: please read them before you agree.", "« En bref » est un résumé. Les conditions d'utilisation complètes et l'avis de confidentialité complet sont dans les deux onglets ci-dessus : merci de les lire avant d'accepter.", "« An kout » se yon rezime. Tout kondisyon itilizasyon yo ak tout avi sou vi prive a nan de onglè anlè yo: tanpri li yo anvan ou dakò."],
+    ["gate.kept", "{v}. Kept on this device; also in About, and in Settings, Ownership.", "{v}. Gardé sur cet appareil ; aussi dans À propos, et dans Réglages, Propriété.", "{v}. Sa rete sou aparèy sa a; li nan Konsènan tou, ak nan Reglaj, Pwopriyete."],
+    ["gate.tick", "I have read and agree to the Terms of use and the Privacy notice.", "J'ai lu les conditions d'utilisation et l'avis de confidentialité, et je les accepte.", "Mwen li kondisyon itilizasyon yo ak avi sou vi prive a, epi mwen dakò."],
+    ["gate.decline", "Decline", "Refuser", "Refize"],
+    ["gate.agree", "I agree", "J'accepte", "Mwen dakò"],
+    ["gate.noChip", "Declined", "Refusé", "Refize"],
+    ["gate.noH", "Lakay stays closed", "Lakay reste fermé", "Lakay rete fèmen"],
+    ["gate.noP", "Lakay opens only once its terms are agreed to. Nothing on this device was changed or sent anywhere. You can read the terms again at any time, and agree when you are ready.", "Lakay ne s'ouvre qu'une fois ses conditions acceptées. Rien n'a été changé sur cet appareil ni envoyé nulle part. Vous pouvez relire les conditions à tout moment, et les accepter quand vous le souhaitez.", "Lakay ouvri sèlman lè yo dakò ak kondisyon li yo. Anyen pa chanje sou aparèy sa a, epi anyen pa voye okenn kote. Ou ka li kondisyon yo ankò nenpòt ki lè, epi dakò lè ou pare."],
+    ["gate.again", "Read the terms again", "Relire les conditions", "Li kondisyon yo ankò"],
+    ["gate.back", "Back to the welcome door", "Retour à la porte d'accueil", "Retounen nan pòt akèy la"],
+    ["about.licence", "Licence", "Licence", "Lisans"],
+    ["set.privacyLink", "Read the Privacy notice", "Lire l'avis de confidentialité", "Li avi sou vi prive a"]);
 
   E.t = function (key, vars) {
     var c = E.custom && E.custom.words && E.custom.words[E.lang], s = c && typeof c[key] === "string" && c[key] ? c[key] : DICT[E.lang][key];
@@ -9582,11 +9771,15 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       actions: [{ label: t("close"), kind: "primary" }] });
   };
   ui.about = function () {
-    var st = B.state() || { settings: { storeName: (E.doorInfo && E.doorInfo.storeName) || "" }, head: null };
-    ui.dialog({ title: t("top.about"), body: h("div.about-card", null, [ui.crestKey(84, { rise: true, title: t("crest.press") }), h("h3", null, E.appName()), h("span.eyebrow", null, E.tagline()),
+    var st = B.state() || { settings: { storeName: (E.doorInfo && E.doorInfo.storeName) || "" }, head: null }, d = null;
+    /* the licence and the terms, for everyone who opens About (Build 26, 31-terms.js): the staff and the website's visitors never open Settings */
+    function then(fn) { return function () { if (d) d.close(); setTimeout(fn, 0); }; }
+    d = ui.dialog({ title: t("top.about"), body: h("div.about-card", null, [ui.crestKey(84, { rise: true, title: t("crest.press") }), h("h3", null, E.appName()), h("span.eyebrow", null, E.tagline()),
       h("dl.about-facts", null, [h("dt", null, t("about.store")), h("dd", null, st.settings.storeName), h("dt", null, t("about.books")), h("dd", null, String(st.head ? st.head.seq : 0)),
         h("dt", null, t("about.lang")), h("dd", null, "English · Français · Kreyòl")]),
       h("p.hint", null, t("about.sealed")),
+      E.terms ? h("div.row-keys.about-legal", null, [h("button.key#aboutLicence", { type: "button", onclick: then(function () { E.terms.readLicence(); }) }, [ui.emo("📜"), t("about.licence")]),
+        h("button.key#aboutTerms", { type: "button", onclick: then(function () { E.terms.read("short"); }) }, [ui.emo("🛡️"), t("terms.h")])]) : null,
       h("p.about-foot", null, [E.appName() + " · " + t("build") + " " + E.BUILD.number + " · " + E.BUILD.date, h("br"), t("foot.made") + " · © 2026 Yannie D. Forest. " + t("foot.rights")])]),
       actions: [{ label: t("close"), kind: "primary" }] });
   };
@@ -11527,7 +11720,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
 (function () {
   var U = E.util, h = U.h, t = E.t, B = E.books, C = E.crypto, ui = E.ui, money = U.money;
 
-  var SET_EMO = { store: "🏪", tax: "🧾", pay: "💳", travel: "✈️", cats: "🗂️", display: "🎨", security: "🔐", backup: "💾", devices: "📲", verify: "🛡️", storage: "🗄️", about: "ℹ️", erase: "🧹" };
+  var SET_EMO = { store: "🏪", tax: "🧾", pay: "💳", travel: "✈️", cats: "🗂️", display: "🎨", security: "🔐", backup: "💾", devices: "📲", verify: "🛡️", storage: "🗄️", own: "📜", about: "ℹ️", erase: "🧹" };
   function sec(id, titleKey, tipKey, children) {
     return h("section.card.set-sec", { id: id, "aria-labelledby": id + "-h" }, [h("div.card-head", null, [h("h2", { id: id + "-h" }, [ui.emo(SET_EMO[id.replace("set-", "")] || "⚙️"), t(titleKey)]), tipKey ? ui.tip(tipKey) : null]), children]);
   }
@@ -11535,7 +11728,7 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
   ui.rooms.settings = function (main) {
     var st = B.state(), s = st.settings;
     main.appendChild(ui.roomHead("room.settings", null));
-    var nav = h("nav.set-nav", { "aria-label": t("set.sections") }, ["store", "tax", "pay", "cats", "display", "security", "backup", "devices", "verify", "storage", "about", "erase"].map(function (k) {
+    var nav = h("nav.set-nav", { "aria-label": t("set.sections") }, ["store", "tax", "pay", "cats", "display", "security", "backup", "devices", "verify", "storage", "own", "about", "erase"].map(function (k) {
       return h("button.chip", { type: "button", onclick: function () { var n = document.getElementById("set-" + k); if (n) n.scrollIntoView({ behavior: ui.still() ? "auto" : "smooth", block: "start" }); } }, [ui.emo(SET_EMO[k]), t("set." + k)]);
     }));
     main.appendChild(nav);
@@ -11645,7 +11838,9 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
         h("button.key", { type: "button", onclick: function () { B.lock("hand"); } }, [ui.emo("🔒"), t("lockNow")]),
         h("button.key", { type: "button", id: "changePw", onclick: changePassword }, [ui.emo("🔑"), t("set.changePw")]),
         h("button.key", { type: "button", id: "newMaster", onclick: newMaster }, [ui.emo("🗝️"), t("set.newMaster")])]),
-      h("p.hint", null, t("set.securityHint"))]));
+      h("p.hint", null, t("set.securityHint")),
+      /* the Privacy notice, from Security (Build 26), as Ingenium's Settings, Security links to it */
+      E.terms ? h("div.row-keys", null, [h("button.key.quiet#privacyLink", { type: "button", onclick: function () { E.terms.show("privacy"); } }, [ui.emo("🛡️"), t("set.privacyLink")])]) : null]));
 
     /* backups */
     var lastB = U.prefGet("lastBackup", "");
@@ -11679,6 +11874,10 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
       var est = r[0], kept = r[1];
       stOut.textContent = (est && est.usage !== undefined ? t("set.used", { mb: (est.usage / 1048576).toFixed(1) }) + " " : "") + t(kept === true ? "set.kept" : kept === false ? "set.notKept" : "set.keptUnknown");
     });
+
+    /* ownership: the licence and the copyright, then the terms and privacy (Build 26, 31-terms.js), as Ingenium has them in
+       Settings, Ownership */
+    if (E.terms) main.appendChild(sec("set-own", "set.own", "tip.own", [E.terms.licenceCard(true), E.terms.card(true)]));
 
     /* about */
     main.appendChild(sec("set-about", "set.about", null, [h("div.about", null, [ui.crestKey(84, { title: t("crest.press") }), h("div", null, [
@@ -16419,6 +16618,311 @@ E.util = { h: h, add: add, clear: clear, icon: icon, parseMoney: parseMoney, mon
     if (last.setAside.length) out.push(h("p.hint", null, t("dev.setAside", { c: last.setAside.join(", ") })));
     return out;
   };
+})();
+
+/* LAKAY | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt.
+   Ownership, terms and privacy (Build 26), in parity with Ingenium 7.58, made for Lakay. The owner's request (21 November 2026):
+   "I want Lakay to have a Terms and Conditions policy and also have a clear copyrights declaration the same way that Ingenium
+   does. I want full and exact parity with Ingenium's Terms and Conditions implementations system and prompting. Please make the
+   necessary changes and please make sure that it is all customised and curated specifically for the Lakay app."
+   What Ingenium has, and Lakay now has in the same way:
+   - Ownership, licence and permissions (Ingenium's PermitCore card, 6.2 to 6.46): who owns the app, a permission's rules, this
+     copy's build, the whole licence to read as a document (its contents, its plain words, parts, sections, clauses and lists:
+     the same reading of the same regular text, release/licence/make_licence.py), and Save the licence. Lakay's permissions are
+     the licence's own (a file signed with the owner's key, or a written message from the owner); Lakay keeps no signed
+     permission files, so the card has no part for them.
+   - Terms and privacy (Ingenium's module r320, 7.37): In short, the Privacy notice, the Terms of use and, for the owner of the
+     real store, Your contact and the Draft chip (a lawyer reads it before it is final).
+   - Before you begin (Ingenium's module r326, 7.41): once the welcome door has opened, a device that has not agreed to this
+     version of the terms shows the sheet over everything: In short, the full Terms of use, the full Privacy notice, a tick,
+     Decline and I agree. Nothing behind it can be reached. Agreed: the version, the date and the build are kept on this device
+     (never sent) and shown with the terms; a new version asks again. Declined: Lakay stays closed, says why, and the terms can
+     be read again.
+   Made for Lakay: the texts are the store's (its books, its people, payments and bookings, its devices and relays), in
+   English, French and Kreyòl (the English applies); the terms are also in About for everyone, since the staff and the
+   website's visitors never open Settings; Lakay has one edition, so every device asks (Ingenium's master copy does not ask
+   its maker); and the declined sheet has a second key, Back to the welcome door, where Refresh and Reset stay, because Lakay
+   never locks anyone out (Build 7). The texts are src/terms/terms.json, from which build.py also writes TERMS.txt and
+   PRIVACY.txt. Not legal advice: a lawyer in the United States and in the United Kingdom should read the final wording. */
+"use strict";
+(function () {
+  var U = E.util, h = U.h, t = E.t;
+  var DATA = {"version": {"en": "Version 1, 21 November 2026", "fr": "Version 1, 21 novembre 2026", "ht": "Vèsyon 1, 21 novanm 2026"}, "short": [{"t": {"en": "The books stay in the store", "fr": "Les livres restent au magasin", "ht": "Liv yo rete nan magazen an"}, "b": {"en": "Sales, stock, people and every record are kept on the store's own devices, sealed.", "fr": "Ventes, stock, personnel et chaque écriture sont gardés sur les propres appareils du magasin, scellés.", "ht": "Vant, stòk, moun ak chak anrejistreman rete sou pwòp aparèy magazen an, sele."}}, {"t": {"en": "Nothing goes to its maker", "fr": "Rien ne part chez son auteur", "ht": "Anyen pa ale kay moun ki fè l la"}, "b": {"en": "No account with its maker, no analytics, no usage reports, no automatic update check.", "fr": "Aucun compte chez son auteur, aucune statistique, aucun rapport d'usage, aucune vérification automatique de mise à jour.", "ht": "Pa gen kont kay moun ki fè l la, pa gen estatistik, pa gen rapò sou itilizasyon, pa gen verifikasyon mizajou otomatik."}}, {"t": {"en": "Sealed with your passwords", "fr": "Scellé par vos mots de passe", "ht": "Sele ak modpas ou yo"}, "b": {"en": "Without a password or the Master Key, no one can open the books, not even its maker.", "fr": "Sans un mot de passe ou la Clé maîtresse, personne ne peut ouvrir les livres, pas même son auteur.", "ht": "San yon modpas oswa Kle Mèt la, pèsonn pa ka louvri liv yo, menm moun ki fè l la."}}, {"t": {"en": "Never a card or passport number", "fr": "Jamais un numéro de carte ou de passeport", "ht": "Janm yon nimewo kat oswa paspò"}, "b": {"en": "Lakay never takes a card's number or anyone's papers; a client's name only if the store's owner turns it on.", "fr": "Lakay ne prend jamais le numéro d'une carte ni les papiers de personne ; le nom d'un client seulement si le propriétaire du magasin l'active.", "ht": "Lakay pa janm pran nimewo yon kat ni papye pèsonn; non yon kliyan sèlman si mèt magazen an aktive sa."}}, {"t": {"en": "Only between your own devices", "fr": "Seulement entre vos propres appareils", "ht": "Sèlman ant pwòp aparèy ou yo"}, "b": {"en": "Changes travel sealed, by file or through the store's own relays at home, which cannot read them.", "fr": "Les changements voyagent scellés, par fichier ou par les propres relais du magasin à la maison, qui ne peuvent pas les lire.", "ht": "Chanjman yo vwayaje sele, pa fichye oswa nan pwòp relè magazen an lakay, ki pa ka li yo."}}, {"t": {"en": "The store's books are the store's", "fr": "Les livres du magasin sont au magasin", "ht": "Liv magazen an se pou magazen an"}, "b": {"en": "What the store records belongs to the store (licence, clause 3.6). Reports and pay are aids: check them with an accountant.", "fr": "Ce que le magasin enregistre appartient au magasin (licence, clause 3.6). Rapports et paie sont des aides : vérifiez-les avec un comptable.", "ht": "Sa magazen an anrejistre se pou magazen an (lisans, kloz 3.6). Rapò ak peman se èd: verifye yo ak yon kontab."}}], "terms": [{"h": {"en": "1. These terms and the licence", "fr": "1. Ces conditions et la licence", "ht": "1. Kondisyon sa yo ak lisans lan"}, "b": {"en": "These terms say how Lakay may be used. Who owns it, and who may use, copy or share it, is set out in its licence (in About, and in Settings, Ownership). If they ever differ, the licence applies.", "fr": "Ces conditions disent comment Lakay peut être utilisé. À qui il appartient, et qui peut l'utiliser, le copier ou le partager, est fixé par sa licence (dans À propos, et dans Réglages, Propriété). Si elles diffèrent un jour, la licence s'applique.", "ht": "Kondisyon sa yo di kijan yo ka itilize Lakay. Ki moun li ye pou li, ak ki moun ki ka itilize l, kopye l oswa pataje l, se lisans li ki di sa (nan Apwopo, ak nan Reglaj, Pwopriyete). Si yo ta janm diferan, se lisans lan ki aplike."}}, {"h": {"en": "2. Who may use Lakay", "fr": "2. Qui peut utiliser Lakay", "ht": "2. Ki moun ki ka itilize Lakay"}, "b": {"en": "Its owner, and a store and its people to whom the owner has given a permission, as the licence says. Anyone may try the practice store on the owner's own website, there and while the owner offers it (licence, clause 6.8).", "fr": "Son propriétaire, ainsi qu'un magasin et son personnel à qui le propriétaire a donné une permission, comme le dit la licence. Chacun peut essayer le magasin d'entraînement sur le propre site web du propriétaire, là-bas et tant qu'il le propose (licence, clause 6.8).", "ht": "Pwopriyetè li, ak yon magazen ak moun li yo pwopriyetè a bay yon pèmisyon, jan lisans lan di l. Nenpòt moun ka eseye magazen pratik la sou pwòp sit entènèt pwopriyetè a, la menm epi pandan li ofri l (lisans, kloz 6.8)."}}, {"h": {"en": "3. The store's books are the store's", "fr": "3. Les livres du magasin sont au magasin", "ht": "3. Liv magazen an se pou magazen an"}, "b": {"en": "What a store records with Lakay, such as its books, receipts, reports and notes, belongs to the store (licence, clause 3.6). The store is responsible for what it records, and for having the right to record it. To keep its records outside Lakay, a store can print its reports and save its sales, receipts and stock as spreadsheet files (CSV).", "fr": "Ce qu'un magasin enregistre avec Lakay, comme ses livres, ses reçus, ses rapports et ses notes, appartient au magasin (licence, clause 3.6). Le magasin répond de ce qu'il enregistre, et du droit de l'enregistrer. Pour garder ses écritures hors de Lakay, un magasin peut imprimer ses rapports et enregistrer ses ventes, ses reçus et son stock en fichiers de tableur (CSV).", "ht": "Sa yon magazen anrejistre ak Lakay, tankou liv li, resi li, rapò li ak nòt li, se pou magazen an (lisans, kloz 3.6). Magazen an reskonsab sa li anrejistre, ak dwa pou l anrejistre l. Pou kenbe anrejistreman li deyò Lakay, yon magazen ka enprime rapò li yo epi sove vant, resi ak stòk li kòm fichye tablo (CSV)."}}, {"h": {"en": "4. Figures, reports and estimates", "fr": "4. Chiffres, rapports et estimations", "ht": "4. Chif, rapò ak estimasyon"}, "b": {"en": "Lakay's reports, taxes, earnings and pay are worked out from what is recorded. They are aids, not professional advice: not accounting, tax, payroll, legal or financial advice. Pay is an estimate before taxes and deductions. Check what matters with an accountant before you rely on it. Lakay does not file taxes, run payroll or move money.", "fr": "Les rapports, les taxes, les gains et la paie de Lakay sont calculés à partir de ce qui est enregistré. Ce sont des aides, pas des conseils professionnels : ni comptables, ni fiscaux, ni de paie, ni juridiques, ni financiers. La paie est une estimation avant impôts et retenues. Vérifiez ce qui compte avec un comptable avant de vous y fier. Lakay ne déclare pas d'impôts, ne fait pas la paie et ne déplace pas d'argent.", "ht": "Rapò, taks, lajan antre ak peman Lakay yo kalkile apati sa ki anrejistre. Se èd yo ye, se pa konsèy pwofesyonèl: ni konsèy kontab, ni taks, ni pewòl, ni legal, ni finansye. Peman an se yon estimasyon anvan taks ak retni. Verifye sa ki konte ak yon kontab anvan ou konte sou li. Lakay pa deklare taks, li pa fè pewòl, li pa deplase lajan."}}, {"h": {"en": "5. Payments, transfers and bookings", "fr": "5. Paiements, transferts et réservations", "ht": "5. Peman, transfè ak rezèvasyon"}, "b": {"en": "Lakay records payments, transfers, top-ups and travel bookings; it does not take payments or move money. Money moves through the store's own card machine, its providers (such as RIA, CAM, Unitransfer or Boss Revolution) and the websites where flights are booked, each under its own terms. Never type a card number or a passport number into Lakay.", "fr": "Lakay enregistre les paiements, les transferts, les recharges et les réservations de voyage ; il n'encaisse pas et ne déplace pas d'argent. L'argent passe par le propre terminal de paiement du magasin, ses fournisseurs (comme RIA, CAM, Unitransfer ou Boss Revolution) et les sites où les vols sont réservés, chacun selon ses propres conditions. Ne tapez jamais un numéro de carte ou de passeport dans Lakay.", "ht": "Lakay anrejistre peman, transfè, rechaj ak rezèvasyon vwayaj; li pa touche peman, li pa deplase lajan. Lajan an pase nan pwòp machin kat magazen an, founisè li yo (tankou RIA, CAM, Unitransfer oswa Boss Revolution) ak sit kote yo rezève vòl yo, chak dapre pwòp kondisyon pa yo. Pa janm tape yon nimewo kat oswa yon nimewo paspò nan Lakay."}}, {"h": {"en": "6. The store's people and its customers", "fr": "6. Le personnel du magasin et ses clients", "ht": "6. Moun magazen an ak kliyan li yo"}, "b": {"en": "The store's owner gives each person a password and their access. Lakay records each person's sales, hours, shifts, pay and training, sealed. The store tells its people and its customers what it records about them, and keeps to the law where it is, such as the laws on work, privacy and tax records. Lakay never asks for a customer's identity; a client's name and phone on a booking are kept only if the store's owner turns that on.", "fr": "Le propriétaire du magasin donne à chaque personne un mot de passe et ses accès. Lakay enregistre, scellés, les ventes, les heures, les horaires, la paie et la formation de chacun. Le magasin dit à son personnel et à ses clients ce qu'il enregistre à leur sujet, et respecte la loi du lieu où il se trouve, comme les lois sur le travail, la vie privée et les registres fiscaux. Lakay ne demande jamais l'identité d'un client ; le nom et le téléphone d'un client sur une réservation ne sont gardés que si le propriétaire du magasin l'active.", "ht": "Mèt magazen an bay chak moun yon modpas ak aksè pa l. Lakay anrejistre, sele, vant, èdtan, orè, peman ak fòmasyon chak moun. Magazen an di moun li yo ak kliyan li yo sa li anrejistre sou yo, epi li respekte lalwa kote l ye a, tankou lwa sou travay, vi prive ak dosye taks. Lakay pa janm mande idantite yon kliyan; non ak telefòn yon kliyan sou yon rezèvasyon kenbe sèlman si mèt magazen an aktive sa."}}, {"h": {"en": "7. Fair use", "fr": "7. Usage loyal", "ht": "7. Bon itilizasyon"}, "b": {"en": "Do not use Lakay to break the law, to harm others, to keep records you have no right to keep, or to get around the protection of anyone else's copy or work.", "fr": "N'utilisez pas Lakay pour enfreindre la loi, nuire à autrui, garder des écritures que vous n'avez pas le droit de garder, ou contourner la protection de la copie ou de l'œuvre de quelqu'un d'autre.", "ht": "Pa itilize Lakay pou vyole lalwa, pou fè lòt moun mal, pou kenbe anrejistreman ou pa gen dwa kenbe, oswa pou kontounen pwoteksyon kopi oswa travay yon lòt moun."}}, {"h": {"en": "8. Passwords, the Master Key and backups", "fr": "8. Mots de passe, Clé maîtresse et sauvegardes", "ht": "8. Modpas, Kle Mèt ak sovgad"}, "b": {"en": "Keep every password and the Master Key safe: they cannot be recovered for you, and without them no one can open the books. Save a sealed backup every day, and keep it away from the store's devices.", "fr": "Gardez en lieu sûr chaque mot de passe et la Clé maîtresse : ils ne peuvent pas être retrouvés pour vous, et sans eux personne ne peut ouvrir les livres. Faites une sauvegarde scellée chaque jour, et gardez-la loin des appareils du magasin.", "ht": "Kenbe chak modpas ak Kle Mèt la an sekirite: pèsonn pa ka rekipere yo pou ou, epi san yo pèsonn pa ka louvri liv yo. Fè yon sovgad sele chak jou, epi kenbe l lwen aparèy magazen an."}}, {"h": {"en": "9. Devices in step and the relays", "fr": "9. Appareils en phase et relais", "ht": "9. Aparèy ki an akò ak relè yo"}, "b": {"en": "Only the store's owner adds a device to the store. The store's owner looks after the store's own network, its router and its Mac minis, and removes a device that is lost, stolen or given up (Settings, Devices in step).", "fr": "Seul le propriétaire du magasin ajoute un appareil au magasin. Il s'occupe du propre réseau du magasin, de son routeur et de ses Mac mini, et retire un appareil perdu, volé ou abandonné (Réglages, Appareils en phase).", "ht": "Se mèt magazen an sèlman ki ajoute yon aparèy nan magazen an. Li okipe pwòp rezo magazen an, routè li ak Mac mini li yo, epi li retire yon aparèy ki pèdi, yo vòlò oswa yo abandone (Reglaj, Aparèy ki an akò)."}}, {"h": {"en": "10. Services made by others", "fr": "10. Services d'autres entreprises", "ht": "10. Sèvis lòt moun fè"}, "b": {"en": "The card machine's processor, the transfer providers, the websites where flights are booked, and the private network app the store's owner chooses (such as WireGuard or Tailscale) each come under their own terms. Using one, you accept its terms.", "fr": "Le processeur du terminal de paiement, les fournisseurs de transferts, les sites où les vols sont réservés et l'application de réseau privé que choisit le propriétaire du magasin (comme WireGuard ou Tailscale) ont chacun leurs propres conditions. En utilisant l'un d'eux, vous acceptez ses conditions.", "ht": "Processeur machin kat la, founisè transfè yo, sit kote yo rezève vòl yo, ak aplikasyon rezo prive mèt magazen an chwazi a (tankou WireGuard oswa Tailscale) chak gen pwòp kondisyon pa yo. Lè w itilize youn, ou aksepte kondisyon li."}}, {"h": {"en": "11. No warranty and no liability", "fr": "11. Aucune garantie et aucune responsabilité", "ht": "11. Pa gen garanti ni responsablite"}, "b": {"en": "Lakay is provided as it is, as the licence says (clauses 11 and 12).", "fr": "Lakay est fourni tel quel, comme le dit la licence (clauses 11 et 12).", "ht": "Yo bay Lakay jan li ye a, jan lisans lan di l (kloz 11 ak 12)."}}, {"h": {"en": "12. Ending, changes and the law", "fr": "12. Fin, changements et droit applicable", "ht": "12. Fen, chanjman ak lalwa"}, "b": {"en": "A permission ends as the licence says (clause 7). These terms may change with a new release; Lakay then asks again. The law that governs them is in the licence (clause 18), as settled for the United States and the United Kingdom.", "fr": "Une permission prend fin comme le dit la licence (clause 7). Ces conditions peuvent changer avec une nouvelle version ; Lakay le demande alors de nouveau. Le droit qui les régit est dans la licence (clause 18), tel qu'il est fixé pour les États-Unis et le Royaume-Uni.", "ht": "Yon pèmisyon fini jan lisans lan di l (kloz 7). Kondisyon sa yo ka chanje ak yon nouvo vèsyon; Lakay mande ankò lè sa a. Lalwa ki gouvène yo nan lisans lan (kloz 18), jan sa fikse pou Etazini ak Wayòm Ini."}}, {"h": {"en": "13. Contact", "fr": "13. Contact", "ht": "13. Kontak"}, "b": {"en": "{contact}", "fr": "{contact}", "ht": "{contact}"}}], "privacy": [{"h": {"en": "1. Who this notice is from", "fr": "1. De qui vient cet avis", "ht": "1. Ki moun avi sa a soti"}, "b": {"en": "Lakay is made by Yannie D. Forest, its owner under its licence. Each store that uses Lakay decides what it records, and is responsible for it. Questions about this notice: {contact}.", "fr": "Lakay est fait par Yannie D. Forest, son propriétaire selon sa licence. Chaque magasin qui utilise Lakay décide de ce qu'il enregistre, et en répond. Questions sur cet avis : {contact}.", "ht": "Se Yannie D. Forest ki fè Lakay, li se pwopriyetè l dapre lisans li. Chak magazen ki itilize Lakay deside sa li anrejistre, epi li reskonsab sa. Kesyon sou avi sa a: {contact}."}}, {"h": {"en": "2. What Lakay keeps, and where", "fr": "2. Ce que Lakay garde, et où", "ht": "2. Sa Lakay kenbe, ak ki kote"}, "b": {"en": "The store's books stay on the devices the store uses Lakay on: its items, prices, costs and stock; its sales, receipts and payments; its transfers, top-ups and travel bookings; its people, their access, hours, shifts, pay and training; its settings; and each person's sticky notes. In a browser, in its own storage for Lakay's page; in the programs for Windows and the Mac, in the person's own profile; on a phone or tablet, in the app's own storage. Backups are files the store's owner saves where they choose. None of it is sent to its maker.", "fr": "Les livres du magasin restent sur les appareils où le magasin utilise Lakay : ses articles, prix, coûts et stock ; ses ventes, reçus et paiements ; ses transferts, recharges et réservations de voyage ; son personnel, ses accès, heures, horaires, paie et formation ; ses réglages ; et les notes de chacun. Dans un navigateur, dans le stockage propre à la page de Lakay ; dans les programmes pour Windows et le Mac, dans le profil de la personne ; sur un téléphone ou une tablette, dans le stockage propre de l'app. Les sauvegardes sont des fichiers que le propriétaire du magasin enregistre où bon lui semble. Rien de tout cela n'est envoyé à son auteur.", "ht": "Liv magazen an rete sou aparèy kote magazen an itilize Lakay: atik li yo, pri, kou ak stòk; vant, resi ak peman; transfè, rechaj ak rezèvasyon vwayaj; moun li yo, aksè yo, èdtan, orè, peman ak fòmasyon yo; paramèt li; ak nòt chak moun. Nan yon navigatè, nan pwòp depo paj Lakay la; nan pwogram pou Windows ak Mac, nan pwòp pwofil moun nan; sou yon telefòn oswa yon tablèt, nan pwòp depo aplikasyon an. Sovgad yo se fichye mèt magazen an sove kote li vle. Anyen nan sa yo pa voye bay moun ki fè l la."}}, {"h": {"en": "3. Sealed with your passwords", "fr": "3. Scellé par vos mots de passe", "ht": "3. Sele ak modpas ou yo"}, "b": {"en": "The books are sealed (AES-GCM, 256-bit) with one Store Key. The Store Key is sealed again with a key made from the password of the store's owner, from each person's own password (PBKDF2, 600,000 rounds), and from the Master Key. Backups and the files that carry changes between devices are sealed too. Without a password or the Master Key, no one can open the books, not even Lakay's maker. Left readable, so that the door can work: the store's name, the people's names and staff numbers, the Author Studio's choices, the build number, and the technical facts needed to open the seal (such as its salt).", "fr": "Les livres sont scellés (AES-GCM, 256 bits) avec une Clé du magasin. Cette clé est scellée à son tour avec une clé tirée du mot de passe du propriétaire du magasin, du mot de passe de chaque personne (PBKDF2, 600 000 tours) et de la Clé maîtresse. Les sauvegardes et les fichiers qui portent les changements entre appareils sont scellés eux aussi. Sans un mot de passe ou la Clé maîtresse, personne ne peut ouvrir les livres, pas même l'auteur de Lakay. Restent lisibles, pour que la porte fonctionne : le nom du magasin, les noms et numéros du personnel, les choix du Studio d'auteur, le numéro de build, et les données techniques nécessaires pour ouvrir le sceau (comme son sel).", "ht": "Liv yo sele (AES-GCM, 256 bit) ak yon sèl Kle magazen. Kle sa a sele ankò ak yon kle ki fèt ak modpas mèt magazen an, ak modpas chak moun (PBKDF2, 600 000 tou), ak Kle Mèt la. Sovgad yo ak fichye ki pote chanjman ant aparèy yo sele tou. San yon modpas oswa Kle Mèt la, pèsonn pa ka louvri liv yo, menm moun ki fè Lakay la. Sa ki rete lizib, pou pòt la ka mache: non magazen an, non ak nimewo moun yo, chwa Estidyo otè a, nimewo build la, ak enfòmasyon teknik ki nesesè pou louvri sele a (tankou sèl li)."}}, {"h": {"en": "4. What Lakay never keeps", "fr": "4. Ce que Lakay ne garde jamais", "ht": "4. Sa Lakay pa janm kenbe"}, "b": {"en": "A card's number, a passport number, or a customer's identity. A sale records what was sold and how it was paid; for a card, the card machine's approval code and, if the store's owner asks, its last four digits. A transfer or top-up records no customer's name, address or papers. A client's name and phone on a travel booking are kept only if the store's owner turns that on; never in the ledger, and erased when it is turned off.", "fr": "Le numéro d'une carte, un numéro de passeport, ou l'identité d'un client. Une vente enregistre ce qui a été vendu et comment cela a été payé ; pour une carte, le code d'autorisation du terminal et, si le propriétaire du magasin le demande, ses quatre derniers chiffres. Un transfert ou une recharge n'enregistre ni le nom, ni l'adresse, ni les papiers d'un client. Le nom et le téléphone d'un client sur une réservation de voyage ne sont gardés que si le propriétaire du magasin l'active ; jamais dans le registre, et effacés quand ce choix est désactivé.", "ht": "Nimewo yon kat, yon nimewo paspò, oswa idantite yon kliyan. Yon vant anrejistre sa ki vann ak kijan yo peye l; pou yon kat, kòd apwobasyon machin kat la epi, si mèt magazen an mande l, kat dènye chif li. Yon transfè oswa yon rechaj pa anrejistre ni non, ni adrès, ni papye yon kliyan. Non ak telefòn yon kliyan sou yon rezèvasyon vwayaj kenbe sèlman si mèt magazen an aktive sa; janm nan rejis la, epi yo efase lè li dezaktive l."}}, {"h": {"en": "5. When Lakay goes online", "fr": "5. Quand Lakay va en ligne", "ht": "5. Ki lè Lakay ale sou entènèt"}, "b": {"en": "Never by itself. Lakay's page is forbidden to connect anywhere, except to the store's own relays once the store's owner has set them up: Lakay Relay, on the store owner's own computers, such as two Mac minis. Lakay has no analytics, no usage reports and no automatic update check. The camera, when it scans a barcode, is read on the device only. When the web app is opened from the owner's website, the website's host receives the request for the page, under its own terms.", "fr": "Jamais de lui-même. La page de Lakay a l'interdiction de se connecter où que ce soit, sauf aux propres relais du magasin une fois que le propriétaire du magasin les a installés : Lakay Relay, sur ses propres ordinateurs, comme deux Mac mini. Lakay n'a ni statistiques, ni rapports d'usage, ni vérification automatique de mise à jour. La caméra, quand elle lit un code-barres, est lue sur l'appareil seulement. Quand l'app web est ouverte depuis le site du propriétaire, l'hébergeur du site reçoit la demande de la page, selon ses propres conditions.", "ht": "Janm poukont li. Paj Lakay la pa gen dwa konekte okenn kote, eksepte nan pwòp relè magazen an yon fwa mèt magazen an mete yo: Lakay Relay, sou òdinatè pa l, tankou de Mac mini. Lakay pa gen estatistik, pa gen rapò sou itilizasyon, pa gen verifikasyon mizajou otomatik. Kamera a, lè l ap li yon kòdba, li sou aparèy la sèlman. Lè yo louvri aplikasyon wèb la sou sit pwopriyetè a, lame sit la resevwa demann paj la, dapre pwòp kondisyon pa l."}}, {"h": {"en": "6. Between the store's own devices", "fr": "6. Entre les propres appareils du magasin", "ht": "6. Ant pwòp aparèy magazen an"}, "b": {"en": "A device joins the store only with a joining file and a pairing code, shown once on a device already in it. The joining file is a sealed backup: like every backup, it shows the store's name, the people's names and staff numbers, and the Author Studio's choices. Changes then travel sealed, by file or through the store's own relays, which cannot read them; the relays see only which device left changes, when, and how large they were.", "fr": "Un appareil ne rejoint le magasin qu'avec un fichier d'adhésion et un code d'appairage, montré une seule fois sur un appareil qui en fait déjà partie. Le fichier d'adhésion est une sauvegarde scellée : comme toute sauvegarde, il montre le nom du magasin, les noms et numéros du personnel, et les choix du Studio d'auteur. Les changements voyagent ensuite scellés, par fichier ou par les propres relais du magasin, qui ne peuvent pas les lire ; les relais voient seulement quel appareil a déposé des changements, quand, et leur taille.", "ht": "Yon aparèy antre nan magazen an sèlman ak yon fichye pou antre ak yon kòd koneksyon, ki parèt yon sèl fwa sou yon aparèy ki deja ladan l. Fichye pou antre a se yon sovgad sele: tankou tout sovgad, li montre non magazen an, non ak nimewo moun yo, ak chwa Estidyo otè a. Apre sa chanjman yo vwayaje sele, pa fichye oswa nan pwòp relè magazen an, ki pa ka li yo; relè yo wè sèlman ki aparèy ki kite chanjman, ki lè, ak gwosè yo."}}, {"h": {"en": "7. Your choices", "fr": "7. Vos choix", "ht": "7. Chwa ou yo"}, "b": {"en": "Lakay's maker holds no data about you from Lakay, so it is in the store's hands, on its devices. The store's owner can see the books, print and save them (Reports), save a sealed backup (Settings, Backups), remove a device (Settings, Devices in step), and erase the store from a device (Settings, Erase). A person who wants to know what the store records about them asks the store's owner. For data that another service holds, such as a card processor or a transfer provider, ask that service.", "fr": "L'auteur de Lakay ne détient aucune donnée sur vous venant de Lakay : tout est entre les mains du magasin, sur ses appareils. Le propriétaire du magasin peut voir les livres, les imprimer et les enregistrer (Rapports), faire une sauvegarde scellée (Réglages, Sauvegardes), retirer un appareil (Réglages, Appareils en phase) et effacer le magasin d'un appareil (Réglages, Effacer). Une personne qui veut savoir ce que le magasin enregistre à son sujet le demande au propriétaire du magasin. Pour les données qu'un autre service détient, comme un processeur de cartes ou un fournisseur de transferts, adressez-vous à ce service.", "ht": "Moun ki fè Lakay la pa kenbe okenn done sou ou ki soti nan Lakay: tout bagay nan men magazen an, sou aparèy li yo. Mèt magazen an ka wè liv yo, enprime yo epi sove yo (Rapò), fè yon sovgad sele (Reglaj, Sovgad), retire yon aparèy (Reglaj, Aparèy ki an akò) epi efase magazen an sou yon aparèy (Reglaj, Efase). Yon moun ki vle konnen sa magazen an anrejistre sou li mande mèt magazen an. Pou done yon lòt sèvis kenbe, tankou yon processeur kat oswa yon founisè transfè, mande sèvis sa a."}}, {"h": {"en": "8. Children", "fr": "8. Enfants", "ht": "8. Timoun"}, "b": {"en": "Lakay is made for running a store. It is not made for children under {age}.", "fr": "Lakay est fait pour tenir un magasin. Il n'est pas fait pour les enfants de moins de {age}.", "ht": "Yo fè Lakay pou jere yon magazen. Yo pa fè l pou timoun ki poko gen {age}."}}, {"h": {"en": "9. Changes", "fr": "9. Changements", "ht": "9. Chanjman"}, "b": {"en": "A new version of this notice comes with a new release of Lakay, with its date; Lakay then asks again.", "fr": "Une nouvelle version de cet avis vient avec une nouvelle version de Lakay, avec sa date ; Lakay le demande alors de nouveau.", "ht": "Yon nouvo vèsyon avi sa a vini ak yon nouvo vèsyon Lakay, ak dat li; Lakay mande ankò lè sa a."}}], "licence": [{"en": "Lakay belongs to Yannie D. Forest alone. Only the owner may use, copy, share, sell, change or remove any part of it.", "fr": "Lakay appartient uniquement à Yannie D. Forest. Seul le propriétaire peut utiliser, copier, partager, vendre, changer ou retirer une partie de Lakay.", "ht": "Lakay se pou Yannie D. Forest sèlman. Se pwopriyetè a sèlman ki ka itilize, kopye, pataje, vann, chanje oswa retire nenpòt pati ladan l."}, {"en": "Anyone else needs a permission from the owner first. Seeing the code, holding a copy, or paying for one gives no right.", "fr": "Toute autre personne a d'abord besoin d'une permission du propriétaire. Voir le code, détenir une copie ou payer pour une copie ne donne aucun droit.", "ht": "Tout lòt moun bezwen yon pèmisyon pwopriyetè a anvan. Wè kòd la, gen yon kopi, oswa peye pou youn pa bay okenn dwa."}, {"en": "A permission is valid only if it is a file signed with the owner's key, or a written message from the owner.", "fr": "Une permission n'est valable que si c'est un fichier signé avec la clé du propriétaire, ou un message écrit du propriétaire.", "ht": "Yon pèmisyon valab sèlman si se yon fichye ki siyen ak kle pwopriyetè a, oswa yon mesaj ekri pwopriyetè a voye."}, {"en": "A permission names one person, allows only what it says, and cannot be passed on.", "fr": "Une permission nomme une personne, ne permet que ce qu'elle dit, et ne peut pas être transmise.", "ht": "Yon pèmisyon nonmen yon sèl moun, li pèmèt sèlman sa li di, epi yo pa ka pase l bay lòt moun."}, {"en": "The owner may withdraw a permission at any time, for any reason. It also ends at once if its terms are broken.", "fr": "Le propriétaire peut retirer une permission à tout moment, pour toute raison. Elle prend fin aussi aussitôt que ses conditions sont violées.", "ht": "Pwopriyetè a ka retire yon pèmisyon nenpòt ki lè, pou nenpòt rezon. Li fini tou menm kote si yo vyole kondisyon li."}, {"en": "When a permission ends, stop using Lakay and delete every copy, backups included.", "fr": "Quand une permission prend fin, cessez d'utiliser Lakay et supprimez chaque copie, sauvegardes comprises.", "ht": "Lè yon pèmisyon fini, sispann itilize Lakay epi efase chak kopi, sovgad yo tou."}, {"en": "A copy the owner gave you as a gift comes with a permission to use it. If anyone else gave you a copy and you hold no permission, do not open it: delete it, or ask the owner. Deleting a copy never needs a permission.", "fr": "Une copie que le propriétaire vous a offerte vient avec une permission de l'utiliser. Si quelqu'un d'autre vous a donné une copie et que vous n'avez pas de permission, ne l'ouvrez pas : supprimez-la, ou demandez au propriétaire. Supprimer une copie ne demande jamais de permission.", "ht": "Yon kopi pwopriyetè a ba ou kòm kado vini ak yon pèmisyon pou itilize l. Si yon lòt moun ba ou yon kopi epi ou pa gen pèmisyon, pa louvri l: efase l, oswa mande pwopriyetè a. Efase yon kopi pa janm bezwen pèmisyon."}, {"en": "What a store records with Lakay, such as its books, receipts and reports, is the store's own.", "fr": "Ce qu'un magasin enregistre avec Lakay, comme ses livres, ses reçus et ses rapports, appartient au magasin.", "ht": "Sa yon magazen anrejistre ak Lakay, tankou liv li, resi li ak rapò li, se pou magazen an."}, {"en": "A copy that is not one of the owner's releases, or that has been changed, is not genuine. It may be harmful: do not run it.", "fr": "Une copie qui n'est pas une des versions publiées par le propriétaire, ou qui a été changée, n'est pas authentique. Elle peut être dangereuse : ne la lancez pas.", "ht": "Yon kopi ki pa youn nan vèsyon pwopriyetè a pibliye, oswa yo chanje, pa otantik. Li ka danjere: pa lanse l."}, {"en": "To ask for a permission, write to the owner. Say who you are, which app you mean, and what you would like to do with it.", "fr": "Pour demander une permission, écrivez au propriétaire. Dites qui vous êtes, de quelle app il s'agit, et ce que vous aimeriez en faire.", "ht": "Pou mande yon pèmisyon, ekri pwopriyetè a. Di ki moun ou ye, ki aplikasyon ou vle di, ak sa ou ta renmen fè avè l."}], "contact": ""}, LICENCE = "LAKAY\nCopyright (c) 2026 Yannie D. Forest. All rights reserved.\n\n============================================================================\nOWNERSHIP, LICENCE AND PERMISSIONS\nVersion 3, 25 October 2026, made for Lakay on 21 November 2026. This notice\nreplaces every earlier notice.\n============================================================================\n\nIN PLAIN WORDS\n\n  • Lakay belongs to Yannie D. Forest alone. Only the owner may use, copy,\n    share, sell, change or remove any part of it.\n  • Anyone else needs a permission from the owner first. Seeing the code,\n    holding a copy, or paying for one gives no right.\n  • A permission is valid only if it is a file signed with the owner's key,\n    or a written message from the owner.\n  • A permission names one person, allows only what it says, and cannot be\n    passed on.\n  • The owner may withdraw a permission at any time, for any reason. It also\n    ends at once if its terms are broken.\n  • When a permission ends, stop using Lakay and delete every copy, backups\n    included.\n  • A copy the owner gave you as a gift comes with a permission to use it.\n    If anyone else gave you a copy and you hold no permission, do not open\n    it: delete it, or ask the owner. Deleting a copy never needs a\n    permission.\n  • What a store records with Lakay, such as its books, receipts and\n    reports, is the store's own.\n  • A copy that is not one of the owner's releases, or that has been\n    changed, is not genuine. It may be harmful: do not run it.\n  • To ask for a permission, write to the owner. Say who you are, which app\n    you mean, and what you would like to do with it.\n\nThis summary helps you read the terms. If it and the terms below ever\ndiffer, the terms below apply.\n\n============================================================================\nPART A. WORDS USED IN THIS NOTICE\n============================================================================\n\n1. WHAT THE WORDS MEAN\n\nIn this notice:\n\n  (a) \"The owner\" means Yannie D. Forest, and the owner's heirs and\n      successors.\n  (b) \"Lakay\" means the software called Lakay, and everything that forms\n      part of it or comes with it. This includes its source code and\n      compiled code; its page; every app, installer and package made of it\n      for any device; its Guidebook, lessons, tours and tips; Lakay Relay,\n      the store's own mailbox for its devices; its other text; its sounds,\n      pictures, icons, seal, name and visual design; the settings and data\n      the owner made for it; and every version, edition, update, translation\n      and part of any of these, released or not.\n  (c) \"A copy\" means any reproduction of Lakay or of any part of it, in any\n      form or medium, whole or in part, exact or changed. This includes a\n      copy kept only in memory, in a cache, in a backup, or in a fork of a\n      repository.\n  (d) \"A derived work\" means anything made from Lakay, based on it, adapted\n      or translated from it, or that contains any part of it. Section 3.6\n      says what is not a derived work.\n  (e) \"Use\" means to run, open, load, install, display or operate Lakay, or\n      any part of it, on any device. Reading this notice, checking whether a\n      copy is genuine (section 9), and deleting a copy are not use.\n  (f) \"Distribute\" means to give, send, share, publish, post, upload, host,\n      stream, sell, rent, lend, license or otherwise make Lakay or a copy\n      available to anyone, by any means, for payment or free, in public or\n      in private.\n  (g) \"A permission\" means a permission given by the owner as section 6 sets\n      out, or one of the limited permissions in section 6.8. \"The holder\"\n      means the person a permission names.\n  (h) \"The work of others\" means the software made by other people that\n      Lakay's programs for computers carry, listed in\n      THIRD_PARTY_NOTICES.txt.\n\n2. HOW TO READ THIS NOTICE\n\n  (a) \"Including\" means \"including, without limit\".\n  (b) The headings and IN PLAIN WORDS help the reader. They do not narrow\n      the terms. If they ever differ from the terms, the terms apply.\n  (c) The singular includes the plural, and the plural the singular.\n  (d) Where this notice says the owner \"may\" do something, the owner decides\n      alone, for any reason or for none.\n\n============================================================================\nPART B. OWNERSHIP\n============================================================================\n\n3. THE OWNER OWNS LAKAY\n\n3.1 Lakay is the sole original work of the owner. The owner conceived,\n    wrote, designed and built it, and owns it outright.\n\n3.2 The owner holds every right in Lakay, in every country, now and in the\n    future. This includes copyright, rights in designs, database rights,\n    rights in its name, seal and other marks, rights in confidential\n    information, moral rights, and every other right of any kind, registered\n    or not, that exists now or arises later.\n\n3.3 Moral rights are an author's personal rights in their own work. The\n    owner asserts the right to be identified as the author of Lakay. The\n    owner also objects to any distortion of Lakay, or other treatment of it,\n    that the owner has not made or approved.\n\n3.4 The name Lakay, its seal and its logo, the crest of The Offline Project,\n    and the names and seals of the owner's other apps are the owner's marks.\n    No one may use them, or anything likely to be mistaken for them, without\n    a permission.\n\n3.5 The work of others is not the owner's. Section 13 deals with it.\n\n3.6 What a store or a person records or makes with Lakay, such as a store's\n    books, records, receipts, reports, backups and notes, is not Lakay. It\n    is not a derived work only because Lakay helped to make it, or because\n    it carries parts of Lakay that Lakay put there itself, such as the\n    layout of a receipt or a report. It belongs to the store or the person\n    who made it, who may keep it after their permission ends; Lakay's\n    reports can be printed, and its sales, receipts and stock saved as\n    spreadsheet files (CSV), for that. Any part of Lakay that it carries\n    stays the owner's. Section 6.8 says how that part may go with the\n    store's work.\n\n============================================================================\nPART C. NO RIGHTS FOR ANYONE ELSE\n============================================================================\n\n4. NO RIGHT IS GIVEN\n\n4.1 This notice gives no right to anyone, except the limited permissions in\n    section 6.8. Every other right in Lakay is reserved to the owner.\n\n4.2 No right of any kind comes from any of these:\n\n  (a) Lakay's code being readable, visible or published;\n  (b) a repository being public;\n  (c) holding, receiving, buying or downloading a copy, or a copy being\n      given by someone other than the owner;\n  (d) the owner knowing of a use and saying nothing;\n  (e) any conduct, custom or earlier dealing;\n  (f) anything else at all, except a permission.\n\n4.3 A permission is the only licence anyone can have in Lakay. No permission\n    can be implied. No one gains one from anything the owner does, says or\n    leaves undone, even if they relied on it. In legal terms, no licence\n    arises by implication, by conduct or by estoppel.\n\n4.4 Where any of the owner's repositories is public, a service's own terms\n    may let its users view or copy what is kept there (for example, GitHub's\n    terms let its users view and fork a public repository on GitHub itself).\n    This notice does not take away what those terms give. Those terms give\n    only what they say, only within that service, and only through its own\n    features. They give no right to use, run, install, change or distribute\n    Lakay anywhere else. A fork or copy made that way is still bound by this\n    notice in full. This is the only exception to section 4.2.\n\n5. WHAT NO ONE ELSE MAY DO\n\n5.1 No one but the owner may do any of these things without a permission\n    that expressly allows it:\n\n  (a) use Lakay;\n  (b) make a copy, keep a copy, or download one to keep;\n  (c) distribute Lakay or a copy of it, in whole or in part;\n  (d) change, edit, adapt, translate, extend or combine Lakay, or make a\n      derived work;\n  (e) take any part out of Lakay, or delete or disable any of its features,\n      in a copy that is then used or distributed;\n  (f) reverse engineer, decompile, disassemble or take apart any compiled\n      form of Lakay, except where the law allows it without permission and\n      that right cannot be excluded;\n  (g) remove, hide, alter or work around this notice, the copyright line,\n      the build stamp, the fingerprints, the seal, the edition, or the\n      holder's name or permission number written into a copy (section 9\n      explains these marks);\n  (h) remove, disable, bypass, weaken or defeat any technical measure in\n      Lakay, including its seal, its fingerprints, its terms and the\n      agreement to them, and its licence card, or make, share or use any\n      tool, code or instructions for doing so;\n  (i) present a copy, changed or not, as the owner's release, or present\n      Lakay or any part of it as the work of anyone but the owner;\n  (j) add any software, code or content to Lakay and pass it on, or release\n      any software under Lakay's name or marks, or in any way that suggests\n      it comes from the owner or has the owner's approval;\n  (k) use Lakay, or any part of it, to develop, train, tune, test or\n      evaluate any artificial intelligence or machine learning system, or\n      put it in any dataset;\n  (l) mine, scrape, harvest or analyse Lakay by automated means. This\n      includes text and data mining, which means using software to copy and\n      study content in bulk. The owner expressly reserves this right, and\n      does not allow it. This does not cover what a device or service does\n      on its own to keep its users safe, such as a virus check;\n  (m) use Lakay in or for any product, service, business or other commercial\n      purpose;\n  (n) use Lakay for anything unlawful, or to harm any person, device or\n      system;\n  (o) help, allow or encourage anyone else to do any of these things.\n\n5.2 For anyone but the owner, anything that a permission does not expressly\n    allow is forbidden.\n\n============================================================================\nPART D. PERMISSIONS\n============================================================================\n\n6. HOW A PERMISSION IS GIVEN\n\n6.1 Only the owner can give a permission. No one else can give, extend,\n    renew or change one: not a holder, a seller, a host, an employer, or\n    anyone who says they act for the owner without the owner's own written\n    word.\n\n6.2 Apart from the limited permissions in section 6.8, a permission must be\n    in writing, and is valid only if it is one of these:\n\n  (a) a permission file signed with one of the owner's keys, whether it is\n      given to the holder or written into a copy made for them. It is valid\n      only if its signature is genuine and nothing in it has changed since\n      it was signed. A file signed with a key that was lost, stolen or used\n      without the owner's consent is not a permission. What a copy of Lakay\n      shows does not decide whether a permission is valid; or\n  (b) a letter or message from the owner that names the holder, the apps it\n      covers and what is allowed, and says when it begins and when it ends,\n      if it has an end.\n\n6.3 Every permission:\n\n  (a) names the person it is given to, and covers that person alone;\n  (b) allows only what it names, for the apps it names, and nothing more. A\n      permission to use or install an app also allows the copies this needs\n      on the holder's own devices, such as a copy in memory, but no others;\n  (c) begins on its start date, and ends on its end date if it has one;\n  (d) is personal to its holder. The permission itself cannot be given,\n      sold, lent, shared or passed on in any way, and its holder cannot\n      grant anyone else a permission under it. In legal terms, it cannot be\n      transferred, assigned or sublicensed. A holder may pass on copies only\n      as section 6.6 allows;\n  (e) leaves the owner free to do anything with Lakay, and to give, refuse\n      or withdraw any other permission;\n  (f) can be withdrawn by the owner at any time, for any reason or none. It\n      ends as soon as the owner tells the holder, by any means, or as soon\n      as the owner publishes, or gives the holder, a signed list of\n      withdrawn permissions that names it, whichever comes first. Lakay\n      works without a connection, so it may still show a permission as valid\n      after it has ended. That does not keep the permission alive. If the\n      law that applies does not allow a permission to be withdrawn at once,\n      it ends after the shortest notice that law allows;\n  (g) ends at once, without notice, if its holder breaks it or this notice,\n      or disputes the owner's rights in Lakay.\n\n6.4 Paying for anything, including a copy, a service or a permission, does\n    not change these terms, unless a written agreement signed by the owner\n    says so in express words.\n\n6.5 The owner may refuse any request for a permission, and need not give a\n    reason.\n\n6.6 A permission can allow any of these things, and each means only what is\n    written here:\n\n  (a) \"use it\": to use Lakay;\n  (b) \"install it on their own devices\": to install Lakay on devices the\n      holder owns or controls;\n  (c) \"change it, for their own use\": to change Lakay for the holder's own\n      use. A changed copy may not be passed on to anyone;\n  (d) \"make install packages of it\": to make install packages of Lakay for\n      the holder's own devices. A package may be passed on only as (e) or\n      (f) allows;\n  (e) \"give a copy to someone named in a permission of their own\": to give\n      an unchanged copy, without charge, to a person who holds a permission\n      of their own that allows them to use it;\n  (f) \"sell it\": to sell unchanged copies, on terms the owner sets in\n      writing, only to persons who hold a permission of their own that\n      allows them to use it.\n\n6.7 A copy passed on under a permission carries no right with it. The person\n    who receives it may do only what their own permission allows. Selling a\n    copy never sells Lakay, or any right in it.\n\n6.8 This notice itself gives these limited permissions, and no others.\n    Section 6.2 does not apply to them, and section 6.3 does, except that\n    they name no one. The owner may withdraw any of them at any time, for\n    everyone or for one person, by telling them, by changing this notice,\n    or, for (b), by taking the page down.\n\n  (a) A person to whom the owner gives a copy as a gift may use it, and\n      install it on their own devices, unless the owner says otherwise when\n      giving it. A permission file that comes with the copy takes the place\n      of this permission.\n  (b) Anyone may use a copy that the owner offers on the owner's own web\n      pages for the public to try, there and while the owner offers it. They\n      may not keep, change or pass on a copy, beyond what their browser\n      keeps by itself to show the page.\n  (c) A person who may use Lakay may pass on, inside a work of their own as\n      section 3.6 describes, the parts of Lakay that Lakay itself puts\n      there. Those parts may not be taken out, used on their own, or used to\n      make anything that does the work of Lakay.\n\n7. WHEN A PERMISSION ENDS\n\n7.1 When a permission ends, for any reason, its holder must at once stop all\n    use of Lakay, delete or destroy every copy and every derived work they\n    hold or control, backups included, and confirm this to the owner in\n    writing if the owner asks. Section 3.6 says what the holder keeps.\n\n7.2 The end of a permission does not end the holder's duties under this\n    notice, or any claim the owner has.\n\n7.3 Nothing done under a permission gives its holder any further right or\n    claim. Any change, improvement or derived work a holder makes belongs to\n    the owner from the moment it is made, and the holder will sign anything\n    the owner reasonably asks to confirm this. If the law does not let it\n    pass to the owner in this way, the holder gives the owner a free,\n    permanent, worldwide and exclusive right to it, which cannot be\n    withdrawn, and will not use it or pass it on except as a permission\n    allows. As far as the law allows, the holder will not assert any moral\n    right in it against the owner or anyone the owner allows. Section 3.6\n    says what is not a derived work.\n\n7.4 When a permission ends, permissions the owner has given to other people\n    do not end with it. A person who received a copy from the holder may go\n    on only as their own permission allows. The holder must at once stop\n    offering, giving or selling copies.\n\n8. SUGGESTIONS AND CONTRIBUTIONS\n\n8.1 Anyone who sends the owner a suggestion, report, idea or change for\n    Lakay agrees that the owner may use it freely, in any way, without\n    payment, credit or any other duty.\n\n8.2 Sending it gives the sender no right in Lakay.\n\n============================================================================\nPART E. GENUINE COPIES AND THE OWNER'S PROTECTION\n============================================================================\n\n9. GENUINE COPIES\n\n9.1 Only the owner releases Lakay. A copy is genuine only if it is one of\n    the owner's releases and has not been changed. Being genuine says only\n    where a copy came from. It gives no right to use it; only a permission\n    does.\n\n9.2 Each release names its build, and lists its SHA-256 fingerprints on its\n    release page and in BUILD_INFO.txt. A copy whose fingerprint differs is\n    not genuine.\n\n9.3 A copy that is not genuine may contain harmful software. Do not run it.\n    The owner is not responsible for any copy that is not genuine, or for\n    anything it does.\n\n9.4 Each build carries its build stamp, shown in Lakay's About. This is\n    stated here openly. Removing or changing it breaks this notice.\n\n10. THE OWNER'S REMEDIES\n\n10.1 Doing any of the things in section 5 without a permission, or beyond\n     what a permission allows, breaks this notice and infringes the owner's\n     rights. The owner may take any action the law allows, in any country,\n     including asking a court to stop it at once, and claiming damages,\n     profits and costs.\n\n10.2 These remedies add to one another, and to any other remedy the law\n     gives.\n\n10.3 If the owner does not act on a breach at once, or at all, the owner\n     keeps every right to act on it, and on any other breach, later.\n\n============================================================================\nPART F. GENERAL TERMS\n============================================================================\n\n11. NO WARRANTY\n\nLakay is provided as it is, with all its faults, and without any promise or\nwarranty of any kind, to the fullest extent the law allows. Keep your own\nbackups.\n\n12. NO LIABILITY\n\nTo the fullest extent the law allows, the owner is not liable for any loss\nor damage of any kind that comes from Lakay, from its use, or from not being\nable to use it. This does not limit any liability that the law does not\nallow to be limited, such as for death or personal injury caused by\nnegligence, or for fraud.\n\n13. THE WORK OF OTHERS\n\n13.1 Lakay's programs for computers carry software made by others, listed in\n     THIRD_PARTY_NOTICES.txt, each under its own licence. Those licences\n     apply to those parts alone, and nothing in this notice takes away a\n     right they give.\n\n13.2 Those parts give no right in Lakay itself. Everything in Lakay that is\n     not listed there is the owner's.\n\n14. THE OWNER'S OTHER APPS\n\n14.1 Some parts of Lakay come from other apps made by the owner, such as\n     Carpe Diem's sticky notes and name tip, and Ingenium's door. Each\n     belongs to the owner alone. Where it carries a notice of its own, that\n     notice applies to it. Where two of the owner's notices differ, the\n     stricter one applies.\n\n14.2 Where any app made by the owner carries no notice of its own, this\n     notice applies to it as if its name stood in place of Lakay.\n\n15. WHERE THIS NOTICE APPLIES\n\n15.1 This notice applies to Lakay wherever it is found: in its repositories,\n     on any website or service, on any device, in every build, edition and\n     package of it, in every copy and every derived work, and to everyone\n     who has, sees or uses any of them.\n\n15.2 Every permission is given on the terms of this notice, which form part\n     of it. Anyone who uses Lakay accepts these terms. Anyone who does not\n     accept them has no permission, and must not use Lakay.\n\n16. CHANGES TO THIS NOTICE\n\n16.1 The owner may change this notice at any time. A new version applies\n     from the moment it is published with Lakay or given to a holder. A\n     holder who does not accept a new version must stop using Lakay, and\n     their permission then ends.\n\n16.2 No change can give anyone a right that the owner has not written into a\n     permission.\n\n17. IF A PART CANNOT BE ENFORCED\n\nIf a court finds that any part of this notice cannot be enforced, that part\nstill applies as far as the law allows, and the rest of the notice applies\nin full.\n\n18. THE LAW\n\n18.1 Nothing in this notice limits a right that the law gives you and that\n     cannot be limited by agreement.\n\n18.2 This notice, and every permission, is governed by the law of the\n     country where the owner lived on the date of this version, and the\n     courts of that country may decide any dispute about it. A claim that\n     the owner's rights have been infringed may also be brought under the\n     law of any country where the infringement happens. The owner may also\n     bring a claim in any other court that can hear it.\n\n19. WHAT CONTINUES\n\nWhen a permission ends, only that permission ends. Every part of this notice\nstill applies to its former holder, and to everyone else.\n\n============================================================================\nTo ask for a permission, write to the owner. Only the owner can give one.\n============================================================================\n", NOTICES = "LAKAY: THIRD-PARTY NOTICES\n==========================\n\nLakay itself is the work of Yannie D. Forest; see LICENCE.txt. Lakay's page\n(the app, and the web app) carries no software, fonts or pictures made by\nothers. Its programs for computers carry the following open-source software,\nunder its own licences; the texts are at the addresses given.\n\n1. The Windows and Mac programs' window and packaging\n   These are carried inside the programs for Windows and the Mac, each\n   under its own licence (Lakay Relay, once packaged as a program, carries\n   Python and PyInstaller's bootloader too):\n   - Python, Python Software Foundation License,\n     https://docs.python.org/3/license.html\n   - pywebview, BSD 3-Clause License, https://github.com/r0x0r/pywebview\n   - PyInstaller's bootloader, GPL 2.0 with an exception that permits\n     distributing programs built with it,\n     https://pyinstaller.org/en/stable/license.html\n   - pythonnet (Windows), MIT License, https://github.com/pythonnet/pythonnet\n   - PyObjC (Mac), MIT License, https://github.com/ronaldoussoren/pyobjc\n\n2. What the devices provide\n   The programs show Lakay's page in the web view of the device itself\n   (Microsoft Edge WebView2 on Windows, WebKit on the Mac, the iPhone and\n   the iPad, and the Android web view on the Fire tablet). These are parts\n   of the devices' own systems, under their makers' terms, and are not\n   carried by Lakay. The emoji are the device's own.\n\nNothing here gives any right in Lakay itself. Everything in Lakay that is\nnot listed here is the work of Yannie D. Forest (LICENCE.txt, section 13).\n";
+  var T = E.terms = {};
+  var VIEW = "short", V = null, ST = "ask", GV = "short", TICK = false, seenDoor = false;
+  function lang() { return E.lang === "fr" || E.lang === "ht" ? E.lang : "en"; }
+  function L(o) { return (o && (o[lang()] || o.en)) || ""; }
+  /* a day in words, without its weekday: "20 November 2026" */
+  function dayWords(d) { return E.fmtDate(d, "long").replace(/^\S+ /, ""); }
+  T.version = function () { return L(DATA.version); };
+  T.versionEn = DATA.version.en;
+  T.contact = function () { return String(U.prefGet("termsContact", "") || DATA.contact || "").trim(); };
+  /* the owner of the real store: the one who adds the contact, and who is told the texts are a draft */
+  function ownerHere() { var B = E.books; return !!(B && B.isOpen && B.mode !== "practice" && B.isOwner && B.isOwner()); }
+
+  /* ---------- the texts, in the reader's language ---------- */
+  function rich(s) {
+    return String(s).split(/(\{contact\}|\{age\})/).filter(Boolean).map(function (p) {
+      if (p === "{contact}") { var c = T.contact(); return c ? h("b.tp-contact", null, c) : h("span.tp-blank", null, t("terms.blankContact")); }
+      if (p === "{age}") return h("span.tp-blank", null, t("terms.blankAge"));
+      return p;
+    });
+  }
+  function doc(kind) {
+    return h("div.tp-doc", null, DATA[kind].map(function (x) { return h("div.tp-sec", null, [h("h3", null, L(x.h)), h("p", null, rich(L(x.b)))]); })
+      .concat(lang() !== "en" ? [h("p.tp-governs", null, t("terms.governs"))] : []));
+  }
+  function shorts(cls) { return h("div." + cls + "s", null, DATA.short.map(function (x) { return h("div." + cls, null, [h("b", null, L(x.t)), h("span", null, L(x.b))]); })); }
+  function shield() {
+    var NS = "http://www.w3.org/2000/svg", svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("aria-hidden", "true"); svg.setAttribute("focusable", "false");
+    ["M12 2.8l7.5 3v5.6c0 4.6-3.2 8.4-7.5 9.8-4.3-1.4-7.5-5.2-7.5-9.8V5.8z", "M9 11.5h6M9 14.5h4"].forEach(function (d) {
+      var p = document.createElementNS(NS, "path"); p.setAttribute("d", d); svg.appendChild(p);
+    });
+    return svg;
+  }
+  function rec() { try { var r = JSON.parse(U.prefGet("terms", "") || "null"); return r && typeof r === "object" && r.v ? r : null; } catch (e) { return null; } }
+  T.record = rec;
+  T.agreed = function () { var r = rec(); return !!(r && r.v === DATA.version.en); };
+  T.need = function () { return !T.agreed(); };
+  function agreedLine() {
+    var r = rec(); if (!r || !r.at) return null;
+    var d = new Date(r.at);
+    return h("p.tp-agreed", null, t("terms.agreed", { v: r.v === DATA.version.en ? T.version() : r.v, d: dayWords(d), t: E.fmtTime(d) }));
+  }
+
+  /* ---------- Terms and privacy: in Settings, Ownership, and from About ---------- */
+  T.card = function (inSettings) {
+    var c = h("div.tp-card", { id: inSettings ? "termsCard" : "termsRead" });
+    function paint() {
+      var mine = !!inSettings && ownerHere();
+      if (VIEW === "contact" && !mine) VIEW = "short";
+      U.clear(c);
+      c.appendChild(h("div.tp-head", null, [h("span.tp-coin", { "aria-hidden": "true" }, shield()),
+        h("div", null, [h("h3.tp-title", null, t("terms.h")), h("p.tp-sub", null, t("terms.sub", { v: T.version() }))])]));
+      c.appendChild(h("div.tp-chips", null, [h("span.tp-chip.ok", null, t("terms.chip.maker")), h("span.tp-chip.sky", null, t("terms.chip.offline")),
+        h("span.tp-chip.lav", null, t("terms.chip.sealed")), mine ? h("span.tp-chip.amb#termsDraft", null, t("terms.chip.draft")) : null]));
+      var parts = [["short", "terms.p.short"], ["privacy", "terms.p.privacy"], ["terms", "terms.p.terms"]].concat(mine ? [["contact", "terms.p.contact"]] : []);
+      c.appendChild(h("div.inv-tabs.tp-parts", { role: "tablist", "aria-label": t("terms.h") }, parts.map(function (p) {
+        return h("button.inv-tab.tp-part", { type: "button", role: "tab", "aria-selected": String(VIEW === p[0]), "data-p": p[0], onclick: function () { VIEW = p[0]; paint(); } }, t(p[1]));
+      })));
+      if (VIEW === "short") c.appendChild(shorts("tp-short"));
+      else if (VIEW === "privacy") c.appendChild(doc("privacy"));
+      else if (VIEW === "terms") c.appendChild(doc("terms"));
+      else {
+        var inp = E.ui.input({ id: "tpContact", maxlength: "200", placeholder: t("terms.contactPh"), value: U.prefGet("termsContact", "") });
+        c.appendChild(E.ui.field("terms.contactL", inp));
+        c.appendChild(h("p.hint", null, t("terms.contactFine")));
+        c.appendChild(h("div.row-keys", null, [
+          h("button.key.primary#tpSave", { type: "button", "data-a": "save", onclick: function () { var v = String(inp.value || "").trim().slice(0, 200); U.prefSet("termsContact", v); E.ui.toast(t(v ? "terms.saved" : "terms.cleared"), "good"); paint(); } }, t("save")),
+          h("button.key#tpClear", { type: "button", "data-a": "clear", onclick: function () { U.prefSet("termsContact", ""); E.ui.toast(t("terms.cleared"), "good"); paint(); } }, t("terms.clear"))]));
+      }
+      var al = agreedLine(); if (al) c.appendChild(al);
+    }
+    paint();
+    c.__paint = paint;
+    return c;
+  };
+
+  /* ---------- the licence, as a document: the reading Ingenium's PermitCore gives its own licence (6.7). The text stays plain (the
+     repositories carry the same file, and Save keeps it as it is); its regular shape is read here: the title block, IN PLAIN
+     WORDS with its bullets, PART headings between rules, numbered section headings in capitals, clauses "4.1", lists "(a)",
+     wrapped lines indented under their first line. Lakay's reading counts a list item only at the margin, so that a wrapped
+     line that begins with "(f)" stays in its clause. ---------- */
+  var ITEM = /^ {0,2}(•|\([a-z]\))\s/;
+  function licenceDoc(text) {
+    var lines = String(text || "").replace(/\r/g, "").split("\n"), i = 0, n = lines.length, toc = [], secN = 0, tag = Math.random().toString(36).slice(2, 7);
+    var ver = (/Version (\d+)/.exec(text) || [])[1] || "";
+    var box = h("div.lic-doc", { role: "region", tabindex: "0", "aria-label": t("lic.readH") + (ver ? ", " + t("lic.versionN", { n: ver }) : "") });
+    function rule(l) { return /^={10,}$/.test(l); }
+    function blank(l) { return !/\S/.test(l); }
+    /* a block: the first line and the indented lines that continue it */
+    function take(first, indent) {
+      var s = first.trim();
+      while (i < n && !blank(lines[i]) && /^\s/.test(lines[i]) && lines[i].length - lines[i].replace(/^\s+/, "").length >= indent && !ITEM.test(lines[i])) { s += " " + lines[i].trim(); i++; }
+      return s;
+    }
+    /* a plain paragraph: its wrapped lines are not indented, so it runs to the next blank line or the next structural line */
+    function para(first) {
+      var s = first.trim();
+      while (i < n && !blank(lines[i]) && !rule(lines[i]) && !ITEM.test(lines[i]) && !/^\d+\.\d+ /.test(lines[i]) && !/^\d+\. [^a-z]+$/.test(lines[i].trim())) { s += " " + lines[i].trim(); i++; }
+      return s;
+    }
+    /* the title block: the name, the copyright, then the notice's title and its version (its wrapped lines read as one) */
+    function metas(into) {
+      var run = [];
+      function put() { if (run.length) into.appendChild(h("p.lcd-meta", null, run.join(" "))); run = []; }
+      while (i < n && !rule(lines[i])) { if (blank(lines[i])) put(); else run.push(lines[i].trim()); i++; }
+      put();
+    }
+    var head = h("div.lcd-head"), app = h("p.lcd-app", null, (lines[0] || "Lakay").trim()); head.appendChild(app); i = 1;
+    metas(head);
+    if (rule(lines[i] || "")) {
+      i++; var tt = (lines[i] || "").trim(); i++;
+      if (!/^ownership,? licen[cs]e and permissions$/i.test(tt)) head.insertBefore(h("h3.lcd-title", null, tt.charAt(0) + tt.slice(1).toLowerCase()), app.nextSibling);  /* not the card's own heading a second time */
+      metas(head); i++;
+    }
+    box.appendChild(head);
+    var tocList = h("ol"), tocBox = h("details.lcd-toc", null, [h("summary", null, t("lic.contents")), tocList]);
+    var plain = null, list = null;
+    while (i < n) {
+      var l = lines[i];
+      if (blank(l)) { i++; list = null; continue; }
+      if (rule(l)) {
+        i++; var nx = (lines[i] || "").trim(), last = true;
+        for (var q = i + 2; q < n; q++) if (!blank(lines[q])) { last = false; break; }
+        if (nx && rule(lines[i + 1] || "") && last) { i += 2; box.appendChild(h("p.lcd-foot", null, nx)); continue; }
+        if (nx && rule(lines[i + 1] || "")) { i += 2; if (plain) { plain = null; box.appendChild(tocBox); } box.appendChild(h("h4.lcd-part", null, nx)); continue; }
+        if (nx) { i++; var ft = take(nx, 0); while (i < n && !rule(lines[i])) { if (!blank(lines[i])) ft += " " + lines[i].trim(); i++; } i++; box.appendChild(h("p.lcd-foot", null, ft)); }
+        continue;
+      }
+      if (/^IN PLAIN WORDS$/.test(l.trim())) { plain = h("div.lcd-plain", null, [h("h4", null, "In plain words"), h("ul")]); box.appendChild(plain); i++; continue; }
+      if (plain && /^ {0,2}•\s/.test(l)) { i++; plain.children[1].appendChild(h("li", null, take(l.replace(/^\s*•\s/, ""), 4))); continue; }
+      if (plain) { i++; plain.appendChild(h("p.lcd-note", null, para(l))); continue; }
+      var mh = /^(\d+)\. ([^a-z]+)$/.exec(l.trim());
+      if (mh) {
+        i++; secN++;
+        var hd = h("h4.lcd-h", { id: "lcd-" + tag + "-" + secN, tabindex: "-1" }, mh[1] + ". " + mh[2].charAt(0) + mh[2].slice(1).toLowerCase().replace(/\blakay\b/g, "Lakay"));
+        box.appendChild(hd); toc.push(hd); list = null; continue;
+      }
+      var mc = /^(\d+\.\d+) (.*)$/.exec(l);
+      if (mc) { i++; box.appendChild(h("div.lcd-cl", null, [h("b", null, mc[1]), h("span", null, take(mc[2], mc[1].length + 1))])); list = null; continue; }
+      var ml = /^ {0,2}\(([a-z])\) (.*)$/.exec(l);
+      if (ml) { i++; if (!list) { list = h("ol.lcd-list"); box.appendChild(list); } list.appendChild(h("li", null, [h("span", null, "(" + ml[1] + ")"), h("span", null, take(ml[2], 6))])); continue; }
+      i++; box.appendChild(h("p", null, para(l))); list = null;
+    }
+    toc.forEach(function (hd) {
+      tocList.appendChild(h("li", null, h("button", { type: "button", onclick: function () { try { hd.scrollIntoView({ block: "start", behavior: "auto" }); } catch (e) { } try { hd.focus({ preventScroll: true }); } catch (e) { } } }, hd.textContent)));
+    });
+    if (!tocBox.parentNode) box.insertBefore(tocBox, box.children[1] || null);
+    return box;
+  }
+  T.licenceDoc = function () { return licenceDoc(LICENCE); };
+
+  /* ---------- Ownership, licence and permissions ---------- */
+  T.licenceCard = function (inSettings) {
+    var built = new Date(String(E.BUILD.date) + "T12:00:00"), when = isNaN(built.getTime()) ? String(E.BUILD.date) : dayWords(built);
+    var ver = (/Version (\d+)/.exec(LICENCE) || [])[1] || "";
+    var dt = h("details.lic-text", null, [h("summary", null, t("lic.read") + (ver ? " (" + t("lic.versionN", { n: ver }) + ")" : "")), licenceDoc(LICENCE)]);
+    return h("div.lic-card", { id: inSettings ? "licenceCard" : "licenceRead" }, [
+      h("div.tp-head", null, [h("span.tp-coin.lic-coin", { "aria-hidden": "true" }, "©"),
+        h("div", null, [h("h3.tp-title", null, t("lic.h")), h("p.lic-copy", null, t("lic.copy"))])]),
+      h("p.lic-line", null, t("lic.sole")),
+      h("p.lic-line.lic-note", null, t("lic.permit")),
+      h("p.lic-line.lic-note.lic-this", null, t("lic.this", { b: E.BUILD.number, d: when })),
+      lang() !== "en" ? h("div.lic-plainbox", null, [h("h4", null, t("lic.plain")), h("ul.lic-plain", null, DATA.licence.map(function (x) { return h("li", null, L(x)); })), h("p.hint", null, t("lic.english"))]) : null,
+      dt,
+      h("div.row-keys", null, [
+        h("button.key.lic-save", { type: "button", onclick: function () { E.ui.saveFile("LICENCE.txt", "text/plain", LICENCE).then(function () { E.ui.toast(t("lic.saved"), "good"); }); } }, [E.ui.emo("📜"), t("lic.save")]),
+        h("button.key.lic-notices", { type: "button", onclick: function () { T.readNotices(); } }, [E.ui.emo("🧩"), t("lic.notices")])])]);
+  };
+  T.readNotices = function () {
+    E.ui.dialog({ title: t("lic.noticesH"), emoji: "🧩", wide: true, body: [h("p.hint", null, t("lic.noticesP")), h("pre.lic-pre#licNoticesText", null, NOTICES)], actions: [{ label: t("close"), kind: "primary" }] });
+  };
+  /* from About: anyone reads them, the staff and the website's visitors too */
+  T.readLicence = function () {
+    E.ui.dialog({ title: t("lic.h"), emoji: "📜", wide: true, body: [T.licenceCard(false)], actions: [{ label: t("close"), kind: "primary" }] });
+  };
+  T.read = function (view) {
+    VIEW = view || "short";
+    E.ui.dialog({ title: t("terms.h"), emoji: "🛡️", wide: true, body: [T.card(false)], actions: [{ label: t("close"), kind: "primary" }] });
+  };
+  /* to Settings, Ownership, at the card (whoever may open Settings), or the same card from About (anyone else) */
+  T.show = function (view) {
+    VIEW = view || "privacy";
+    var ui = E.ui;
+    if (E.books && E.books.isOpen && ui.allowed && ui.allowed("settings")) {
+      if (ui.current !== "settings") ui.go("settings");
+      setTimeout(function () { var c = document.getElementById("termsCard"); if (c) { if (c.__paint) c.__paint(); try { c.scrollIntoView({ block: "start", behavior: ui.still && ui.still() ? "auto" : "smooth" }); } catch (e) { } } }, 150);
+    } else T.read(VIEW);
+  };
+  T.repaint = function () { ["termsCard", "termsRead"].forEach(function (id) { var c = document.getElementById(id); if (c && c.__paint) c.__paint(); }); };
+
+  /* ---------- before you begin: agreeing to the terms ---------- */
+  function atDoor() { return !!document.getElementById("introDoor") && !document.getElementById("lockDoor"); }
+  function key(label, cls, fn, id) { return h("button.key.tg-key" + (cls ? "." + cls : "") + (id ? "#" + id : ""), { type: "button", onclick: fn }, label); }
+  function openSheet() {
+    if (V) return;
+    V = h("div.tg-veil#termsGate");
+    V.appendChild(h("div.tg", { role: "dialog", "aria-modal": "true", "aria-label": t("gate.h") }));
+    document.body.appendChild(V);
+    window.addEventListener("keydown", trap, true);
+    paintSheet();
+  }
+  function closeSheet() { if (!V) return; V.remove(); V = null; window.removeEventListener("keydown", trap, true); }
+  /* the keyboard stays in the sheet: Tab goes round its own keys, and Escape does not close it. Lakay listens first (on the
+     window), so that no key reaches the rooms behind the sheet: the register's keys, the scanner, the rail's shortcuts. */
+  function trap(e) {
+    if (!V) return;
+    e.stopPropagation();
+    if (e.key === "Escape") { e.preventDefault(); return; }
+    if (!V.contains(e.target) && e.key !== "Tab") { e.preventDefault(); return; }
+    if (e.key !== "Tab") return;
+    var f = Array.prototype.filter.call(V.querySelectorAll("button,input,[tabindex='0']"), function (x) { return !x.disabled && x.offsetParent !== null; });
+    if (!f.length) return;
+    var i = f.indexOf(document.activeElement);
+    if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+    else if (!e.shiftKey && (i === -1 || i === f.length - 1)) { e.preventDefault(); f[0].focus(); }
+  }
+  function paintSheet() {
+    var s = V && V.firstChild; if (!s) return;
+    U.clear(s);
+    if (ST === "no") {
+      s.appendChild(h("span.tg-chip.no", null, t("gate.noChip")));
+      s.appendChild(h("h2", null, t("gate.noH")));
+      s.appendChild(h("p.tg-said#tgSaid", null, t("gate.noP")));
+      s.appendChild(h("div.tg-row", null, [key(t("gate.back"), "", back, "tgBack"), key(t("gate.again"), "primary", function () { ST = "ask"; GV = "terms"; paintSheet(); }, "tgAgain")]));
+      try { s.querySelector("#tgAgain").focus({ preventScroll: true }); } catch (e) { }
+      return;
+    }
+    s.appendChild(h("span.tg-chip", null, t("gate.chip")));
+    s.appendChild(h("h2", null, t("gate.h")));
+    s.appendChild(h("div.inv-tabs.tg-tabs", { role: "tablist", "aria-label": t("gate.h") }, [["short", "terms.p.short"], ["terms", "terms.p.terms"], ["privacy", "terms.p.privacy"]].map(function (x) {
+      return h("button.inv-tab.tg-tab", { type: "button", role: "tab", "aria-selected": String(GV === x[0]), "data-g": x[0], onclick: function () {
+        GV = x[0]; paintSheet(); try { V.querySelector('.tg-tab[aria-selected="true"]').focus({ preventScroll: true }); } catch (e) { }
+      } }, t(x[1]));
+    })));
+    var rd = h("div.tg-read", { role: "tabpanel", tabindex: "0" });
+    if (GV === "short") { rd.appendChild(shorts("tg-short")); rd.appendChild(h("p.tg-more.tg-moreIn", null, t("gate.more"))); }
+    else rd.appendChild(doc(GV));
+    s.appendChild(rd);
+    s.appendChild(h("p.tg-more", null, t("gate.kept", { v: T.version() })));
+    var cb = h("input#tgTick", { type: "checkbox" }); cb.checked = TICK;
+    s.appendChild(h("label.tg-tick", { for: "tgTick" }, [cb, h("span", null, t("gate.tick"))]));
+    var agr = key(t("gate.agree"), "primary", agree, "tgAgree"); agr.disabled = !TICK;
+    cb.addEventListener("change", function () { TICK = cb.checked; agr.disabled = !TICK; });
+    s.appendChild(h("div.tg-row", null, [key(t("gate.decline"), "", function () { ST = "no"; paintSheet(); }, "tgDecline"), agr]));
+    try { (V.querySelector('.tg-tab[aria-selected="true"]') || rd).focus({ preventScroll: true }); } catch (e) { }
+  }
+  function agree() {
+    if (!TICK) return;
+    U.prefSet("terms", JSON.stringify({ v: DATA.version.en, at: Date.now(), build: E.BUILD && E.BUILD.number }));
+    closeSheet(); T.repaint();
+  }
+  /* back to the welcome door: the books close if they were open; the door's Refresh and Reset are there (Build 7) */
+  function back() {
+    closeSheet(); seenDoor = true;
+    if (E.books && E.books.isOpen) E.books.lock("terms");
+    else if (E.door && E.door.show) E.door.show("").catch(function (e) { console.error(e); });
+  }
+  /* asked once the welcome door has opened: over the sign-in, the set-up, the practice store, joining or restoring */
+  function check() {
+    var app = document.getElementById("app");
+    if (!app) return;
+    if (atDoor()) { seenDoor = true; return; }
+    if (V || !seenDoor || !app.firstChild || !T.need()) return;
+    ST = "ask"; GV = "short"; TICK = false; openSheet();
+  }
+  T.check = check;
+  T.gate = { need: T.need, agreed: T.agreed, record: rec, open: function () { ST = "ask"; GV = "short"; TICK = false; openSheet(); }, close: closeSheet };
+  function watch() {
+    var app = document.getElementById("app");
+    if (!app) { setTimeout(watch, 200); return; }
+    try { new MutationObserver(function () { setTimeout(check, 0); }).observe(app, { childList: true }); } catch (e) { }
+    setInterval(function () { if (!V) check(); }, 3000);
+    check();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", watch); else watch();
 })();
 
 /* EMPORIUM | Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED. See LICENCE.txt.

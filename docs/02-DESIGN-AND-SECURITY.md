@@ -190,6 +190,25 @@ works. What matters for security:
 - Limits: removal does not change the Store Key, so a removed device still opens, with a person's password, on what it
   held. An invitation used on two devices lets the first one heard from keep the place, and refuses the other as a fork.
 
+**Stage 3, the relays at home (Build 26).** The owner's choice (20 November 2026) is `06-THE-RELAY.md`: the owner's own
+server and private network, on two Mac minis at home that also hold the books. What matters for security:
+
+- Lakay Relay (`relay/lakay_relay.py`) keeps only sealed bundles, each sealed with the Store Key on the device that made
+  it. It never holds the books, the Store Key or a password, and it cannot read what it keeps.
+- It answers only to keys. The owner's key is made from the owner's password on a device (PBKDF2, salted with a label and
+  the store's id); each device makes a random key of its own. The relay keeps only the SHA-256 of each and compares them in
+  constant time. A new relay belongs to no store until the owner claims it with its claim code (16 characters; eight
+  wrong codes, then a pause of ten minutes) and the owner's password.
+- A removed device's key can be closed at the relays, so it can no longer fetch new changes from them.
+- The page may reach only the relays named in `build.json`, through its security policy's `connect-src`; with none, it
+  reaches nowhere. Relay state on a device (its key, its place in each relay's list) is sealed with the Store Key in that
+  device's own database, and is never put in a backup.
+- Limits: the relay is built on the web server of Python's standard library, which Python's documentation does not
+  recommend for the open internet. It must answer only inside the store's private network (WireGuard on the home
+  router, or Tailscale), with the owner's own certificate for https. Anyone on that network who learns a device's key
+  could fetch sealed bundles, which they still cannot open without the Store Key. The relay limits sizes (16 MB a
+  bundle, 2 GB in all) and keeps bundles 30 days.
+
 ## 6. Payments (Stage 7)
 
 When cards are added, the card system (for example Square) handles the card. Emporium records only the amount, the
@@ -262,6 +281,30 @@ turns it off. Lakay refuses a card's number wherever a booking could hold one (t
 machines do), and refuses what looks like a passport or identity number. That second check is a guess and is said to
 be one. Money paid and given back is never erased: a payment is voided with a reason, a booking is cancelled with a
 reason and the part of the fee kept. Verify replays each booking's status, prices, days and payments.
+
+## 6f. Terms, privacy and the licence (Build 26)
+
+The owner asked (21 November 2026) for Terms and Conditions and a clear copyright declaration, in exact parity with
+Ingenium's system and prompting, made for Lakay. What there is, and what it is not:
+
+- **The licence.** `LICENCE.txt` is the owner's licence, version 3, made for Lakay by `release/licence/make_licence.py`.
+  The build stops if the file differs from what the script writes. Settings, Ownership, and About show it, with the
+  copyright, this copy's build, the whole licence as a document, and Save the licence. `THIRD_PARTY_NOTICES.txt` lists
+  what the programs for computers carry; the page carries no software made by others.
+- **The terms and the notice.** `src/terms/terms.json` holds the Terms of use, the Privacy notice, In short and the
+  licence's plain words, in English, French and Kreyòl. The English applies. Every statement in the Privacy notice was
+  written from what the code does (what is sealed, what is left readable for the door, what is never kept, when the page
+  goes online). When the code changes what the notice says, the notice changes with it, and its version moves on.
+- **Agreeing.** After the welcome door, a device that has not agreed to this version shows the sheet over everything.
+  The record (the version in English, the time, the build) is kept in this device's own storage (`emporium.terms`),
+  never sent and never in the books. A new version (`version` in `terms.json`) asks every device again.
+- **Not a lock.** The sheet records consent; it protects nothing. Someone who edits the device's storage can skip it.
+  The books stay sealed whatever the sheet says, and the sheet never changes or sends anything.
+- **Never locked out.** Declining leaves the welcome door within reach (Back to the welcome door), with Refresh and
+  Reset, as Build 7 requires.
+- **A draft.** The texts are not legal advice. A lawyer in the United States and in the United Kingdom should read them
+  before they are final; the owner of the real store sees a Draft chip until then. The contact for questions is added by
+  the owner (Settings, Ownership, Your contact, on that device) or in `build.json` (`contact`), for every device.
 
 ## 7. Protection against attacks and malware
 

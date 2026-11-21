@@ -22,7 +22,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 README = os.path.join(ROOT, "release", "readme")
-COMMON = ["LICENCE.txt", "build.json", "app/Lakay.html", "app/Lakay.html.sha256", "release/publish.py", ".gitignore"]
+COMMON = ["LICENCE.txt", "TERMS.txt", "PRIVACY.txt", "THIRD_PARTY_NOTICES.txt", "build.json", "app/Lakay.html", "app/Lakay.html.sha256", "release/publish.py", ".gitignore"]
 KITS = {
     "mac": {
         "paths": ["desktop/emporium_app.py", "desktop/mac"],
@@ -71,6 +71,23 @@ def fill(src, dst):
         fh.write(text)
 
 
+def build_info():
+    """BUILD_INFO.txt: the build, its date and stage, the copyright, the owner's texts, and the SHA-256 fingerprints of the app
+    itself and of the web app's page, as the licence promises (LICENCE.txt, clause 9.2)."""
+    w = words()
+    with open(os.path.join(ROOT, "build.json"), encoding="utf-8") as fh:
+        stage = json.load(fh).get("stage", "")
+    def sha(rel):
+        with open(os.path.join(ROOT, rel), encoding="ascii") as fh:
+            return fh.read().split()[0]
+    return ("Lakay\nBuild: %s\nDate: %s\nStage: %s\nCopyright (c) 2026 Yannie D. Forest. All rights reserved. See LICENCE.txt.\n"
+            "Terms of use: TERMS.txt. Privacy notice: PRIVACY.txt. Software made by others: THIRD_PARTY_NOTICES.txt.\n"
+            "SHA-256 of app/Lakay.html, the app itself: %s\n"
+            "SHA-256 of the web app's page (index.html, in Lakay-Web.zip): %s\n"
+            "The release page lists the fingerprint of every download. A copy whose fingerprint differs is not genuine (LICENCE.txt, clause 9).\n"
+            % (w["@@BUILD@@"], w["@@DATE@@"], stage, sha("app/Lakay.html.sha256"), sha("web/index.html.sha256")))
+
+
 def empty(target):
     for name in os.listdir(target):
         if name in (".git", "builds"):
@@ -103,6 +120,8 @@ def make(kind, target):
     fill(os.path.join(README, "README-%s.md" % kind), os.path.join(target, "README.md"))
     with open(os.path.join(target, ".gitattributes"), "w", encoding="utf-8", newline="\n") as fh:
         fh.write(ATTRIBUTES)
+    with open(os.path.join(target, "BUILD_INFO.txt"), "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(build_info())
     os.makedirs(os.path.join(target, "builds"), exist_ok=True)
     print("Made the %s repository in %s." % (kind, target))
 
@@ -115,12 +134,8 @@ def main():
         fill(os.path.join(README, "READ ME FIRST (Windows).txt"), os.path.join(ROOT, "READ ME FIRST (Windows).txt"))
         with open(os.path.join(ROOT, ".gitattributes"), "w", encoding="utf-8", newline="\n") as fh:
             fh.write(ATTRIBUTES)
-        w = words()
-        with open(os.path.join(ROOT, "build.json"), encoding="utf-8") as fh:
-            stage = json.load(fh).get("stage", "")
         with open(os.path.join(ROOT, "BUILD_INFO.txt"), "w", encoding="utf-8", newline="\n") as fh:
-            fh.write("Lakay\nBuild: %s\nDate: %s\nStage: %s\nCopyright (c) 2026 Yannie D. Forest. All rights reserved.\n"
-                     "NO LICENCE IS GRANTED.\n" % (w["@@BUILD@@"], w["@@DATE@@"], stage))
+            fh.write(build_info())
         print("Wrote this repository's README.md, READ ME FIRST (Windows).txt and BUILD_INFO.txt.")
         return
     if len(sys.argv) < 3:

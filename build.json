@@ -1,6 +1,7 @@
 {
   "build": 26,
-  "date": "2026-11-20",
-  "stage": "Lakay Build 26: devices in step, stage 3. Lakay Relay, the store's own mailbox for sealed changes, runs on the owner's own Mac minis at home; each device leaves its changes there and takes the others', by itself, with a sign in the top bar; the owner connects each device with the owner's password and a relay's claim code, and a removed device's key is closed at the relays. The relays' addresses are added once the Mac minis are set up",
-  "relays": []
+  "date": "2026-11-21",
+  "stage": "Lakay Build 26: devices in step, stage 3, and Lakay's terms. Lakay Relay, the store's own mailbox for sealed changes, runs on the owner's own Mac minis at home; each device leaves its changes there and takes the others', by itself, with a sign in the top bar; the owner connects each device with the owner's password and a relay's claim code, and a removed device's key is closed at the relays. The relays' addresses are added once the Mac minis are set up. Lakay now has its Terms of use and Privacy notice, agreed to once on each device before Lakay opens, and its licence and copyright in Settings, Ownership, and in About, as Ingenium has them",
+  "relays": [],
+  "contact": ""
 }

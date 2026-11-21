@@ -1,0 +1,401 @@
+{
+ "version": {
+  "en": "Version 1, 21 November 2026",
+  "fr": "Version 1, 21 novembre 2026",
+  "ht": "Vèsyon 1, 21 novanm 2026"
+ },
+ "short": [
+  {
+   "t": {
+    "en": "The books stay in the store",
+    "fr": "Les livres restent au magasin",
+    "ht": "Liv yo rete nan magazen an"
+   },
+   "b": {
+    "en": "Sales, stock, people and every record are kept on the store's own devices, sealed.",
+    "fr": "Ventes, stock, personnel et chaque écriture sont gardés sur les propres appareils du magasin, scellés.",
+    "ht": "Vant, stòk, moun ak chak anrejistreman rete sou pwòp aparèy magazen an, sele."
+   }
+  },
+  {
+   "t": {
+    "en": "Nothing goes to its maker",
+    "fr": "Rien ne part chez son auteur",
+    "ht": "Anyen pa ale kay moun ki fè l la"
+   },
+   "b": {
+    "en": "No account with its maker, no analytics, no usage reports, no automatic update check.",
+    "fr": "Aucun compte chez son auteur, aucune statistique, aucun rapport d'usage, aucune vérification automatique de mise à jour.",
+    "ht": "Pa gen kont kay moun ki fè l la, pa gen estatistik, pa gen rapò sou itilizasyon, pa gen verifikasyon mizajou otomatik."
+   }
+  },
+  {
+   "t": {
+    "en": "Sealed with your passwords",
+    "fr": "Scellé par vos mots de passe",
+    "ht": "Sele ak modpas ou yo"
+   },
+   "b": {
+    "en": "Without a password or the Master Key, no one can open the books, not even its maker.",
+    "fr": "Sans un mot de passe ou la Clé maîtresse, personne ne peut ouvrir les livres, pas même son auteur.",
+    "ht": "San yon modpas oswa Kle Mèt la, pèsonn pa ka louvri liv yo, menm moun ki fè l la."
+   }
+  },
+  {
+   "t": {
+    "en": "Never a card or passport number",
+    "fr": "Jamais un numéro de carte ou de passeport",
+    "ht": "Janm yon nimewo kat oswa paspò"
+   },
+   "b": {
+    "en": "Lakay never takes a card's number or anyone's papers; a client's name only if the store's owner turns it on.",
+    "fr": "Lakay ne prend jamais le numéro d'une carte ni les papiers de personne ; le nom d'un client seulement si le propriétaire du magasin l'active.",
+    "ht": "Lakay pa janm pran nimewo yon kat ni papye pèsonn; non yon kliyan sèlman si mèt magazen an aktive sa."
+   }
+  },
+  {
+   "t": {
+    "en": "Only between your own devices",
+    "fr": "Seulement entre vos propres appareils",
+    "ht": "Sèlman ant pwòp aparèy ou yo"
+   },
+   "b": {
+    "en": "Changes travel sealed, by file or through the store's own relays at home, which cannot read them.",
+    "fr": "Les changements voyagent scellés, par fichier ou par les propres relais du magasin à la maison, qui ne peuvent pas les lire.",
+    "ht": "Chanjman yo vwayaje sele, pa fichye oswa nan pwòp relè magazen an lakay, ki pa ka li yo."
+   }
+  },
+  {
+   "t": {
+    "en": "The store's books are the store's",
+    "fr": "Les livres du magasin sont au magasin",
+    "ht": "Liv magazen an se pou magazen an"
+   },
+   "b": {
+    "en": "What the store records belongs to the store (licence, clause 3.6). Reports and pay are aids: check them with an accountant.",
+    "fr": "Ce que le magasin enregistre appartient au magasin (licence, clause 3.6). Rapports et paie sont des aides : vérifiez-les avec un comptable.",
+    "ht": "Sa magazen an anrejistre se pou magazen an (lisans, kloz 3.6). Rapò ak peman se èd: verifye yo ak yon kontab."
+   }
+  }
+ ],
+ "terms": [
+  {
+   "h": {
+    "en": "1. These terms and the licence",
+    "fr": "1. Ces conditions et la licence",
+    "ht": "1. Kondisyon sa yo ak lisans lan"
+   },
+   "b": {
+    "en": "These terms say how Lakay may be used. Who owns it, and who may use, copy or share it, is set out in its licence (in About, and in Settings, Ownership). If they ever differ, the licence applies.",
+    "fr": "Ces conditions disent comment Lakay peut être utilisé. À qui il appartient, et qui peut l'utiliser, le copier ou le partager, est fixé par sa licence (dans À propos, et dans Réglages, Propriété). Si elles diffèrent un jour, la licence s'applique.",
+    "ht": "Kondisyon sa yo di kijan yo ka itilize Lakay. Ki moun li ye pou li, ak ki moun ki ka itilize l, kopye l oswa pataje l, se lisans li ki di sa (nan Apwopo, ak nan Reglaj, Pwopriyete). Si yo ta janm diferan, se lisans lan ki aplike."
+   }
+  },
+  {
+   "h": {
+    "en": "2. Who may use Lakay",
+    "fr": "2. Qui peut utiliser Lakay",
+    "ht": "2. Ki moun ki ka itilize Lakay"
+   },
+   "b": {
+    "en": "Its owner, and a store and its people to whom the owner has given a permission, as the licence says. Anyone may try the practice store on the owner's own website, there and while the owner offers it (licence, clause 6.8).",
+    "fr": "Son propriétaire, ainsi qu'un magasin et son personnel à qui le propriétaire a donné une permission, comme le dit la licence. Chacun peut essayer le magasin d'entraînement sur le propre site web du propriétaire, là-bas et tant qu'il le propose (licence, clause 6.8).",
+    "ht": "Pwopriyetè li, ak yon magazen ak moun li yo pwopriyetè a bay yon pèmisyon, jan lisans lan di l. Nenpòt moun ka eseye magazen pratik la sou pwòp sit entènèt pwopriyetè a, la menm epi pandan li ofri l (lisans, kloz 6.8)."
+   }
+  },
+  {
+   "h": {
+    "en": "3. The store's books are the store's",
+    "fr": "3. Les livres du magasin sont au magasin",
+    "ht": "3. Liv magazen an se pou magazen an"
+   },
+   "b": {
+    "en": "What a store records with Lakay, such as its books, receipts, reports and notes, belongs to the store (licence, clause 3.6). The store is responsible for what it records, and for having the right to record it. To keep its records outside Lakay, a store can print its reports and save its sales, receipts and stock as spreadsheet files (CSV).",
+    "fr": "Ce qu'un magasin enregistre avec Lakay, comme ses livres, ses reçus, ses rapports et ses notes, appartient au magasin (licence, clause 3.6). Le magasin répond de ce qu'il enregistre, et du droit de l'enregistrer. Pour garder ses écritures hors de Lakay, un magasin peut imprimer ses rapports et enregistrer ses ventes, ses reçus et son stock en fichiers de tableur (CSV).",
+    "ht": "Sa yon magazen anrejistre ak Lakay, tankou liv li, resi li, rapò li ak nòt li, se pou magazen an (lisans, kloz 3.6). Magazen an reskonsab sa li anrejistre, ak dwa pou l anrejistre l. Pou kenbe anrejistreman li deyò Lakay, yon magazen ka enprime rapò li yo epi sove vant, resi ak stòk li kòm fichye tablo (CSV)."
+   }
+  },
+  {
+   "h": {
+    "en": "4. Figures, reports and estimates",
+    "fr": "4. Chiffres, rapports et estimations",
+    "ht": "4. Chif, rapò ak estimasyon"
+   },
+   "b": {
+    "en": "Lakay's reports, taxes, earnings and pay are worked out from what is recorded. They are aids, not professional advice: not accounting, tax, payroll, legal or financial advice. Pay is an estimate before taxes and deductions. Check what matters with an accountant before you rely on it. Lakay does not file taxes, run payroll or move money.",
+    "fr": "Les rapports, les taxes, les gains et la paie de Lakay sont calculés à partir de ce qui est enregistré. Ce sont des aides, pas des conseils professionnels : ni comptables, ni fiscaux, ni de paie, ni juridiques, ni financiers. La paie est une estimation avant impôts et retenues. Vérifiez ce qui compte avec un comptable avant de vous y fier. Lakay ne déclare pas d'impôts, ne fait pas la paie et ne déplace pas d'argent.",
+    "ht": "Rapò, taks, lajan antre ak peman Lakay yo kalkile apati sa ki anrejistre. Se èd yo ye, se pa konsèy pwofesyonèl: ni konsèy kontab, ni taks, ni pewòl, ni legal, ni finansye. Peman an se yon estimasyon anvan taks ak retni. Verifye sa ki konte ak yon kontab anvan ou konte sou li. Lakay pa deklare taks, li pa fè pewòl, li pa deplase lajan."
+   }
+  },
+  {
+   "h": {
+    "en": "5. Payments, transfers and bookings",
+    "fr": "5. Paiements, transferts et réservations",
+    "ht": "5. Peman, transfè ak rezèvasyon"
+   },
+   "b": {
+    "en": "Lakay records payments, transfers, top-ups and travel bookings; it does not take payments or move money. Money moves through the store's own card machine, its providers (such as RIA, CAM, Unitransfer or Boss Revolution) and the websites where flights are booked, each under its own terms. Never type a card number or a passport number into Lakay.",
+    "fr": "Lakay enregistre les paiements, les transferts, les recharges et les réservations de voyage ; il n'encaisse pas et ne déplace pas d'argent. L'argent passe par le propre terminal de paiement du magasin, ses fournisseurs (comme RIA, CAM, Unitransfer ou Boss Revolution) et les sites où les vols sont réservés, chacun selon ses propres conditions. Ne tapez jamais un numéro de carte ou de passeport dans Lakay.",
+    "ht": "Lakay anrejistre peman, transfè, rechaj ak rezèvasyon vwayaj; li pa touche peman, li pa deplase lajan. Lajan an pase nan pwòp machin kat magazen an, founisè li yo (tankou RIA, CAM, Unitransfer oswa Boss Revolution) ak sit kote yo rezève vòl yo, chak dapre pwòp kondisyon pa yo. Pa janm tape yon nimewo kat oswa yon nimewo paspò nan Lakay."
+   }
+  },
+  {
+   "h": {
+    "en": "6. The store's people and its customers",
+    "fr": "6. Le personnel du magasin et ses clients",
+    "ht": "6. Moun magazen an ak kliyan li yo"
+   },
+   "b": {
+    "en": "The store's owner gives each person a password and their access. Lakay records each person's sales, hours, shifts, pay and training, sealed. The store tells its people and its customers what it records about them, and keeps to the law where it is, such as the laws on work, privacy and tax records. Lakay never asks for a customer's identity; a client's name and phone on a booking are kept only if the store's owner turns that on.",
+    "fr": "Le propriétaire du magasin donne à chaque personne un mot de passe et ses accès. Lakay enregistre, scellés, les ventes, les heures, les horaires, la paie et la formation de chacun. Le magasin dit à son personnel et à ses clients ce qu'il enregistre à leur sujet, et respecte la loi du lieu où il se trouve, comme les lois sur le travail, la vie privée et les registres fiscaux. Lakay ne demande jamais l'identité d'un client ; le nom et le téléphone d'un client sur une réservation ne sont gardés que si le propriétaire du magasin l'active.",
+    "ht": "Mèt magazen an bay chak moun yon modpas ak aksè pa l. Lakay anrejistre, sele, vant, èdtan, orè, peman ak fòmasyon chak moun. Magazen an di moun li yo ak kliyan li yo sa li anrejistre sou yo, epi li respekte lalwa kote l ye a, tankou lwa sou travay, vi prive ak dosye taks. Lakay pa janm mande idantite yon kliyan; non ak telefòn yon kliyan sou yon rezèvasyon kenbe sèlman si mèt magazen an aktive sa."
+   }
+  },
+  {
+   "h": {
+    "en": "7. Fair use",
+    "fr": "7. Usage loyal",
+    "ht": "7. Bon itilizasyon"
+   },
+   "b": {
+    "en": "Do not use Lakay to break the law, to harm others, to keep records you have no right to keep, or to get around the protection of anyone else's copy or work.",
+    "fr": "N'utilisez pas Lakay pour enfreindre la loi, nuire à autrui, garder des écritures que vous n'avez pas le droit de garder, ou contourner la protection de la copie ou de l'œuvre de quelqu'un d'autre.",
+    "ht": "Pa itilize Lakay pou vyole lalwa, pou fè lòt moun mal, pou kenbe anrejistreman ou pa gen dwa kenbe, oswa pou kontounen pwoteksyon kopi oswa travay yon lòt moun."
+   }
+  },
+  {
+   "h": {
+    "en": "8. Passwords, the Master Key and backups",
+    "fr": "8. Mots de passe, Clé maîtresse et sauvegardes",
+    "ht": "8. Modpas, Kle Mèt ak sovgad"
+   },
+   "b": {
+    "en": "Keep every password and the Master Key safe: they cannot be recovered for you, and without them no one can open the books. Save a sealed backup every day, and keep it away from the store's devices.",
+    "fr": "Gardez en lieu sûr chaque mot de passe et la Clé maîtresse : ils ne peuvent pas être retrouvés pour vous, et sans eux personne ne peut ouvrir les livres. Faites une sauvegarde scellée chaque jour, et gardez-la loin des appareils du magasin.",
+    "ht": "Kenbe chak modpas ak Kle Mèt la an sekirite: pèsonn pa ka rekipere yo pou ou, epi san yo pèsonn pa ka louvri liv yo. Fè yon sovgad sele chak jou, epi kenbe l lwen aparèy magazen an."
+   }
+  },
+  {
+   "h": {
+    "en": "9. Devices in step and the relays",
+    "fr": "9. Appareils en phase et relais",
+    "ht": "9. Aparèy ki an akò ak relè yo"
+   },
+   "b": {
+    "en": "Only the store's owner adds a device to the store. The store's owner looks after the store's own network, its router and its Mac minis, and removes a device that is lost, stolen or given up (Settings, Devices in step).",
+    "fr": "Seul le propriétaire du magasin ajoute un appareil au magasin. Il s'occupe du propre réseau du magasin, de son routeur et de ses Mac mini, et retire un appareil perdu, volé ou abandonné (Réglages, Appareils en phase).",
+    "ht": "Se mèt magazen an sèlman ki ajoute yon aparèy nan magazen an. Li okipe pwòp rezo magazen an, routè li ak Mac mini li yo, epi li retire yon aparèy ki pèdi, yo vòlò oswa yo abandone (Reglaj, Aparèy ki an akò)."
+   }
+  },
+  {
+   "h": {
+    "en": "10. Services made by others",
+    "fr": "10. Services d'autres entreprises",
+    "ht": "10. Sèvis lòt moun fè"
+   },
+   "b": {
+    "en": "The card machine's processor, the transfer providers, the websites where flights are booked, and the private network app the store's owner chooses (such as WireGuard or Tailscale) each come under their own terms. Using one, you accept its terms.",
+    "fr": "Le processeur du terminal de paiement, les fournisseurs de transferts, les sites où les vols sont réservés et l'application de réseau privé que choisit le propriétaire du magasin (comme WireGuard ou Tailscale) ont chacun leurs propres conditions. En utilisant l'un d'eux, vous acceptez ses conditions.",
+    "ht": "Processeur machin kat la, founisè transfè yo, sit kote yo rezève vòl yo, ak aplikasyon rezo prive mèt magazen an chwazi a (tankou WireGuard oswa Tailscale) chak gen pwòp kondisyon pa yo. Lè w itilize youn, ou aksepte kondisyon li."
+   }
+  },
+  {
+   "h": {
+    "en": "11. No warranty and no liability",
+    "fr": "11. Aucune garantie et aucune responsabilité",
+    "ht": "11. Pa gen garanti ni responsablite"
+   },
+   "b": {
+    "en": "Lakay is provided as it is, as the licence says (clauses 11 and 12).",
+    "fr": "Lakay est fourni tel quel, comme le dit la licence (clauses 11 et 12).",
+    "ht": "Yo bay Lakay jan li ye a, jan lisans lan di l (kloz 11 ak 12)."
+   }
+  },
+  {
+   "h": {
+    "en": "12. Ending, changes and the law",
+    "fr": "12. Fin, changements et droit applicable",
+    "ht": "12. Fen, chanjman ak lalwa"
+   },
+   "b": {
+    "en": "A permission ends as the licence says (clause 7). These terms may change with a new release; Lakay then asks again. The law that governs them is in the licence (clause 18), as settled for the United States and the United Kingdom.",
+    "fr": "Une permission prend fin comme le dit la licence (clause 7). Ces conditions peuvent changer avec une nouvelle version ; Lakay le demande alors de nouveau. Le droit qui les régit est dans la licence (clause 18), tel qu'il est fixé pour les États-Unis et le Royaume-Uni.",
+    "ht": "Yon pèmisyon fini jan lisans lan di l (kloz 7). Kondisyon sa yo ka chanje ak yon nouvo vèsyon; Lakay mande ankò lè sa a. Lalwa ki gouvène yo nan lisans lan (kloz 18), jan sa fikse pou Etazini ak Wayòm Ini."
+   }
+  },
+  {
+   "h": {
+    "en": "13. Contact",
+    "fr": "13. Contact",
+    "ht": "13. Kontak"
+   },
+   "b": {
+    "en": "{contact}",
+    "fr": "{contact}",
+    "ht": "{contact}"
+   }
+  }
+ ],
+ "privacy": [
+  {
+   "h": {
+    "en": "1. Who this notice is from",
+    "fr": "1. De qui vient cet avis",
+    "ht": "1. Ki moun avi sa a soti"
+   },
+   "b": {
+    "en": "Lakay is made by Yannie D. Forest, its owner under its licence. Each store that uses Lakay decides what it records, and is responsible for it. Questions about this notice: {contact}.",
+    "fr": "Lakay est fait par Yannie D. Forest, son propriétaire selon sa licence. Chaque magasin qui utilise Lakay décide de ce qu'il enregistre, et en répond. Questions sur cet avis : {contact}.",
+    "ht": "Se Yannie D. Forest ki fè Lakay, li se pwopriyetè l dapre lisans li. Chak magazen ki itilize Lakay deside sa li anrejistre, epi li reskonsab sa. Kesyon sou avi sa a: {contact}."
+   }
+  },
+  {
+   "h": {
+    "en": "2. What Lakay keeps, and where",
+    "fr": "2. Ce que Lakay garde, et où",
+    "ht": "2. Sa Lakay kenbe, ak ki kote"
+   },
+   "b": {
+    "en": "The store's books stay on the devices the store uses Lakay on: its items, prices, costs and stock; its sales, receipts and payments; its transfers, top-ups and travel bookings; its people, their access, hours, shifts, pay and training; its settings; and each person's sticky notes. In a browser, in its own storage for Lakay's page; in the programs for Windows and the Mac, in the person's own profile; on a phone or tablet, in the app's own storage. Backups are files the store's owner saves where they choose. None of it is sent to its maker.",
+    "fr": "Les livres du magasin restent sur les appareils où le magasin utilise Lakay : ses articles, prix, coûts et stock ; ses ventes, reçus et paiements ; ses transferts, recharges et réservations de voyage ; son personnel, ses accès, heures, horaires, paie et formation ; ses réglages ; et les notes de chacun. Dans un navigateur, dans le stockage propre à la page de Lakay ; dans les programmes pour Windows et le Mac, dans le profil de la personne ; sur un téléphone ou une tablette, dans le stockage propre de l'app. Les sauvegardes sont des fichiers que le propriétaire du magasin enregistre où bon lui semble. Rien de tout cela n'est envoyé à son auteur.",
+    "ht": "Liv magazen an rete sou aparèy kote magazen an itilize Lakay: atik li yo, pri, kou ak stòk; vant, resi ak peman; transfè, rechaj ak rezèvasyon vwayaj; moun li yo, aksè yo, èdtan, orè, peman ak fòmasyon yo; paramèt li; ak nòt chak moun. Nan yon navigatè, nan pwòp depo paj Lakay la; nan pwogram pou Windows ak Mac, nan pwòp pwofil moun nan; sou yon telefòn oswa yon tablèt, nan pwòp depo aplikasyon an. Sovgad yo se fichye mèt magazen an sove kote li vle. Anyen nan sa yo pa voye bay moun ki fè l la."
+   }
+  },
+  {
+   "h": {
+    "en": "3. Sealed with your passwords",
+    "fr": "3. Scellé par vos mots de passe",
+    "ht": "3. Sele ak modpas ou yo"
+   },
+   "b": {
+    "en": "The books are sealed (AES-GCM, 256-bit) with one Store Key. The Store Key is sealed again with a key made from the password of the store's owner, from each person's own password (PBKDF2, 600,000 rounds), and from the Master Key. Backups and the files that carry changes between devices are sealed too. Without a password or the Master Key, no one can open the books, not even Lakay's maker. Left readable, so that the door can work: the store's name, the people's names and staff numbers, the Author Studio's choices, the build number, and the technical facts needed to open the seal (such as its salt).",
+    "fr": "Les livres sont scellés (AES-GCM, 256 bits) avec une Clé du magasin. Cette clé est scellée à son tour avec une clé tirée du mot de passe du propriétaire du magasin, du mot de passe de chaque personne (PBKDF2, 600 000 tours) et de la Clé maîtresse. Les sauvegardes et les fichiers qui portent les changements entre appareils sont scellés eux aussi. Sans un mot de passe ou la Clé maîtresse, personne ne peut ouvrir les livres, pas même l'auteur de Lakay. Restent lisibles, pour que la porte fonctionne : le nom du magasin, les noms et numéros du personnel, les choix du Studio d'auteur, le numéro de build, et les données techniques nécessaires pour ouvrir le sceau (comme son sel).",
+    "ht": "Liv yo sele (AES-GCM, 256 bit) ak yon sèl Kle magazen. Kle sa a sele ankò ak yon kle ki fèt ak modpas mèt magazen an, ak modpas chak moun (PBKDF2, 600 000 tou), ak Kle Mèt la. Sovgad yo ak fichye ki pote chanjman ant aparèy yo sele tou. San yon modpas oswa Kle Mèt la, pèsonn pa ka louvri liv yo, menm moun ki fè Lakay la. Sa ki rete lizib, pou pòt la ka mache: non magazen an, non ak nimewo moun yo, chwa Estidyo otè a, nimewo build la, ak enfòmasyon teknik ki nesesè pou louvri sele a (tankou sèl li)."
+   }
+  },
+  {
+   "h": {
+    "en": "4. What Lakay never keeps",
+    "fr": "4. Ce que Lakay ne garde jamais",
+    "ht": "4. Sa Lakay pa janm kenbe"
+   },
+   "b": {
+    "en": "A card's number, a passport number, or a customer's identity. A sale records what was sold and how it was paid; for a card, the card machine's approval code and, if the store's owner asks, its last four digits. A transfer or top-up records no customer's name, address or papers. A client's name and phone on a travel booking are kept only if the store's owner turns that on; never in the ledger, and erased when it is turned off.",
+    "fr": "Le numéro d'une carte, un numéro de passeport, ou l'identité d'un client. Une vente enregistre ce qui a été vendu et comment cela a été payé ; pour une carte, le code d'autorisation du terminal et, si le propriétaire du magasin le demande, ses quatre derniers chiffres. Un transfert ou une recharge n'enregistre ni le nom, ni l'adresse, ni les papiers d'un client. Le nom et le téléphone d'un client sur une réservation de voyage ne sont gardés que si le propriétaire du magasin l'active ; jamais dans le registre, et effacés quand ce choix est désactivé.",
+    "ht": "Nimewo yon kat, yon nimewo paspò, oswa idantite yon kliyan. Yon vant anrejistre sa ki vann ak kijan yo peye l; pou yon kat, kòd apwobasyon machin kat la epi, si mèt magazen an mande l, kat dènye chif li. Yon transfè oswa yon rechaj pa anrejistre ni non, ni adrès, ni papye yon kliyan. Non ak telefòn yon kliyan sou yon rezèvasyon vwayaj kenbe sèlman si mèt magazen an aktive sa; janm nan rejis la, epi yo efase lè li dezaktive l."
+   }
+  },
+  {
+   "h": {
+    "en": "5. When Lakay goes online",
+    "fr": "5. Quand Lakay va en ligne",
+    "ht": "5. Ki lè Lakay ale sou entènèt"
+   },
+   "b": {
+    "en": "Never by itself. Lakay's page is forbidden to connect anywhere, except to the store's own relays once the store's owner has set them up: Lakay Relay, on the store owner's own computers, such as two Mac minis. Lakay has no analytics, no usage reports and no automatic update check. The camera, when it scans a barcode, is read on the device only. When the web app is opened from the owner's website, the website's host receives the request for the page, under its own terms.",
+    "fr": "Jamais de lui-même. La page de Lakay a l'interdiction de se connecter où que ce soit, sauf aux propres relais du magasin une fois que le propriétaire du magasin les a installés : Lakay Relay, sur ses propres ordinateurs, comme deux Mac mini. Lakay n'a ni statistiques, ni rapports d'usage, ni vérification automatique de mise à jour. La caméra, quand elle lit un code-barres, est lue sur l'appareil seulement. Quand l'app web est ouverte depuis le site du propriétaire, l'hébergeur du site reçoit la demande de la page, selon ses propres conditions.",
+    "ht": "Janm poukont li. Paj Lakay la pa gen dwa konekte okenn kote, eksepte nan pwòp relè magazen an yon fwa mèt magazen an mete yo: Lakay Relay, sou òdinatè pa l, tankou de Mac mini. Lakay pa gen estatistik, pa gen rapò sou itilizasyon, pa gen verifikasyon mizajou otomatik. Kamera a, lè l ap li yon kòdba, li sou aparèy la sèlman. Lè yo louvri aplikasyon wèb la sou sit pwopriyetè a, lame sit la resevwa demann paj la, dapre pwòp kondisyon pa l."
+   }
+  },
+  {
+   "h": {
+    "en": "6. Between the store's own devices",
+    "fr": "6. Entre les propres appareils du magasin",
+    "ht": "6. Ant pwòp aparèy magazen an"
+   },
+   "b": {
+    "en": "A device joins the store only with a joining file and a pairing code, shown once on a device already in it. The joining file is a sealed backup: like every backup, it shows the store's name, the people's names and staff numbers, and the Author Studio's choices. Changes then travel sealed, by file or through the store's own relays, which cannot read them; the relays see only which device left changes, when, and how large they were.",
+    "fr": "Un appareil ne rejoint le magasin qu'avec un fichier d'adhésion et un code d'appairage, montré une seule fois sur un appareil qui en fait déjà partie. Le fichier d'adhésion est une sauvegarde scellée : comme toute sauvegarde, il montre le nom du magasin, les noms et numéros du personnel, et les choix du Studio d'auteur. Les changements voyagent ensuite scellés, par fichier ou par les propres relais du magasin, qui ne peuvent pas les lire ; les relais voient seulement quel appareil a déposé des changements, quand, et leur taille.",
+    "ht": "Yon aparèy antre nan magazen an sèlman ak yon fichye pou antre ak yon kòd koneksyon, ki parèt yon sèl fwa sou yon aparèy ki deja ladan l. Fichye pou antre a se yon sovgad sele: tankou tout sovgad, li montre non magazen an, non ak nimewo moun yo, ak chwa Estidyo otè a. Apre sa chanjman yo vwayaje sele, pa fichye oswa nan pwòp relè magazen an, ki pa ka li yo; relè yo wè sèlman ki aparèy ki kite chanjman, ki lè, ak gwosè yo."
+   }
+  },
+  {
+   "h": {
+    "en": "7. Your choices",
+    "fr": "7. Vos choix",
+    "ht": "7. Chwa ou yo"
+   },
+   "b": {
+    "en": "Lakay's maker holds no data about you from Lakay, so it is in the store's hands, on its devices. The store's owner can see the books, print and save them (Reports), save a sealed backup (Settings, Backups), remove a device (Settings, Devices in step), and erase the store from a device (Settings, Erase). A person who wants to know what the store records about them asks the store's owner. For data that another service holds, such as a card processor or a transfer provider, ask that service.",
+    "fr": "L'auteur de Lakay ne détient aucune donnée sur vous venant de Lakay : tout est entre les mains du magasin, sur ses appareils. Le propriétaire du magasin peut voir les livres, les imprimer et les enregistrer (Rapports), faire une sauvegarde scellée (Réglages, Sauvegardes), retirer un appareil (Réglages, Appareils en phase) et effacer le magasin d'un appareil (Réglages, Effacer). Une personne qui veut savoir ce que le magasin enregistre à son sujet le demande au propriétaire du magasin. Pour les données qu'un autre service détient, comme un processeur de cartes ou un fournisseur de transferts, adressez-vous à ce service.",
+    "ht": "Moun ki fè Lakay la pa kenbe okenn done sou ou ki soti nan Lakay: tout bagay nan men magazen an, sou aparèy li yo. Mèt magazen an ka wè liv yo, enprime yo epi sove yo (Rapò), fè yon sovgad sele (Reglaj, Sovgad), retire yon aparèy (Reglaj, Aparèy ki an akò) epi efase magazen an sou yon aparèy (Reglaj, Efase). Yon moun ki vle konnen sa magazen an anrejistre sou li mande mèt magazen an. Pou done yon lòt sèvis kenbe, tankou yon processeur kat oswa yon founisè transfè, mande sèvis sa a."
+   }
+  },
+  {
+   "h": {
+    "en": "8. Children",
+    "fr": "8. Enfants",
+    "ht": "8. Timoun"
+   },
+   "b": {
+    "en": "Lakay is made for running a store. It is not made for children under {age}.",
+    "fr": "Lakay est fait pour tenir un magasin. Il n'est pas fait pour les enfants de moins de {age}.",
+    "ht": "Yo fè Lakay pou jere yon magazen. Yo pa fè l pou timoun ki poko gen {age}."
+   }
+  },
+  {
+   "h": {
+    "en": "9. Changes",
+    "fr": "9. Changements",
+    "ht": "9. Chanjman"
+   },
+   "b": {
+    "en": "A new version of this notice comes with a new release of Lakay, with its date; Lakay then asks again.",
+    "fr": "Une nouvelle version de cet avis vient avec une nouvelle version de Lakay, avec sa date ; Lakay le demande alors de nouveau.",
+    "ht": "Yon nouvo vèsyon avi sa a vini ak yon nouvo vèsyon Lakay, ak dat li; Lakay mande ankò lè sa a."
+   }
+  }
+ ],
+ "licence": [
+  {
+   "en": "Lakay belongs to Yannie D. Forest alone. Only the owner may use, copy, share, sell, change or remove any part of it.",
+   "fr": "Lakay appartient uniquement à Yannie D. Forest. Seul le propriétaire peut utiliser, copier, partager, vendre, changer ou retirer une partie de Lakay.",
+   "ht": "Lakay se pou Yannie D. Forest sèlman. Se pwopriyetè a sèlman ki ka itilize, kopye, pataje, vann, chanje oswa retire nenpòt pati ladan l."
+  },
+  {
+   "en": "Anyone else needs a permission from the owner first. Seeing the code, holding a copy, or paying for one gives no right.",
+   "fr": "Toute autre personne a d'abord besoin d'une permission du propriétaire. Voir le code, détenir une copie ou payer pour une copie ne donne aucun droit.",
+   "ht": "Tout lòt moun bezwen yon pèmisyon pwopriyetè a anvan. Wè kòd la, gen yon kopi, oswa peye pou youn pa bay okenn dwa."
+  },
+  {
+   "en": "A permission is valid only if it is a file signed with the owner's key, or a written message from the owner.",
+   "fr": "Une permission n'est valable que si c'est un fichier signé avec la clé du propriétaire, ou un message écrit du propriétaire.",
+   "ht": "Yon pèmisyon valab sèlman si se yon fichye ki siyen ak kle pwopriyetè a, oswa yon mesaj ekri pwopriyetè a voye."
+  },
+  {
+   "en": "A permission names one person, allows only what it says, and cannot be passed on.",
+   "fr": "Une permission nomme une personne, ne permet que ce qu'elle dit, et ne peut pas être transmise.",
+   "ht": "Yon pèmisyon nonmen yon sèl moun, li pèmèt sèlman sa li di, epi yo pa ka pase l bay lòt moun."
+  },
+  {
+   "en": "The owner may withdraw a permission at any time, for any reason. It also ends at once if its terms are broken.",
+   "fr": "Le propriétaire peut retirer une permission à tout moment, pour toute raison. Elle prend fin aussi aussitôt que ses conditions sont violées.",
+   "ht": "Pwopriyetè a ka retire yon pèmisyon nenpòt ki lè, pou nenpòt rezon. Li fini tou menm kote si yo vyole kondisyon li."
+  },
+  {
+   "en": "When a permission ends, stop using Lakay and delete every copy, backups included.",
+   "fr": "Quand une permission prend fin, cessez d'utiliser Lakay et supprimez chaque copie, sauvegardes comprises.",
+   "ht": "Lè yon pèmisyon fini, sispann itilize Lakay epi efase chak kopi, sovgad yo tou."
+  },
+  {
+   "en": "A copy the owner gave you as a gift comes with a permission to use it. If anyone else gave you a copy and you hold no permission, do not open it: delete it, or ask the owner. Deleting a copy never needs a permission.",
+   "fr": "Une copie que le propriétaire vous a offerte vient avec une permission de l'utiliser. Si quelqu'un d'autre vous a donné une copie et que vous n'avez pas de permission, ne l'ouvrez pas : supprimez-la, ou demandez au propriétaire. Supprimer une copie ne demande jamais de permission.",
+   "ht": "Yon kopi pwopriyetè a ba ou kòm kado vini ak yon pèmisyon pou itilize l. Si yon lòt moun ba ou yon kopi epi ou pa gen pèmisyon, pa louvri l: efase l, oswa mande pwopriyetè a. Efase yon kopi pa janm bezwen pèmisyon."
+  },
+  {
+   "en": "What a store records with Lakay, such as its books, receipts and reports, is the store's own.",
+   "fr": "Ce qu'un magasin enregistre avec Lakay, comme ses livres, ses reçus et ses rapports, appartient au magasin.",
+   "ht": "Sa yon magazen anrejistre ak Lakay, tankou liv li, resi li ak rapò li, se pou magazen an."
+  },
+  {
+   "en": "A copy that is not one of the owner's releases, or that has been changed, is not genuine. It may be harmful: do not run it.",
+   "fr": "Une copie qui n'est pas une des versions publiées par le propriétaire, ou qui a été changée, n'est pas authentique. Elle peut être dangereuse : ne la lancez pas.",
+   "ht": "Yon kopi ki pa youn nan vèsyon pwopriyetè a pibliye, oswa yo chanje, pa otantik. Li ka danjere: pa lanse l."
+  },
+  {
+   "en": "To ask for a permission, write to the owner. Say who you are, which app you mean, and what you would like to do with it.",
+   "fr": "Pour demander une permission, écrivez au propriétaire. Dites qui vous êtes, de quelle app il s'agit, et ce que vous aimeriez en faire.",
+   "ht": "Pou mande yon pèmisyon, ekri pwopriyetè a. Di ki moun ou ye, ki aplikasyon ou vle di, ak sa ou ta renmen fè avè l."
+  }
+ ]
+}

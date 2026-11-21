@@ -1,0 +1,88 @@
+LAKAY
+PRIVACY NOTICE
+Version 1, 21 November 2026. Made by Yannie D. Forest.
+
+============================================================================
+
+1. WHO THIS NOTICE IS FROM
+
+Lakay is made by Yannie D. Forest, its owner under its licence. Each store
+that uses Lakay decides what it records, and is responsible for it.
+Questions about this notice: the contact shown in Lakay, in About, Terms and
+privacy.
+
+2. WHAT LAKAY KEEPS, AND WHERE
+
+The store's books stay on the devices the store uses Lakay on: its items,
+prices, costs and stock; its sales, receipts and payments; its transfers,
+top-ups and travel bookings; its people, their access, hours, shifts, pay
+and training; its settings; and each person's sticky notes. In a browser, in
+its own storage for Lakay's page; in the programs for Windows and the Mac,
+in the person's own profile; on a phone or tablet, in the app's own storage.
+Backups are files the store's owner saves where they choose. None of it is
+sent to its maker.
+
+3. SEALED WITH YOUR PASSWORDS
+
+The books are sealed (AES-GCM, 256-bit) with one Store Key. The Store Key is
+sealed again with a key made from the password of the store's owner, from
+each person's own password (PBKDF2, 600,000 rounds), and from the Master
+Key. Backups and the files that carry changes between devices are sealed
+too. Without a password or the Master Key, no one can open the books, not
+even Lakay's maker. Left readable, so that the door can work: the store's
+name, the people's names and staff numbers, the Author Studio's choices, the
+build number, and the technical facts needed to open the seal (such as its
+salt).
+
+4. WHAT LAKAY NEVER KEEPS
+
+A card's number, a passport number, or a customer's identity. A sale records
+what was sold and how it was paid; for a card, the card machine's approval
+code and, if the store's owner asks, its last four digits. A transfer or
+top-up records no customer's name, address or papers. A client's name and
+phone on a travel booking are kept only if the store's owner turns that on;
+never in the ledger, and erased when it is turned off.
+
+5. WHEN LAKAY GOES ONLINE
+
+Never by itself. Lakay's page is forbidden to connect anywhere, except to
+the store's own relays once the store's owner has set them up: Lakay Relay,
+on the store owner's own computers, such as two Mac minis. Lakay has no
+analytics, no usage reports and no automatic update check. The camera, when
+it scans a barcode, is read on the device only. When the web app is opened
+from the owner's website, the website's host receives the request for the
+page, under its own terms.
+
+6. BETWEEN THE STORE'S OWN DEVICES
+
+A device joins the store only with a joining file and a pairing code, shown
+once on a device already in it. The joining file is a sealed backup: like
+every backup, it shows the store's name, the people's names and staff
+numbers, and the Author Studio's choices. Changes then travel sealed, by
+file or through the store's own relays, which cannot read them; the relays
+see only which device left changes, when, and how large they were.
+
+7. YOUR CHOICES
+
+Lakay's maker holds no data about you from Lakay, so it is in the store's
+hands, on its devices. The store's owner can see the books, print and save
+them (Reports), save a sealed backup (Settings, Backups), remove a device
+(Settings, Devices in step), and erase the store from a device (Settings,
+Erase). A person who wants to know what the store records about them asks
+the store's owner. For data that another service holds, such as a card
+processor or a transfer provider, ask that service.
+
+8. CHILDREN
+
+Lakay is made for running a store. It is not made for children under the age
+the lawyer sets.
+
+9. CHANGES
+
+A new version of this notice comes with a new release of Lakay, with its
+date; Lakay then asks again.
+
+============================================================================
+In Lakay, these texts are also given in French and Kreyòl. If a translation
+ever differs from this English text, the English applies. Copyright (c) 2026
+Yannie D. Forest. All rights reserved. See LICENCE.txt.

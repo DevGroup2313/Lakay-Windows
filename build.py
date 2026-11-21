@@ -44,6 +44,18 @@ def main():
     ROLES = ["edge", "plate", "engr", "hshadow", "sshadow", "halo", "sside", "shell", "lattice", "pearl", "sparks"]
     mark = {th: {r: b64png("spiral-%s-%s.png" % (th, r)) for r in ROLES} for th in ("day", "night")}
     js = js.replace('"/*@@MARK@@*/"', json.dumps(mark))
+    # Ownership, terms and privacy (Build 26, src/js/31-terms.js): the licence (LICENCE.txt, made by
+    # release/licence/make_licence.py), the terms and the privacy notice (src/terms/terms.json, in English, French and Kreyòl)
+    # and the notices of others' software (THIRD_PARTY_NOTICES.txt) go into the page as text. They go in after the checks
+    # above, because the notices name the web pages of the licences they quote: the page shows those addresses and never
+    # reaches them (its policy is unchanged). The same terms are written beside the licence as TERMS.txt and PRIVACY.txt.
+    licence, notices, terms = terms_parts(info)
+    for name, val in (("TERMS", terms), ("LICENCE", licence), ("NOTICES", notices)):
+        ph = '"@@%s@@"' % name
+        if js.count(ph) != 1:
+            sys.exit("build stopped: the place for %s was not found in the code" % name)
+        js = js.replace(ph, js_text(val))
+    write_terms_texts(terms)
     if "@@" in js:
         sys.exit("build stopped: a placeholder was left in the code")
     # the logo alone for the tab, and its square tile for home screen shortcuts (both made by release/icons.py)
@@ -147,6 +159,90 @@ def main():
             with open(os.path.join(WEB, name), "rb") as f:
                 put(z, "lakay/" + name, f.read())
     print("Lakay web app %s: builds/Lakay-Web.zip, %d bytes, ready to upload" % (build, os.path.getsize(zpath)))
+
+
+def js_text(value):
+    """A value as a JavaScript literal that is safe inside the page's one script: no "<" (so no closing tag and no comment can
+    begin), and the two line separators that older engines refuse inside a string, escaped."""
+    s = json.dumps(value, ensure_ascii=False)
+    return s.replace("<", "\\u003c").replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
+
+
+def terms_parts(info):
+    """The licence, the notices and the terms, checked: the licence is what its script writes; the terms have every text in
+    the three languages, with the same blanks ({contact}, {age}) in each; their plain words of the licence are the licence's own
+    IN PLAIN WORDS, line for line; and nothing in them could become code or a remote script."""
+    sys.dont_write_bytecode = True
+    sys.path.insert(0, os.path.join(HERE, "release", "licence"))
+    import make_licence
+    with open(os.path.join(HERE, "LICENCE.txt"), encoding="utf-8") as f:
+        licence = f.read()
+    if licence != make_licence.render("lakay"):
+        sys.exit("build stopped: LICENCE.txt is not what release/licence/make_licence.py writes (run it, then build again)")
+    with open(os.path.join(HERE, "THIRD_PARTY_NOTICES.txt"), encoding="utf-8") as f:
+        notices = f.read()
+    with open(os.path.join(SRC, "terms", "terms.json"), encoding="utf-8") as f:
+        terms = json.load(f)
+    contact = str(info.get("contact") or "").strip()
+    if len(contact) > 200 or re.search(r"[<>\"\\]", contact):
+        sys.exit("build stopped: the contact in build.json is not plain words, an email address or a web page")
+    terms["contact"] = contact
+
+    def blanks(s):
+        return sorted(re.findall(r"\{[a-z]+\}", s))
+    def texts(o, where):
+        if not (isinstance(o, dict) and all(isinstance(o.get(l), str) and o[l].strip() for l in ("en", "fr", "ht"))):
+            sys.exit("build stopped: the terms miss a language at %s" % where)
+        for l in ("fr", "ht"):
+            if blanks(o[l]) != blanks(o["en"]):
+                sys.exit("build stopped: the terms' blanks differ in %s at %s" % (l, where))
+        if set(blanks(o["en"])) - {"{contact}", "{age}"}:
+            sys.exit("build stopped: an unknown blank in the terms at %s" % where)
+    texts(terms.get("version"), "version")
+    for part, keys in (("short", ("t", "b")), ("terms", ("h", "b")), ("privacy", ("h", "b"))):
+        if not terms.get(part):
+            sys.exit("build stopped: the terms have no %s" % part)
+        for i, x in enumerate(terms[part]):
+            for k in keys:
+                texts(x.get(k), "%s %d %s" % (part, i + 1, k))
+    for i, x in enumerate(terms.get("licence") or []):
+        texts(x, "licence %d" % (i + 1))
+    plain, on = [], False
+    for line in licence.split("\n"):
+        if line.strip() == "IN PLAIN WORDS":
+            on = True
+        elif on and line.startswith("  \u2022 "):
+            plain.append(line[4:].strip())
+        elif on and line.startswith("    ") and plain:
+            plain[-1] += " " + line.strip()
+        elif on and plain and line.strip():
+            break
+    if plain != [x["en"] for x in terms.get("licence") or []]:
+        sys.exit("build stopped: the terms' plain words of the licence are not the licence's own IN PLAIN WORDS")
+    every = json.dumps(terms, ensure_ascii=False) + licence + notices
+    if re.search(r"<\s*/?\s*script", every, re.I) or "claude.ai" in every or "claudeusercontent" in every or "@@" in every:
+        sys.exit("build stopped: the terms, the licence or the notices hold something that does not belong")
+    return licence, notices, terms
+
+
+def write_terms_texts(terms):
+    """TERMS.txt and PRIVACY.txt beside LICENCE.txt, laid out as Ingenium's: the name, the title, the version and the maker, a
+    rule, then each section, its heading in capitals and its words wrapped at 76 characters. In English, which applies."""
+    import textwrap
+    contact = terms.get("contact") or "the contact shown in Lakay, in About, Terms and privacy"
+    def fill(s):
+        s = s.replace("{contact}", contact).replace("{age}", "the age the lawyer sets")
+        return textwrap.fill(s, width=76, break_long_words=False, break_on_hyphens=False)
+    for name, title, part in (("TERMS.txt", "TERMS OF USE", "terms"), ("PRIVACY.txt", "PRIVACY NOTICE", "privacy")):
+        out = ["LAKAY", title, "%s. Made by Yannie D. Forest." % terms["version"]["en"], "", "=" * 76, ""]
+        for x in terms[part]:
+            out += [x["h"]["en"].upper(), "", fill(x["b"]["en"]), ""]
+        out += ["=" * 76, fill("In Lakay, these texts are also given in French and Kreyòl. If a translation ever differs from this English text, the English applies. Copyright (c) 2026 Yannie D. Forest. All rights reserved. See LICENCE.txt.")]
+        text = "\n".join(out).rstrip("\n") + "\n"
+        if max(len(l) for l in text.split("\n")) > 76:
+            sys.exit("build stopped: a line of %s is longer than 76 characters" % name)
+        with open(os.path.join(HERE, name), "w", encoding="utf-8", newline="\n") as f:
+            f.write(text)
 
 
 if __name__ == "__main__":

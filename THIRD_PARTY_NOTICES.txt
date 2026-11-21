@@ -1,0 +1,30 @@
+LAKAY: THIRD-PARTY NOTICES
+==========================
+
+Lakay itself is the work of Yannie D. Forest; see LICENCE.txt. Lakay's page
+(the app, and the web app) carries no software, fonts or pictures made by
+others. Its programs for computers carry the following open-source software,
+under its own licences; the texts are at the addresses given.
+
+1. The Windows and Mac programs' window and packaging
+   These are carried inside the programs for Windows and the Mac, each
+   under its own licence (Lakay Relay, once packaged as a program, carries
+   Python and PyInstaller's bootloader too):
+   - Python, Python Software Foundation License,
+     https://docs.python.org/3/license.html
+   - pywebview, BSD 3-Clause License, https://github.com/r0x0r/pywebview
+   - PyInstaller's bootloader, GPL 2.0 with an exception that permits
+     distributing programs built with it,
+     https://pyinstaller.org/en/stable/license.html
+   - pythonnet (Windows), MIT License, https://github.com/pythonnet/pythonnet
+   - PyObjC (Mac), MIT License, https://github.com/ronaldoussoren/pyobjc
+
+2. What the devices provide
+   The programs show Lakay's page in the web view of the device itself
+   (Microsoft Edge WebView2 on Windows, WebKit on the Mac, the iPhone and
+   the iPad, and the Android web view on the Fire tablet). These are parts
+   of the devices' own systems, under their makers' terms, and are not
+   carried by Lakay. The emoji are the device's own.
+
+Nothing here gives any right in Lakay itself. Everything in Lakay that is
+not listed here is the work of Yannie D. Forest (LICENCE.txt, section 13).

@@ -7,7 +7,7 @@
    Every word is in French and Kreyòl; each tab fits a phone.
    Run: node tests/t_build18.js [url]   (default: the built page, app/Lakay.html, opened from disk) */
 "use strict";
-const { chromium } = require("playwright");
+const { chromium } = require("./_agreed");  /* each browser has agreed to the terms (Build 26) */
 const path = require("path");
 const fs = require("fs");
 const os = require("os");

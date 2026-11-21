@@ -4,7 +4,7 @@
    press panel, hidden scrollbars, the footer, the build number in About and the Guidebook, the report periods with no
    stamp line, night dress, and the real store: set-up with the Master Key, lock, sign-in, a wrong password refused. */
 "use strict";
-const { chromium } = require("playwright");
+const { chromium } = require("./_agreed");  /* each browser has agreed to the terms (Build 26) */
 const path = require("path");
 const BUILD = require(path.join(__dirname, "..", "build.json")).build;
 const URL = process.argv[2] || "file://" + path.resolve(__dirname, "..", "app", "Lakay.html");

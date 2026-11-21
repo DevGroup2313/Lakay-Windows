@@ -533,11 +533,15 @@
       actions: [{ label: t("close"), kind: "primary" }] });
   };
   ui.about = function () {
-    var st = B.state() || { settings: { storeName: (E.doorInfo && E.doorInfo.storeName) || "" }, head: null };
-    ui.dialog({ title: t("top.about"), body: h("div.about-card", null, [ui.crestKey(84, { rise: true, title: t("crest.press") }), h("h3", null, E.appName()), h("span.eyebrow", null, E.tagline()),
+    var st = B.state() || { settings: { storeName: (E.doorInfo && E.doorInfo.storeName) || "" }, head: null }, d = null;
+    /* the licence and the terms, for everyone who opens About (Build 26, 31-terms.js): the staff and the website's visitors never open Settings */
+    function then(fn) { return function () { if (d) d.close(); setTimeout(fn, 0); }; }
+    d = ui.dialog({ title: t("top.about"), body: h("div.about-card", null, [ui.crestKey(84, { rise: true, title: t("crest.press") }), h("h3", null, E.appName()), h("span.eyebrow", null, E.tagline()),
       h("dl.about-facts", null, [h("dt", null, t("about.store")), h("dd", null, st.settings.storeName), h("dt", null, t("about.books")), h("dd", null, String(st.head ? st.head.seq : 0)),
         h("dt", null, t("about.lang")), h("dd", null, "English · Français · Kreyòl")]),
       h("p.hint", null, t("about.sealed")),
+      E.terms ? h("div.row-keys.about-legal", null, [h("button.key#aboutLicence", { type: "button", onclick: then(function () { E.terms.readLicence(); }) }, [ui.emo("📜"), t("about.licence")]),
+        h("button.key#aboutTerms", { type: "button", onclick: then(function () { E.terms.read("short"); }) }, [ui.emo("🛡️"), t("terms.h")])]) : null,
       h("p.about-foot", null, [E.appName() + " · " + t("build") + " " + E.BUILD.number + " · " + E.BUILD.date, h("br"), t("foot.made") + " · © 2026 Yannie D. Forest. " + t("foot.rights")])]),
       actions: [{ label: t("close"), kind: "primary" }] });
   };

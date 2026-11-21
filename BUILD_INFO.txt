@@ -1,6 +1,9 @@
 Lakay
-Build: 25
-Date: 20 November 2026
-Stage: Lakay Build 25: devices in step, stage 2. The owner adds a device in Settings (a letter reserved, a sealed joining file, a pairing code shown once); the new device joins at the door with the file and the code, and each person signs in with their own password; the changes travel between devices by sealed files, with a plain report; an invitation can be cancelled and a device removed
-Copyright (c) 2026 Yannie D. Forest. All rights reserved.
-NO LICENCE IS GRANTED.
+Build: 26
+Date: 21 November 2026
+Stage: Lakay Build 26: devices in step, stage 3, and Lakay's terms. Lakay Relay, the store's own mailbox for sealed changes, runs on the owner's own Mac minis at home; each device leaves its changes there and takes the others', by itself, with a sign in the top bar; the owner connects each device with the owner's password and a relay's claim code, and a removed device's key is closed at the relays. The relays' addresses are added once the Mac minis are set up. Lakay now has its Terms of use and Privacy notice, agreed to once on each device before Lakay opens, and its licence and copyright in Settings, Ownership, and in About, as Ingenium has them
+Copyright (c) 2026 Yannie D. Forest. All rights reserved. See LICENCE.txt.
+Terms of use: TERMS.txt. Privacy notice: PRIVACY.txt. Software made by others: THIRD_PARTY_NOTICES.txt.
+SHA-256 of app/Lakay.html, the app itself: 7f5c8d96c843fdffa342fd5ff6665f0f2d38692f931fdae5fd4cc6d018aad6e2
+SHA-256 of the web app's page (index.html, in Lakay-Web.zip): ebf3b586bc5c0a868ac2fca4d701799731f72c34d8c77e8578d6004d1cc792af
+The release page lists the fingerprint of every download. A copy whose fingerprint differs is not genuine (LICENCE.txt, clause 9).

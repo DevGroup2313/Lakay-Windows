@@ -4,6 +4,50 @@ Copyright (c) 2026 Yannie D. Forest. All rights reserved. NO LICENCE IS GRANTED.
 
 The newest build is first. The build number also shows in Lakay's About.
 
+## Build 26 (21 November 2026): devices in step (stage 3), the relays at home; and Lakay's terms, licence and copyright
+
+Two requests of the owner. The relays follow the plan the owner approved on 20 November 2026 (`docs/06-THE-RELAY.md`): the owner's own server and private network at home, on two Mac minis that also hold the books, with no company in between and Tailscale kept as an option. The terms answer the owner's request of 21 November 2026: "I want Lakay to have a Terms and Conditions policy and also have a clear copyrights declaration the same way that Ingenium does. I want full and exact parity with Ingenium's Terms and Conditions implementations system and prompting ... customised and curated specifically for the Lakay app."
+
+**Lakay Relay, the store's own mailbox for sealed changes**
+- `relay/lakay_relay.py` is a small program for the Mac minis at home, built on Python's standard library alone. Each device leaves its new changes there as sealed bundles and takes the others' bundles. The relay never holds the books, the Store Key or a password, and it cannot read what it keeps.
+- A new relay belongs to no store. At its first start it writes a claim code (16 characters, in `claim.txt` beside its data). The owner types that code in Lakay, with the owner's password, to make the relay the store's. After eight wrong codes, it waits ten minutes.
+- It answers only to keys. The owner's key is made from the owner's password on a device (PBKDF2); each device makes its own key. The relay keeps only their SHA-256 and compares them in constant time. Its log holds no key.
+- Its limits: 16 MB for one bundle, 30 days for each, 2 GB in all (the oldest go first). With the owner's own certificate (`--make-certificate`, which makes the owner's own authority once), it answers over https.
+- It must answer only inside the store's private network (WireGuard on the home router, or Tailscale), never open to the whole internet: Python's documentation does not recommend its web server for that.
+
+**The exchange, by itself**
+- Each device takes and leaves changes when the store opens, every two minutes while it is open, two seconds after a change, and when the connection comes back. Every device uses every relay, so either Mac mini can be off. A change taken twice brings nothing new.
+- Once a device is connected, a sign beside the top bar's status says how the exchange stands: in step, waiting, or this device's key closed at the relays. Pressing it shows each relay's state, the last exchange and any problem, with a key to exchange now.
+- Settings, Devices in step, has a new part, The relays: each relay with its state, Connect this device (the owner's password, and the first time a relay's claim code), and for a removed device, Close its key at the relays.
+- Taking in only another device's word that it has taken in changes writes no ledger line, so two devices do not answer each other forever.
+- The relays' addresses are the only places the page may reach. `build.py` writes them from `build.json` into the page's security policy (`connect-src`), and the page reads them back from there. `build.json` lists none yet: they are added once the Mac minis are set up, so this build reaches nowhere, as before.
+
+**Ownership, licence and copyright, as Ingenium has them**
+- `LICENCE.txt` is now the owner's licence, version 3, the same as Ingenium's, made for Lakay by `release/licence/make_licence.py` (its parts, the store's books in clause 3.6, its seal and fingerprints, its programs and Lakay Relay). It replaces the old one-paragraph notice. The build stops if the file differs from what the script writes.
+- `THIRD_PARTY_NOTICES.txt` lists the open-source software Lakay's programs for computers carry (Python, pywebview, PyInstaller's bootloader, pythonnet, PyObjC), each with its licence. Lakay's page carries none.
+- Settings has a new section, Ownership, before About (the owner's): Ownership, licence and permissions (the copyright, Lakay as the owner's sole original work, a permission's rules, this copy's build, the whole licence to read, Save the licence, and the notices of others' software), then Terms and privacy.
+- The whole licence reads as a document, as Ingenium reads its own: its contents, In plain words, parts A to F, sections, clauses and lists. In French and Kreyòl, the card also gives the licence's plain words in that language, with a note that the English text applies.
+- About, for everyone (the staff and the website's visitors never open Settings), has two new keys: Licence, and Terms and privacy.
+- Every release now carries `TERMS.txt`, `PRIVACY.txt` and `THIRD_PARTY_NOTICES.txt` beside `LICENCE.txt`, and `BUILD_INFO.txt` lists the SHA-256 of the app itself and of the web app's page, as the licence promises (clause 9.2).
+
+**Terms of use and Privacy notice, written for the store**
+- The Terms of use (13 sections) and the Privacy notice (9 sections), in English, French and Kreyòl, with In short: six promises. They are written from what Lakay really does: the books on the store's own devices, sealed; nothing sent to its maker; never a card's number, a passport number or a customer's identity; the payments, transfers and bookings; the people and the customers; the devices and the relays; the services of others; the law of the United States and the United Kingdom, as the licence settles.
+- They say "the store's owner" where the person who runs the store is meant, and "the owner" for the owner of Lakay's rights.
+- They are a draft: a lawyer in the United States and in the United Kingdom should read them before they are final. The owner of the real store sees a Draft chip and can add a contact for questions (Your contact), which the texts then show. Until then they say "the contact its maker adds".
+- The texts live in `src/terms/terms.json`. The build checks that every text is in the three languages with the same blanks, and that the plain words match the licence's own, line for line.
+
+**Before you begin: agreeing to the terms, as in Ingenium**
+- Once the welcome door has opened (Enter, the practice store, the sign-in, setting up, joining or restoring), a device that has not agreed to this version of the terms shows a sheet over everything: In short, the full Terms of use, the full Privacy notice, a tick, Decline and I agree.
+- Nothing behind it can be reached. Escape does not close it, Tab stays inside it, and no key reaches the rooms behind it (the register's keys, the scanner, the rail's shortcuts).
+- I agree keeps the version, the date and the build on this device, never sent. Settings, Ownership, and About say when this device agreed. A new version of the terms asks again.
+- Decline keeps Lakay closed, says why, records nothing, and offers the terms again. Lakay adds one key to Ingenium's: Back to the welcome door, where Refresh and Reset stay, since Lakay never locks anyone out (Build 7).
+- Lakay has one edition, so every device asks once, the owner's included. Ingenium's master copy does not ask its maker.
+- Settings, Security, has a key to read the Privacy notice, as Ingenium's Security links to it.
+
+**Tests**
+- tests/t_build26.js: 37 checks, with two copies of Lakay Relay and three browsers standing for three devices. tests/t_build26_terms.js: 55 checks, with Playwright as it is, so the sheet itself is tested. The suites written before this build open browsers that have already agreed (`tests/_agreed.js`), since they test the rooms.
+- Every word is in English, French and Kreyòl (the Kreyòl is marked for review by a native speaker).
+
 ## Build 25 (20 November 2026): devices in step (stage 2), adding a device and carrying the changes by file
 
 This is the second stage of the plan the owner approved on 15 November 2026 (`docs/05-DEVICES-IN-STEP.md`). A device joins the store with a joining file and a pairing code, and the devices carry their changes to one another by sealed files. Nothing travels over a network yet: that is stage 3, the relay.

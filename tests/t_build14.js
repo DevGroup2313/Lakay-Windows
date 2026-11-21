@@ -8,7 +8,7 @@
    the service worker keeps the page, and Lakay opens again with the server gone. Nothing is refused by the page's policy.
    Run: node tests/t_build14.js [url]   (default: the built page, app/Lakay.html, opened from disk) */
 "use strict";
-const { chromium } = require("playwright");
+const { chromium } = require("./_agreed");  /* each browser has agreed to the terms (Build 26) */
 const path = require("path"), fs = require("fs"), http = require("http"), crypto = require("crypto");
 const ROOT = path.resolve(__dirname, ".."), APP = path.join(ROOT, "app"), WEB = path.join(ROOT, "web");
 const PAGE = process.argv[2] || "file://" + path.join(APP, "Lakay.html");

@@ -16,7 +16,7 @@ Unzip it, drag Lakay to Applications, and follow [READ ME FIRST (Mac).txt](READ%
 - `builds/`: the ready-made Mac apps. Each new build replaces them.
 - `READ ME FIRST (Mac).txt`: installing, the first open, updating, and where the books are kept.
 - The build kit, the files GitHub builds from: `app/Lakay.html` (Lakay itself), `desktop/` (the window program and its Mac recipe), `release/publish.py`, and `.github/workflows/mac.yml`. A push builds both apps again on GitHub's Macs, opens each once, and puts them here and on the Releases page.
-- `LICENCE.txt`: all rights reserved; no licence is granted.
+- `LICENCE.txt`: the owner's licence (Copyright (c) 2026 Yannie D. Forest; all rights reserved). `TERMS.txt` and `PRIVACY.txt`: Lakay's Terms of use and Privacy notice, which each device agrees to once, in Lakay itself. `THIRD_PARTY_NOTICES.txt`: the software made by others that the programs carry. `BUILD_INFO.txt`: the build, and the SHA-256 fingerprints of the app and of the web app's page.
 
 Lakay's source and its notes are in Lakay-Windows. Lakay for iPhone, iPad and the Fire tablet is in Lakay-Apps.
 

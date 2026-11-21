@@ -9,7 +9,7 @@
    transparency for the system to fill in black. The page's security policy blocks nothing it needs.
    Run: node tests/t_build12.js [url]   (default: the built page, app/Lakay.html, opened from disk) */
 "use strict";
-const { chromium } = require("playwright");
+const { chromium } = require("./_agreed");  /* each browser has agreed to the terms (Build 26) */
 const path = require("path"), fs = require("fs");
 const APP = path.resolve(__dirname, "..", "app");
 const URL = process.argv[2] || "file://" + path.join(APP, "Lakay.html");

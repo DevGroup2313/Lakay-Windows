@@ -7,7 +7,7 @@
    payment too. Every word is in French and Kreyòl. On a device with no camera, the camera key stays hidden.
    Run: node tests/t_build16.js [url]   (default: the built page, app/Lakay.html, opened from disk) */
 "use strict";
-const { chromium } = require("playwright");
+const { chromium } = require("./_agreed");  /* each browser has agreed to the terms (Build 26) */
 const path = require("path");
 const ROOT = path.resolve(__dirname, ".."), PAGE = process.argv[2] || "file://" + path.join(ROOT, "app", "Lakay.html");
 let failed = 0, passed = 0;

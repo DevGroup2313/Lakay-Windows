@@ -6,7 +6,7 @@
    In the practice store: Marie (a cashier) and Jean (a manager). Every word in French and Kreyòl; it fits a phone.
    Run: node tests/t_build21.js [url]   (default: the built page, app/Lakay.html, opened from disk) */
 "use strict";
-const { chromium } = require("playwright");
+const { chromium } = require("./_agreed");  /* each browser has agreed to the terms (Build 26) */
 const path = require("path");
 const ROOT = path.resolve(__dirname, ".."), PAGE = process.argv[2] || "file://" + path.join(ROOT, "app", "Lakay.html");
 let failed = 0, passed = 0;

@@ -1,6 +1,6 @@
 # Lakay for Windows
 
-**Build 25, 20 November 2026.** Lakay is the store's own app: inventory, the register and reports. It works with no connection, and it keeps the store's books sealed on each device. This repository also holds Lakay's source.
+**Build 26, 21 November 2026.** Lakay is the store's own app: inventory, the register and reports. It works with no connection, and it keeps the store's books sealed on each device. This repository also holds Lakay's source.
 
 ## Download
 
@@ -20,13 +20,13 @@ The other devices have their own repositories, set up the same way:
 - `builds/`: the ready-made Windows installer, and `Lakay-Web.zip`, the web app to upload to the store's own website. Each new build replaces them.
 - `READ ME FIRST (Windows).txt`: installing, updating, and where the books are kept.
 - Lakay's source, for every device:
-  - `src/`: the app (`src/js`, `src/css`, the mark's pictures in `src/brand`). `build.py` makes `app/Lakay.html` from it.
-  - `tests/t_build3.js`, `tests/t_build6.js`, `tests/t_build7.js`, `tests/t_build8.js`, `tests/t_build9.js`, `tests/t_build10.js`, `tests/t_build12.js`, `tests/t_build14.js`, `tests/t_build15.js`, `tests/t_build16.js`, `tests/t_build17.js`, `tests/t_build18.js`, `tests/t_build19.js`, `tests/t_build20.js`, `tests/t_build21.js`, `tests/t_build22.js`, `tests/t_build23.js`, `tests/t_build24.js`, `tests/t_build25.js` and `tests/t_build26.js`: the whole app driven in Chromium.
-  - `desktop/`: the window program for Windows and the Mac, with their recipes. `packages/`: the iPhone and iPad shell and the Fire tablet's.
+  - `src/`: the app (`src/js`, `src/css`, the mark's pictures in `src/brand`, the terms in `src/terms`). `build.py` makes `app/Lakay.html` from it, with the licence, the terms and the notices, and writes `TERMS.txt` and `PRIVACY.txt`.
+  - `tests/t_build3.js`, `tests/t_build6.js`, `tests/t_build7.js`, `tests/t_build8.js`, `tests/t_build9.js`, `tests/t_build10.js`, `tests/t_build12.js`, `tests/t_build14.js`, `tests/t_build15.js`, `tests/t_build16.js`, `tests/t_build17.js`, `tests/t_build18.js`, `tests/t_build19.js`, `tests/t_build20.js`, `tests/t_build21.js`, `tests/t_build22.js`, `tests/t_build23.js`, `tests/t_build24.js`, `tests/t_build25.js`, `tests/t_build26.js` and `tests/t_build26_terms.js`: the whole app driven in Chromium (`tests/_agreed.js` opens browsers that have agreed to the terms, for the suites that test the rooms).
+  - `desktop/`: the window program for Windows and the Mac, with their recipes. `packages/`: the iPhone and iPad shell and the Fire tablet's. `relay/`: Lakay Relay, the store's own mailbox for sealed changes, for the Mac minis at home.
   - `.github/workflows/windows.yml`: builds the Windows program, opens it once, installs and uninstalls it, scans it with Microsoft Defender, and puts it here and on the Releases page.
-  - `release/`: `publish.py` (the Releases page and `builds/`), `device_repos.py` (makes Lakay-Mac and Lakay-Apps from this source), `icons.py` (every icon, from the one approved drawing of the logo), `ACTIONS.md` (the GitHub actions the builds use, each pinned by commit and checked to run on Node.js 24), the other devices' workflows, and the READ ME FIRST files.
+  - `release/`: `publish.py` (the Releases page and `builds/`), `device_repos.py` (makes Lakay-Mac and Lakay-Apps from this source), `licence/make_licence.py` (the owner's licence, made for Lakay), `icons.py` (every icon, from the one approved drawing of the logo), `ACTIONS.md` (the GitHub actions the builds use, each pinned by commit and checked to run on Node.js 24), the other devices' workflows, and the READ ME FIRST files.
   - `docs/`: [HANDOFF.md](docs/HANDOFF.md) (where Lakay stands and what comes next), [CHANGES.md](docs/CHANGES.md) (each build), the design and security notes, and the mark's drawings in `docs/brand`.
-- `LICENCE.txt`: all rights reserved; no licence is granted.
+- `LICENCE.txt`: the owner's licence (Copyright (c) 2026 Yannie D. Forest; all rights reserved). `TERMS.txt` and `PRIVACY.txt`: Lakay's Terms of use and Privacy notice, which each device agrees to once, in Lakay itself. `THIRD_PARTY_NOTICES.txt`: the software made by others that the programs carry. `BUILD_INFO.txt`: the build, and the SHA-256 fingerprints of the app and of the web app's page.
 
 ## Lakay on the web
 
@@ -59,6 +59,7 @@ Its address bar and tabs show Lakay's logo in any browser. On an iPhone or iPad,
     node tests/t_build24.js       # devices in step (stage 1): the books of two, three and five devices joined; the owner's requests for the Home, the rail, the notes and the Studio
     node tests/t_build25.js       # devices in step (stage 2): a device invited, joined at the door with its file and code, changes carried by file both ways, an invitation cancelled, a device removed
     node tests/t_build26.js       # devices in step (stage 3): two copies of Lakay Relay, three devices, relays claimed and devices connected, changes by themselves through either relay, a removed device's key closed
+    node tests/t_build26_terms.js # Lakay's terms: the sheet after the welcome door, Decline and Back to the welcome door, I agree and a new version, About, Settings, Ownership, the licence as a document, three languages, a phone, night
 
 The build stops if the code uses `eval`, `innerHTML`, `document.write` or an address outside the page. The page's Content Security Policy allows only its own script, named by its SHA-256.
 

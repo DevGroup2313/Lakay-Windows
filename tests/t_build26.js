@@ -7,7 +7,7 @@
    both relays; the relays hold only sealed bundles.
    Run: node tests/t_build26.js */
 "use strict";
-const { chromium } = require("playwright");
+const { chromium } = require("./_agreed");  /* each browser has agreed to the terms (Build 26) */
 const fs = require("fs");
 const os = require("os");
 const path = require("path");

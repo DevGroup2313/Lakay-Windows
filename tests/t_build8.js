@@ -5,7 +5,7 @@
    edit menu inside a note. The Reset's erase choice is a quiet card, and the night is Lakay's calm periwinkle ink.
    Run: node tests/t_build8.js [url]   (default: the built page, app/Lakay.html, opened from disk) */
 "use strict";
-const { chromium } = require("playwright");
+const { chromium } = require("./_agreed");  /* each browser has agreed to the terms (Build 26) */
 const path = require("path");
 const URL = process.argv[2] || "file://" + path.resolve(__dirname, "..", "app", "Lakay.html");
 let failed = 0, passed = 0;
