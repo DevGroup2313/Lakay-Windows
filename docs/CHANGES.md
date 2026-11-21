@@ -24,7 +24,7 @@ Two requests of the owner. The relays follow the plan the owner approved on 20 N
 
 **Ownership, licence and copyright, as Ingenium has them**
 - `LICENCE.txt` is now the owner's licence, version 3, the same as Ingenium's, made for Lakay by `release/licence/make_licence.py` (its parts, the store's books in clause 3.6, its seal and fingerprints, its programs and Lakay Relay). It replaces the old one-paragraph notice. The build stops if the file differs from what the script writes.
-- `THIRD_PARTY_NOTICES.txt` lists the open-source software Lakay's programs for computers carry (Python, pywebview, PyInstaller's bootloader, pythonnet, PyObjC), each with its licence. Lakay's page carries none.
+- `THIRD_PARTY_NOTICES.txt` says what each program carries that others made, read from the programs' own recipes: on Windows, Python, PyInstaller, pywebview with Microsoft's WebView2 SDK files, pythonnet, clr_loader, cffi, pycparser, bottle, proxy_tools, typing_extensions and the Inno Setup installer; on the Mac, Python, PyInstaller, pywebview, PyObjC and the same small helpers. It gives each licence's own text, as each package gives it (made by `release/licence/make_notices.py`; the build stops if the file differs). The page carries none, and the iPhone, iPad and Fire apps carry nothing made by others. The page shows this file, so the notices travel inside every program.
 - Settings has a new section, Ownership, before About (the owner's): Ownership, licence and permissions (the copyright, Lakay as the owner's sole original work, a permission's rules, this copy's build, the whole licence to read, Save the licence, and the notices of others' software), then Terms and privacy.
 - The whole licence reads as a document, as Ingenium reads its own: its contents, In plain words, parts A to F, sections, clauses and lists. In French and Kreyòl, the card also gives the licence's plain words in that language, with a note that the English text applies.
 - About, for everyone (the staff and the website's visitors never open Settings), has two new keys: Licence, and Terms and privacy.
@@ -39,13 +39,13 @@ Two requests of the owner. The relays follow the plan the owner approved on 20 N
 **Before you begin: agreeing to the terms, as in Ingenium**
 - Once the welcome door has opened (Enter, the practice store, the sign-in, setting up, joining or restoring), a device that has not agreed to this version of the terms shows a sheet over everything: In short, the full Terms of use, the full Privacy notice, a tick, Decline and I agree.
 - Nothing behind it can be reached. Escape does not close it, Tab stays inside it, and no key reaches the rooms behind it (the register's keys, the scanner, the rail's shortcuts).
-- I agree keeps the version, the date and the build on this device, never sent. Settings, Ownership, and About say when this device agreed. A new version of the terms asks again.
+- I agree keeps the version, the date and the build on this device, never sent. Settings, Ownership, and About say when this device agreed. A new version of the terms asks again. Where a browser refuses to keep the record (a private window), the agreement holds for that session, and the sheet does not come back.
 - Decline keeps Lakay closed, says why, records nothing, and offers the terms again. Lakay adds one key to Ingenium's: Back to the welcome door, where Refresh and Reset stay, since Lakay never locks anyone out (Build 7).
 - Lakay has one edition, so every device asks once, the owner's included. Ingenium's master copy does not ask its maker.
 - Settings, Security, has a key to read the Privacy notice, as Ingenium's Security links to it.
 
 **Tests**
-- tests/t_build26.js: 37 checks, with two copies of Lakay Relay and three browsers standing for three devices. tests/t_build26_terms.js: 55 checks, with Playwright as it is, so the sheet itself is tested. The suites written before this build open browsers that have already agreed (`tests/_agreed.js`), since they test the rooms.
+- tests/t_build26.js: 37 checks, with two copies of Lakay Relay and three browsers standing for three devices. tests/t_build26_terms.js: 56 checks, with Playwright as it is, so the sheet itself is tested. The suites written before this build open browsers that have already agreed (`tests/_agreed.js`), since they test the rooms. Every suite passes: 1,094 checks in all.
 - Every word is in English, French and Kreyòl (the Kreyòl is marked for review by a native speaker).
 
 ## Build 25 (20 November 2026): devices in step (stage 2), adding a device and carrying the changes by file

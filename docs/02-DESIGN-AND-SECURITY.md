@@ -289,8 +289,9 @@ Ingenium's system and prompting, made for Lakay. What there is, and what it is n
 
 - **The licence.** `LICENCE.txt` is the owner's licence, version 3, made for Lakay by `release/licence/make_licence.py`.
   The build stops if the file differs from what the script writes. Settings, Ownership, and About show it, with the
-  copyright, this copy's build, the whole licence as a document, and Save the licence. `THIRD_PARTY_NOTICES.txt` lists
-  what the programs for computers carry; the page carries no software made by others.
+  copyright, this copy's build, the whole licence as a document, and Save the licence. `THIRD_PARTY_NOTICES.txt`, made by
+  `release/licence/make_notices.py` from the licence files of the packages themselves, says what each program carries
+  and gives each licence's text; the page carries no software made by others, and shows this file.
 - **The terms and the notice.** `src/terms/terms.json` holds the Terms of use, the Privacy notice, In short and the
   licence's plain words, in English, French and Kreyòl. The English applies. Every statement in the Privacy notice was
   written from what the code does (what is sealed, what is left readable for the door, what is never kept, when the page

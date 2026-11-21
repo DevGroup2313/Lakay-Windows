@@ -32,7 +32,11 @@ too. Without a password or the Master Key, no one can open the books, not
 even Lakay's maker. Left readable, so that the door can work: the store's
 name, the people's names and staff numbers, the Author Studio's choices, the
 build number, and the technical facts needed to open the seal (such as its
-salt).
+salt). This device also keeps its own settings, unsealed, in its storage for
+Lakay: the language and the look, the sound, how the side keys are laid out,
+when the last backup was saved, the count of wrong passwords at the door,
+and when this device agreed to these terms (with the contact, if one was
+added).
 
 4. WHAT LAKAY NEVER KEEPS
 
@@ -60,7 +64,8 @@ once on a device already in it. The joining file is a sealed backup: like
 every backup, it shows the store's name, the people's names and staff
 numbers, and the Author Studio's choices. Changes then travel sealed, by
 file or through the store's own relays, which cannot read them; the relays
-see only which device left changes, when, and how large they were.
+see only the store's and the devices' identifiers, when changes were left,
+and how large they were, and they keep the sealed changes for 30 days.
 
 7. YOUR CHOICES
 

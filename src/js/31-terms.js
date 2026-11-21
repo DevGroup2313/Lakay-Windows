@@ -27,7 +27,7 @@
   var U = E.util, h = U.h, t = E.t;
   var DATA = "@@TERMS@@", LICENCE = "@@LICENCE@@", NOTICES = "@@NOTICES@@";
   var T = E.terms = {};
-  var VIEW = "short", V = null, ST = "ask", GV = "short", TICK = false, seenDoor = false;
+  var VIEW = "short", V = null, ST = "ask", GV = "short", TICK = false, seenDoor = false, MEMO = null;
   function lang() { return E.lang === "fr" || E.lang === "ht" ? E.lang : "en"; }
   function L(o) { return (o && (o[lang()] || o.en)) || ""; }
   /* a day in words, without its weekday: "20 November 2026" */
@@ -61,7 +61,8 @@
   }
   function rec() { try { var r = JSON.parse(U.prefGet("terms", "") || "null"); return r && typeof r === "object" && r.v ? r : null; } catch (e) { return null; } }
   T.record = rec;
-  T.agreed = function () { var r = rec(); return !!(r && r.v === DATA.version.en); };
+  /* MEMO: agreed in this session, even where the browser keeps nothing (a private window, storage refused): asked once, not again every few seconds */
+  T.agreed = function () { var r = rec(); return MEMO === DATA.version.en || !!(r && r.v === DATA.version.en); };
   T.need = function () { return !T.agreed(); };
   function agreedLine() {
     var r = rec(); if (!r || !r.at) return null;
@@ -274,6 +275,7 @@
   }
   function agree() {
     if (!TICK) return;
+    MEMO = DATA.version.en;
     U.prefSet("terms", JSON.stringify({ v: DATA.version.en, at: Date.now(), build: E.BUILD && E.BUILD.number }));
     closeSheet(); T.repaint();
   }

@@ -4,6 +4,6 @@ Date: 21 November 2026
 Stage: Lakay Build 26: devices in step, stage 3, and Lakay's terms. Lakay Relay, the store's own mailbox for sealed changes, runs on the owner's own Mac minis at home; each device leaves its changes there and takes the others', by itself, with a sign in the top bar; the owner connects each device with the owner's password and a relay's claim code, and a removed device's key is closed at the relays. The relays' addresses are added once the Mac minis are set up. Lakay now has its Terms of use and Privacy notice, agreed to once on each device before Lakay opens, and its licence and copyright in Settings, Ownership, and in About, as Ingenium has them
 Copyright (c) 2026 Yannie D. Forest. All rights reserved. See LICENCE.txt.
 Terms of use: TERMS.txt. Privacy notice: PRIVACY.txt. Software made by others: THIRD_PARTY_NOTICES.txt.
-SHA-256 of app/Lakay.html, the app itself: 7f5c8d96c843fdffa342fd5ff6665f0f2d38692f931fdae5fd4cc6d018aad6e2
-SHA-256 of the web app's page (index.html, in Lakay-Web.zip): ebf3b586bc5c0a868ac2fca4d701799731f72c34d8c77e8578d6004d1cc792af
+SHA-256 of app/Lakay.html, the app itself: e8936a37a768e485edf08fbff70c6b3505c5cf6fbffd1047efd1063b1b2b8615
+SHA-256 of the web app's page (index.html, in Lakay-Web.zip): 8dfdd3641925211b54ead190d620734e4be298f57d6f918cd92ba76102576edf
 The release page lists the fingerprint of every download. A copy whose fingerprint differs is not genuine (LICENCE.txt, clause 9).

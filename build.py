@@ -169,7 +169,7 @@ def js_text(value):
 
 
 def terms_parts(info):
-    """The licence, the notices and the terms, checked: the licence is what its script writes; the terms have every text in
+    """The licence, the notices and the terms, checked: the licence and the notices are what their scripts write; the terms have every text in
     the three languages, with the same blanks ({contact}, {age}) in each; their plain words of the licence are the licence's own
     IN PLAIN WORDS, line for line; and nothing in them could become code or a remote script."""
     sys.dont_write_bytecode = True
@@ -179,8 +179,11 @@ def terms_parts(info):
         licence = f.read()
     if licence != make_licence.render("lakay"):
         sys.exit("build stopped: LICENCE.txt is not what release/licence/make_licence.py writes (run it, then build again)")
+    import make_notices
     with open(os.path.join(HERE, "THIRD_PARTY_NOTICES.txt"), encoding="utf-8") as f:
         notices = f.read()
+    if notices != make_notices.render():
+        sys.exit("build stopped: THIRD_PARTY_NOTICES.txt is not what release/licence/make_notices.py writes (run it, then build again)")
     with open(os.path.join(SRC, "terms", "terms.json"), encoding="utf-8") as f:
         terms = json.load(f)
     contact = str(info.get("contact") or "").strip()

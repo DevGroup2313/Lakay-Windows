@@ -155,8 +155,9 @@ const V = TERMS.version.en;
   const saved = path.join(TMP, dl.suggestedFilename()); await dl.saveAs(saved);
   ok(dl.suggestedFilename() === "LICENCE.txt" && fs.readFileSync(saved, "utf8") === LICENCE, "Save the licence: LICENCE.txt, exactly as the repositories carry it");
   await A.click("#licenceRead .lic-notices"); await A.waitForSelector("#licNoticesText");
-  ok(await A.evaluate(() => /PyInstaller's bootloader/.test(document.getElementById("licNoticesText").textContent) && /carries no software, fonts or pictures made by\s+others/.test(document.getElementById("licNoticesText").textContent)),
-    "the notices of others' software: what the programs for computers carry, and that the page carries none");
+  const nt = await A.evaluate(() => document.getElementById("licNoticesText").textContent);
+  ok(nt === fs.readFileSync(path.join(ROOT, "THIRD_PARTY_NOTICES.txt"), "utf8") && /carries no software, fonts or pictures made by\s+others/.test(nt) && /PyInstaller 6\.22\.3/.test(nt) && /Microsoft WebView2 SDK files/.test(nt) && /Bootloader Exception/.test(nt) && /Apache License/.test(nt),
+    "the notices of others' software, exactly as THIRD_PARTY_NOTICES.txt: what each program carries, with the licences' own texts, and that the page carries none");
   await A.evaluate(() => document.querySelectorAll(".layer").forEach(l => l.remove()));
 
   console.log("Settings, Ownership: in the practice store");
@@ -220,6 +221,17 @@ const V = TERMS.version.en;
   const french = await A.evaluate(() => { E.setLang("fr"); const s = ["lic.sole", "lic.permit", "gate.noP", "terms.blankContact", "terms.chip.maker", "tip.own.b"].map(k => E.t(k)).join(" "); E.setLang("en"); return s; });
   const frTerms = (JSON.stringify(TERMS).match(/"fr":"(?:[^"\\]|\\.)*"/g) || []).join(" ");
   ok(/le propriétaire/.test(french) && /son auteur\b/.test(french) && !/\b(auteure|propriétaire\s+elle|prête|prêt)\b/.test(french + " " + frTerms), "the French names no gender: le propriétaire, son auteur", french.slice(0, 80));
+
+  console.log("Where the browser keeps nothing");
+  const N = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  await N.addInitScript(() => { const orig = Storage.prototype.setItem; Storage.prototype.setItem = function (k, v) { if (String(k) === "emporium.terms") throw new Error("refused"); return orig.call(this, k, v); }; });
+  const Np = await N.newPage(); Np.on("pageerror", e => errors.push(e.message));
+  await Np.goto(PAGE); await Np.waitForSelector("#introDoor", { timeout: 20000 }); await Np.evaluate(() => E.util.prefSet("tips", "0"));
+  await Np.click("#introEnter"); await Np.waitForSelector(".shell", { timeout: 90000 }); await Np.waitForSelector("#termsGate .tg", { timeout: 8000 });
+  await Np.check("#tgTick"); await Np.click("#tgAgree"); await wait(Np, 3800);
+  ok(!(await Np.$("#termsGate")) && (await Np.evaluate(() => localStorage.getItem("emporium.terms"))) === null,
+    "where the browser refuses to keep the record, the agreement holds for the session: the sheet does not come back every few seconds");
+  await N.close();
 
   console.log("A phone's width, and night");
   const P = await device({ w: 390, h: 844 });
